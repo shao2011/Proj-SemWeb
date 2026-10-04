@@ -63,16 +63,49 @@
     ] .
 
 :Illustrator a owl:Class ;
-    rdfs:subClassOf :Person .
+    rdfs:subClassOf :Person ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Person
+            [ a owl:Restriction ;
+              owl:onProperty :illustrates ;
+              owl:someValuesFrom :BookEdition
+            ]
+        )
+    ] .
 
 :Editor a owl:Class ;
-    rdfs:subClassOf :Person .
+    rdfs:subClassOf :Person ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Person
+            [ a owl:Restriction ;
+              owl:onProperty :edits ;
+              owl:someValuesFrom :BookEdition
+            ]
+        )
+    ] .
 
 :Narrator a owl:Class ;
-    rdfs:subClassOf :Person .
+    rdfs:subClassOf :Person ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Person
+            [ a owl:Restriction ;
+              owl:onProperty :narrates ;
+              owl:someValuesFrom :BookEdition
+            ]
+        )
+    ] .
 
 :Organization a owl:Class ;
     rdfs:subClassOf schema:Organization .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( :Person :Organization ) .
 
 :Publisher a owl:Class ;
     rdfs:subClassOf :Organization .
@@ -91,6 +124,10 @@
 
 :BookFormat a owl:Class .
 
+:AudioFormat a owl:Class ;
+    rdfs:subClassOf :BookFormat ;
+    rdfs:comment "Formats whose content is listened to (Audio CD, Audible Audio, MP3 CD, ...)." .
+
 :Award a owl:Class .
 :AwardRecognition a owl:Class .
 
@@ -102,6 +139,9 @@
 
 :AwardFinalistRecognition a owl:Class ;
     rdfs:subClassOf :AwardRecognition .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( :AwardWin :AwardNomination :AwardFinalistRecognition ) .
 
 :SeriesBook a owl:Class ;
     owl:equivalentClass [
@@ -147,7 +187,7 @@
             :BookEdition
             [ a owl:Restriction ;
               owl:onProperty :hasFormat ;
-              owl:hasValue :Audiobook
+              owl:someValuesFrom :AudioFormat
             ]
         )
     ] .
@@ -211,6 +251,21 @@
     rdfs:domain :Person ;
     rdfs:range :BookEdition ;
     owl:inverseOf :isTranslatedBy .
+
+:illustrates a owl:ObjectProperty ;
+    rdfs:domain :Person ;
+    rdfs:range :BookEdition ;
+    owl:inverseOf :isIllustratedBy .
+
+:edits a owl:ObjectProperty ;
+    rdfs:domain :Person ;
+    rdfs:range :BookEdition ;
+    owl:inverseOf :isEditedBy .
+
+:narrates a owl:ObjectProperty ;
+    rdfs:domain :Person ;
+    rdfs:range :BookEdition ;
+    owl:inverseOf :isNarratedBy .
 
 :isIllustratedBy a owl:ObjectProperty ;
     rdfs:domain :BookEdition ;
@@ -280,11 +335,13 @@
 
 :hasAwardRecognition a owl:ObjectProperty ;
     rdfs:domain :Book ;
-    rdfs:range :AwardRecognition .
+    rdfs:range :AwardRecognition ;
+    owl:inverseOf :isRecognitionFor .
 
 :isRecognitionFor a owl:ObjectProperty ;
     rdfs:domain :AwardRecognition ;
-    rdfs:range :Book .
+    rdfs:range :Book ;
+    owl:inverseOf :hasAwardRecognition .
 
 :forAward a owl:ObjectProperty ;
     rdfs:domain :AwardRecognition ;
@@ -333,6 +390,16 @@
     rdfs:domain :Book ;
     rdfs:range xsd:date ;
     rdfs:subPropertyOf schema:datePublished .
+
+:publishYear a owl:DatatypeProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range xsd:gYear ;
+    rdfs:comment "Year of this edition; kept even when the source gives only a year or month/year." .
+
+:firstPublishYear a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:gYear ;
+    rdfs:comment "Year the work was first published; kept even when the full date is unknown." .
 
 :rating a owl:DatatypeProperty ;
     rdfs:domain :Book ;
@@ -390,9 +457,3 @@
 :oneStarRatings a owl:DatatypeProperty ;
     rdfs:domain :Book ;
     rdfs:range xsd:nonNegativeInteger .
-
-#################################################################
-# Required ontology individual
-#################################################################
-
-:Audiobook a owl:NamedIndividual , :BookFormat .

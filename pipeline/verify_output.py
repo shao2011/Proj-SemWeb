@@ -33,8 +33,13 @@ def verify(data_path: Path, ontology_path: Path, csv_path: Path, qa_path: Path,
     assert len(books) == summary["Book"]
     assert len(editions) == summary["BookEdition"]
     assert not books & editions
-    assert all(list(graph.objects(book, BOOKS.isWrittenBy)) and
-               list(graph.objects(book, BOOKS.hasEdition)) for book in books)
+    assert all(list(graph.objects(book, BOOKS.hasEdition)) for book in books)
+    # A work may lack isWrittenBy only if every edition was reported as authorless.
+    no_author_ids = {record["bookId"] for record in details["works_without_author"]}
+    for book in books:
+        if not list(graph.objects(book, BOOKS.isWrittenBy)):
+            assert all(str(graph.value(e, BOOKS.bookId)) in no_author_ids
+                       for e in graph.objects(book, BOOKS.hasEdition)), book
     assert all(len(set(graph.subjects(BOOKS.hasEdition, edition))) == 1 for edition in editions)
     assert all(isinstance(s, URIRef) and str(s).startswith(base) for s in books | editions)
     assert not any(isinstance(node, BNode) for triple in graph for node in triple)
@@ -50,6 +55,7 @@ def verify(data_path: Path, ontology_path: Path, csv_path: Path, qa_path: Path,
 
     domain = {BOOKS.isbn: BOOKS.BookEdition, BOOKS.pageCount: BOOKS.BookEdition,
               BOOKS.isPublishedBy: BOOKS.BookEdition, BOOKS.hasFormat: BOOKS.BookEdition,
+              BOOKS.publishYear: BOOKS.BookEdition, BOOKS.firstPublishYear: BOOKS.Book,
               BOOKS.rating: BOOKS.Book, BOOKS.numRatings: BOOKS.Book,
               BOOKS.hasCategory: BOOKS.Book, BOOKS.hasCharacter: BOOKS.Book,
               BOOKS.setIn: BOOKS.Book}

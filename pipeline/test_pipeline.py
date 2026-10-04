@@ -118,11 +118,64 @@ def test_category_dedup_type_isolation_and_series(tmp_path):
     categories = subjects(g, BOOKS.BookCategory)
     assert len(categories) == 2
     audiobook_category = only({c for c in categories if (c, RDFS.label, Literal("Audiobook")) in g})
-    assert audiobook_category != BOOKS.Audiobook
+    audio_format = only(subjects(g, BOOKS.AudioFormat))
+    assert audiobook_category != audio_format
+    assert (audio_format, RDF.type, BOOKS.BookFormat) in g
     series = only(subjects(g, BOOKS.BookSeries))
     assert (series, RDFS.label, Literal("The Hunger Games")) in g
     book = only(set(g.subjects(BOOKS.seriesPosition, Literal("1-3", datatype=XSD.string))))
     assert (book, BOOKS.isPartOfSeries, series) in g
+
+
+@pytest.mark.parametrize("author,authors,others", [
+    ("Jane Carruth (Adapted By), Lewis Carroll (Original Story By), Rene Cloke (Illustrator)",
+     {"Lewis Carroll"}, {("Rene Cloke", "isIllustratedBy"), ("Jane Carruth", "hasEditionContributor")}),
+    ("Brian K. Vaughan (Goodreads Author) (Writer), Fiona Staples (Artist)",
+     {"Brian K. Vaughan"}, {("Fiona Staples", "isIllustratedBy")}),
+    ("P.C. Cast (Goodreads Author) (co-author), Kristin Cast (Goodreads Author) (co-author)",
+     {"P.C. Cast", "Kristin Cast"}, set()),
+    ("Ann Author, Tom Trans (Translator, Introduction), Ed Itor (Editor/Translator)",
+     {"Ann Author"}, {("Tom Trans", "isTranslatedBy"), ("Tom Trans", "hasEditionContributor"),
+                      ("Ed Itor", "isEditedBy"), ("Ed Itor", "isTranslatedBy")}),
+    ("Kim Writer (Writer, Artist)", {"Kim Writer"}, {("Kim Writer", "isIllustratedBy")}),
+])
+def test_author_role_aliases_and_combined_roles(tmp_path, author, authors, others):
+    g, summary, _ = build(tmp_path, [row(author=author)])
+    assert summary["skipped_rows"] == 0
+    book, edition = only(subjects(g, BOOKS.Book)), only(subjects(g, BOOKS.BookEdition))
+    label = lambda node: str(g.value(node, RDFS.label))
+    assert {label(p) for p in g.objects(book, BOOKS.isWrittenBy)} == authors
+    found = {(label(o), str(p).rsplit("#", 1)[1]) for p, o in g.predicate_objects(edition)
+             if (o, RDF.type, BOOKS.Person) in g}
+    assert found == others
+
+
+def test_edition_without_author_is_kept_and_reported(tmp_path):
+    g, summary, qa = build(tmp_path, [row("1", title="Best Stories", author="Ed Itor (Editor)"),
+                                     row("2", title="Scripture", author="J. Smith (Translator)")])
+    assert summary["skipped_rows"] == 0
+    assert len(subjects(g, BOOKS.Book)) == 2
+    assert not list(g.triples((None, BOOKS.isWrittenBy, None)))
+    assert {r["bookId"] for r in issue(qa, "works_without_author")} == {"1", "2"}
+
+
+def test_year_kept_when_full_date_unknown(tmp_path):
+    g, _, _ = build(tmp_path, [row("1", publishDate="2004", firstPublishDate="March 1999"),
+                              row("2", title="Full", publishDate="September 14th 2008",
+                                  firstPublishDate="09/14/08"),
+                              row("3", title="Old", firstPublishDate="1813", publishDate="May 2003")])
+    years = lambda title: {
+        "edition": [str(y) for e in g.objects(book(title), BOOKS.hasEdition)
+                    for y in g.objects(e, BOOKS.publishYear)],
+        "first": [str(y) for y in g.objects(book(title), BOOKS.firstPublishYear)]}
+    book = lambda title: only(set(g.subjects(BOOKS.title, Literal(title))))
+    assert years("Example Book") == {"edition": ["2004"], "first": ["1999"]}
+    assert years("Full") == {"edition": ["2008"], "first": []}  # two-digit first date: century unknown
+    assert years("Old") == {"edition": ["2003"], "first": ["1813"]}
+    assert not list(g.triples((None, BOOKS.firstPublishDate, None)))
+    edition = only(set(g.objects(book("Full"), BOOKS.hasEdition)))
+    assert (edition, BOOKS.publishDate, Literal("2008-09-14", datatype=XSD.date)) in g
+    assert all(y.datatype == XSD.gYear for y in g.objects(None, BOOKS.publishYear))
 
 
 def test_character_scoped_to_series_or_work(tmp_path):
@@ -259,8 +312,9 @@ def test_vocabulary_and_domain_sanity(tmp_path):
 
 
 def test_reasoning_integration(tmp_path):
-    g, _, _ = build(tmp_path, [row(author="Alice, Bob (Translator)", series="Saga #1",
-                                   bookFormat="Audiobook", awards="['Pulitzer Prize for Fiction (1961)']")])
+    g, _, _ = build(tmp_path, [row(author="Alice, Bob (Translator), Ivy (Illustrator), Ed (Editor), "
+                                          "Nat (Narrator)", series="Saga #1", bookFormat="Audio CD",
+                                   awards="['Pulitzer Prize for Fiction (1961)']")])
     book, edition = only(subjects(g, BOOKS.Book)), only(subjects(g, BOOKS.BookEdition))
     people = {str(next(g.objects(p, RDFS.label))): p for p in subjects(g, BOOKS.Person)}
     combined = Graph()
@@ -277,3 +331,10 @@ def test_reasoning_integration(tmp_path):
     assert (book, RDF.type, BOOKS.SeriesBook) in combined
     assert (edition, RDF.type, BOOKS.AudiobookEdition) in combined
     assert (book, RDF.type, BOOKS.AwardWinningBook) in combined
+    for name, role in (("Ivy", BOOKS.Illustrator), ("Ed", BOOKS.Editor), ("Nat", BOOKS.Narrator)):
+        assert (people[name], RDF.type, role) not in g  # derived by the reasoner, not asserted
+        assert (people[name], RDF.type, role) in combined
+    assert (people["Bob"], RDF.type, BOOKS.Translator) not in g
+    recognition = only(set(g.objects(book, BOOKS.hasAwardRecognition)))
+    assert (recognition, BOOKS.isRecognitionFor, book) not in g
+    assert (recognition, BOOKS.isRecognitionFor, book) in combined
