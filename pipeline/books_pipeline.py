@@ -25,8 +25,9 @@ from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, XSD
 
 
-BOOKS = Namespace("http://example.org/books#")
-DEFAULT_BASE = "http://example.org/books/resource/"
+BOOKS = Namespace("https://shao2011.github.io/Proj-SemWeb/ontology#")
+DEFAULT_BASE = "https://shao2011.github.io/Proj-SemWeb/resource/"
+DEFAULT_TOP_N = 10000
 CATEGORIES = (
     "skipped_rows", "duplicate_book_ids", "ambiguous_work_groups",
     "conflicting_work_values", "invalid_isbn", "invalid_dates",
@@ -37,7 +38,7 @@ LIST_FIELDS = ("genres", "characters", "awards", "setting")
 REP_FIELDS = ("title", "description", "rating", "numRatings", "ratingsByStars",
               "likedPercent", "bbeScore", "bbeVotes")
 EDITION_FIELDS = ("isbn", "edition", "pages", "publishDate", "publishYear", "publisher",
-                  "language", "bookFormat", "coverImg", "price")
+                  "language", "bookFormat", "coverImg")
 STAR_PROPERTIES = (BOOKS.fiveStarRatings, BOOKS.fourStarRatings,
                    BOOKS.threeStarRatings, BOOKS.twoStarRatings, BOOKS.oneStarRatings)
 ROLE_PROPERTIES = {"translator": BOOKS.isTranslatedBy, "illustrator": BOOKS.isIllustratedBy,
@@ -350,7 +351,6 @@ def parse_row(raw: dict, index: int, qa: QA, pivot: int) -> ParsedRow | None:
     for field in ("rating", "bbeScore"):
         values[field] = parse_decimal(clean(raw.get(field)), field, book_id, qa)
     values["likedPercent"] = parse_decimal(clean(raw.get("likedPercent")), "likedPercent", book_id, qa, 0, 100)
-    values["price"] = parse_decimal(clean(raw.get("price")), "price", book_id, qa, 0)
     for field in ("description", "language", "bookFormat", "edition", "publisher"):
         values[field] = clean(raw.get(field)) or None
     url = clean(raw.get("coverImg"))
@@ -449,8 +449,7 @@ def emit_edition(em: Emitter, book: URIRef, book_id: str, rows: list[ParsedRow])
     for field, prop, dtype in (("isbn", BOOKS.isbn, None), ("edition", BOOKS.editionName, None),
                                ("pages", BOOKS.pageCount, XSD.nonNegativeInteger),
                                ("publishDate", BOOKS.publishDate, XSD.date),
-                               ("coverImg", BOOKS.coverImage, XSD.anyURI),
-                               ("price", BOOKS.price, XSD.decimal)):
+                               ("coverImg", BOOKS.coverImage, XSD.anyURI)):
         value = values[field]
         if isinstance(value, date): value = value.isoformat()
         emit_literal(g, edition, prop, value, dtype)
@@ -563,12 +562,26 @@ def validate_vocabulary(data: Graph, ontology: Graph) -> None:
     if unknown_types: raise ValueError(f"Undeclared local classes: {sorted(map(str, unknown_types))}")
 
 
+def select_top_ids(input_csv: Path, top_n: int) -> set[str] | None:
+    """bookIds of the top_n most-rated editions (ties: smaller bookId); None keeps every row."""
+    if top_n <= 0: return None
+    ratings: dict[str, int] = {}
+    with input_csv.open(encoding="utf-8-sig", newline="") as handle:
+        for raw in csv.DictReader(handle):
+            book_id = clean(raw.get("bookId"))
+            count = clean(raw.get("numRatings")).replace(",", "")
+            if book_id:
+                ratings[book_id] = max(ratings.get(book_id, -1), int(count) if count.isdigit() else -1)
+    return set(sorted(ratings, key=lambda b: (-ratings[b], b))[:top_n])
+
+
 def run(input_csv: Path, ontology_path: Path, output_ttl: Path, qa_dir: Path,
-        base: str = DEFAULT_BASE, pivot: int = 26) -> tuple[Graph, dict]:
+        base: str = DEFAULT_BASE, pivot: int = 26, top_n: int = 0) -> tuple[Graph, dict]:
     ontology = Graph().parse(ontology_path, format="turtle")
     qa = QA()
     rows = []
-    input_count = 0
+    input_count = selected_count = 0
+    selected = select_top_ids(input_csv, top_n)
     with input_csv.open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
         required = {"bookId", "title", "author"}
@@ -576,6 +589,8 @@ def run(input_csv: Path, ontology_path: Path, output_ttl: Path, qa_dir: Path,
             raise ValueError(f"Missing required CSV columns: {sorted(required - set(reader.fieldnames or []))}")
         for index, raw in enumerate(reader, start=2):
             input_count += 1
+            if selected is not None and clean(raw.get("bookId")) not in selected: continue
+            selected_count += 1
             try:
                 parsed = parse_row(raw, index, qa, pivot)
                 if parsed: rows.append(parsed)
@@ -591,7 +606,8 @@ def run(input_csv: Path, ontology_path: Path, output_ttl: Path, qa_dir: Path,
     validate_vocabulary(emitter.graph, ontology)
     output_ttl.parent.mkdir(parents=True, exist_ok=True)
     emitter.graph.serialize(destination=output_ttl, format="turtle")
-    counts = {"input_rows": input_count, "parsed_rows": input_count - len(qa.records["skipped_rows"]),
+    counts = {"input_rows": input_count, "top_n": top_n, "selected_rows": selected_count,
+              "parsed_rows": selected_count - len(qa.records["skipped_rows"]),
               "skipped_rows": len(qa.records["skipped_rows"]),
               "triple_count": len(emitter.graph), "Book": len(works),
               "BookEdition": len(editions)}
@@ -615,10 +631,13 @@ def main() -> None:
     parser.add_argument("--resource-base", default=DEFAULT_BASE)
     parser.add_argument("--two-digit-year-pivot", type=int, default=26,
                         help="Fixed pivot for edition publishDate (default: 26, the 2026 handover year)")
+    parser.add_argument("--top-n", type=int, default=DEFAULT_TOP_N,
+                        help="Keep the N most-rated bookIds (default: 10000; 0 keeps all rows)")
     args = parser.parse_args()
     if not 0 <= args.two_digit_year_pivot <= 99: parser.error("pivot must be 0..99")
+    if args.top_n < 0: parser.error("--top-n must be >= 0")
     _, summary = run(args.input, args.ontology, args.output, args.qa_dir,
-                     args.resource_base, args.two_digit_year_pivot)
+                     args.resource_base, args.two_digit_year_pivot, args.top_n)
     print(json.dumps(summary, indent=2))
 
 

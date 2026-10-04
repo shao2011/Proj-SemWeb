@@ -15,10 +15,16 @@ pipeline/.venv/bin/python pipeline/verify_output.py
 ```
 
 The CLI accepts `--input`, `--ontology`, `--output`, `--qa-dir`,
-`--resource-base`, and `--two-digit-year-pivot`. By default the Turtle is
+`--resource-base`, `--two-digit-year-pivot`, and `--top-n`. By default the Turtle is
 `pipeline/output/books_data.ttl` and the QA files are in `pipeline/output/qa/`.
 The fixed default pivot is `26`, representing the 2026 handover context; an
 edition date `09/14/08` becomes `2008-09-14` and is counted in QA.
+
+`--top-n` (default `10000`) keeps the N `bookId`s with the most `numRatings`
+(ties: smaller `bookId`), including every duplicate row of those IDs;
+`--top-n 0` converts all rows. Resource URIs default to
+`https://shao2011.github.io/Proj-SemWeb/resource/`. The CSV `price` column is
+not converted. See `../NOTES.md` for why.
 
 ## Processing
 

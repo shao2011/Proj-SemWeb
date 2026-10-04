@@ -284,7 +284,7 @@ def test_award_status(tmp_path, award, expected):
 
 def test_invalid_data_and_duplicate_id_do_not_crash(tmp_path):
     g, summary, qa = build(tmp_path, [row("1", publishDate="nonsense", isbn="B001UFP6JY",
-                                        price="-3", genres="['broken'", author="Alice, Jane (Foreword)"),
+                                        pages="many", genres="['broken'", author="Alice, Jane (Foreword)"),
                                     row("1", title="Other", author="Bob"),
                                     row("2", title="Valid", author="Carol")])
     assert len(subjects(g, BOOKS.BookEdition)) == 2
@@ -292,6 +292,23 @@ def test_invalid_data_and_duplicate_id_do_not_crash(tmp_path):
     for category in ("invalid_dates", "invalid_isbn", "invalid_values",
                      "malformed_list_fields", "unknown_contributor_roles", "duplicate_book_ids"):
         assert issue(qa, category)
+
+
+def test_top_n_keeps_most_rated_book_ids_and_all_their_rows(tmp_path):
+    rows = [row("1", title="Low", numRatings="5", price="9.99"),
+            row("2", title="High", numRatings="500"),
+            row("3", title="Mid", numRatings="50"),
+            row("3", title="Mid", numRatings="40", isbn="9780439023481")]
+    source = tmp_path / "fixture.csv"
+    with source.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=FIELDS)
+        writer.writeheader()
+        writer.writerows(rows)
+    g, summary = run(source, ROOT / "ontology.ttl", tmp_path / "data.ttl", tmp_path / "qa", top_n=2)
+    assert {str(t) for t in g.objects(None, BOOKS.title)} == {"High", "Mid"}
+    assert (summary["input_rows"], summary["selected_rows"], summary["BookEdition"]) == (4, 3, 2)
+    assert list(g.triples((None, BOOKS.isbn, None)))  # duplicate row of a selected id still merged
+    assert not any("price" in str(p) for p in g.predicates())
 
 
 def test_vocabulary_and_domain_sanity(tmp_path):
