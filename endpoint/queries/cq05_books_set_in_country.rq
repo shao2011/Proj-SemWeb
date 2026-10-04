@@ -1,0 +1,12 @@
+# CQ5: Which popular books are set in a given country?
+PREFIX books: <https://shao2011.github.io/Proj-SemWeb/ontology#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+SELECT ?title ?place ?rating ?numRatings WHERE {
+  ?book books:setIn ?p ; books:title ?title ; books:rating ?rating ; books:numRatings ?numRatings .
+  ?p rdfs:label ?place .
+  FILTER(STRENDS(?place, "(Japan)"))
+}
+ORDER BY DESC(?numRatings)
+LIMIT 20

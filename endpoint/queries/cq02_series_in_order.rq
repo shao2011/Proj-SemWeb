@@ -1,0 +1,12 @@
+# CQ2: Which books make up a series, in reading order?
+PREFIX books: <https://shao2011.github.io/Proj-SemWeb/ontology#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+SELECT ?position ?title ?firstPublished WHERE {
+  ?series a books:BookSeries ; rdfs:label "Harry Potter" ; books:hasBook ?book .
+  ?book books:title ?title ; books:seriesPosition ?position .
+  OPTIONAL { ?book books:firstPublishYear ?firstPublished }
+  FILTER(REGEX(?position, "^[0-9]+$"))
+}
+ORDER BY xsd:integer(?position)

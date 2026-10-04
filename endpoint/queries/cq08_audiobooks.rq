@@ -1,0 +1,13 @@
+# CQ8: Which editions are audiobooks, and who narrates them?
+# AudiobookEdition and Narrator are inferred: the data only says the edition's format is an
+# AudioFormat (Audio CD, Audible Audio, MP3 CD, ...) and that someone isNarratedBy it.
+PREFIX books: <https://shao2011.github.io/Proj-SemWeb/ontology#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+SELECT ?title ?format ?narrator WHERE {
+  ?edition a books:AudiobookEdition ; books:hasFormat/rdfs:label ?format ; books:isEditionOf ?book .
+  ?book books:title ?title .
+  OPTIONAL { ?edition books:isNarratedBy ?n . ?n a books:Narrator ; rdfs:label ?narrator }
+}
+ORDER BY ?title

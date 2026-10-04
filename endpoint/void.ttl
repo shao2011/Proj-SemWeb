@@ -1,0 +1,41 @@
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Dataset-level metadata: provenance, licence, vocabularies, links and access methods
+# (Heath & Bizer best practices 6-9, course slides 04_LOD p.17).
+
+<https://shao2011.github.io/Proj-SemWeb/dataset> a void:Dataset ;
+    dcterms:title "Books Linked Data (Goodreads Best Books Ever, top 10,000)" ;
+    dcterms:description "Books, editions, contributors, series, awards, characters and settings of the 10,000 most-rated books of the Goodreads Best Books Ever list, linked to Wikidata, DBpedia and Open Library." ;
+    dcterms:license <https://creativecommons.org/licenses/by-nc/4.0/> ;
+    dcterms:source <https://doi.org/10.5281/zenodo.4265096> ;
+    prov:wasDerivedFrom <https://doi.org/10.5281/zenodo.4265096> , <https://www.wikidata.org/> , <https://openlibrary.org/> ;
+    dcterms:creator <https://github.com/shao2011> ;
+    foaf:homepage <https://github.com/shao2011/Proj-SemWeb> ;
+    void:uriSpace "https://shao2011.github.io/Proj-SemWeb/resource/" ;
+    void:vocabulary <https://shao2011.github.io/Proj-SemWeb/ontology#> , <https://schema.org/> ,
+        <http://xmlns.com/foaf/0.1/> , <http://purl.org/dc/terms/> ;
+    void:sparqlEndpoint <http://localhost:3030/books/sparql> ;
+    void:dataDump <https://github.com/shao2011/Proj-SemWeb> ;
+    void:subset <https://shao2011.github.io/Proj-SemWeb/linkset/wikidata> ,
+        <https://shao2011.github.io/Proj-SemWeb/linkset/dbpedia> ,
+        <https://shao2011.github.io/Proj-SemWeb/linkset/openlibrary> .
+
+<https://shao2011.github.io/Proj-SemWeb/linkset/wikidata> a void:Linkset ;
+    void:linkPredicate owl:sameAs ;
+    void:target <https://shao2011.github.io/Proj-SemWeb/dataset> , <https://www.wikidata.org/> ;
+    dcterms:description "Books, authors and series matched by Goodreads ID (P2969) or title + author; reviewed on a random sample." .
+
+<https://shao2011.github.io/Proj-SemWeb/linkset/dbpedia> a void:Linkset ;
+    void:linkPredicate owl:sameAs ;
+    void:target <https://shao2011.github.io/Proj-SemWeb/dataset> , <http://dbpedia.org/> ;
+    dcterms:description "Derived from the English Wikipedia sitelink of each linked Wikidata item." .
+
+<https://shao2011.github.io/Proj-SemWeb/linkset/openlibrary> a void:Linkset ;
+    void:linkPredicate owl:sameAs ;
+    void:target <https://shao2011.github.io/Proj-SemWeb/dataset> , <https://openlibrary.org/> ;
+    dcterms:description "Editions matched by ISBN-13, kept only when the Open Library title agrees and no other edition here maps to the same Open Library record." .

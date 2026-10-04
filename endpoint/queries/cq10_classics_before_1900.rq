@@ -1,0 +1,14 @@
+# CQ10: Which of the most-read books were first published before 1900?
+# Before linking, only 133 of the 10,000 books had a first-publication year (the CSV lost
+# the century). Most years here come from Wikidata P577 (graph .../enrichment).
+PREFIX books: <https://shao2011.github.io/Proj-SemWeb/ontology#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+SELECT ?title ?author ?firstPublished ?numRatings WHERE {
+  ?book books:firstPublishYear ?firstPublished ; books:title ?title ; books:numRatings ?numRatings .
+  OPTIONAL { ?book books:isWrittenBy/rdfs:label ?author }
+  FILTER(YEAR(?firstPublished) < 1900)
+}
+ORDER BY DESC(?numRatings)
+LIMIT 20

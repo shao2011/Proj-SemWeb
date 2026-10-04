@@ -1,0 +1,14 @@
+# CQ1: Which books did an author write, when were they first published, and how are they rated?
+# Uses books:writes, which exists only as an OWL-RL inference (inverse of isWrittenBy),
+# and firstPublishYear, mostly filled from Wikidata P577 (graph .../enrichment).
+PREFIX books: <https://shao2011.github.io/Proj-SemWeb/ontology#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+SELECT ?title ?firstPublished ?rating ?numRatings WHERE {
+  ?author rdfs:label "Neil Gaiman" ; books:writes ?book .
+  ?book books:title ?title ; books:rating ?rating ; books:numRatings ?numRatings .
+  OPTIONAL { ?book books:firstPublishYear ?firstPublished }
+}
+# Unknown years last (Wikidata has no P577 for most Sandman volumes).
+ORDER BY (!BOUND(?firstPublished)) ?firstPublished ?title

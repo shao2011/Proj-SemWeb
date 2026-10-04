@@ -1,0 +1,14 @@
+# CQ9: How much of the graph is linked to other datasets (5-star)?
+PREFIX books: <https://shao2011.github.io/Proj-SemWeb/ontology#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+SELECT ?kind ?target (COUNT(DISTINCT ?local) AS ?linked) WHERE {
+  VALUES (?kind ?class) { ("book" books:Book) ("person" books:Person) ("series" books:BookSeries) ("edition" books:BookEdition) }
+  ?local a ?class ; owl:sameAs ?external .
+  BIND(IF(STRSTARTS(STR(?external), "http://www.wikidata.org/"), "Wikidata",
+       IF(STRSTARTS(STR(?external), "http://dbpedia.org/"), "DBpedia",
+       IF(STRSTARTS(STR(?external), "https://openlibrary.org/"), "Open Library", "other"))) AS ?target)
+}
+GROUP BY ?kind ?target
+ORDER BY ?kind ?target
