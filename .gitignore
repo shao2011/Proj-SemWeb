@@ -1,0 +1,53 @@
+.venv
+.pytest_cache
+
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+.env
+*firebase-adminsdk-*.json
+
+*.backup.*
+.coverage
+logs/
+backend/scripts/benchmark/results/
+backend/scripts/benchmark/predictions/
+# ~103 MB of downloadable benchmark corpora. Refetch with mtrag_data.fetch().
+backend/scripts/benchmark/data/
+
+.temp/
+hichunk/
+raptor-rag/
+qdrant_storage/
+archive/
+seminar2/
+
+# Local benchmark datasets (REQuestA from github.com/parham-box/SANER-QAMR).
+/data/
+
+# Secrets: any env file except the committed templates, keys, service accounts.
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*service-account*.json
+*serviceAccount*.json
+secrets/
+
+# Local media store (uploaded documents, rendered markdown) and databases.
+media/
+**/media/
+*.sqlite
+*.sqlite3
+*.db
+
+# Local scratch: soft-deleted files.
+.trash/
+/package-lock.json
+/document/
