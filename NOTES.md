@@ -47,17 +47,21 @@ We dropped the CSV `price` column and `:price` from the ontology:
 
 ## 5. Links to other datasets (5 stars)
 
-`linking/link_books.py` writes `linking/output/links.ttl` (26,823 `owl:sameAs` triples) and `enrichment.ttl` (first-publication years). The output is committed, so you can build the endpoint without running the linker.
+`linking/link_books.py` writes `linking/output/links.ttl` (28,750 `owl:sameAs` triples) and `enrichment.ttl` (first-publication years). The output is committed, so you can build the endpoint without running the linker. Wikidata's public endpoint is slow: the run that added the ISBN lookups sent 563 new requests and took 26 minutes. Every answer is cached in `linking/.cache`, so a rerun takes 30 s with no network (`--offline` proves it).
 
 | What | Linked | Out of |
 |---|---|---|
-| Books → Wikidata | 6,995 (70%) | 9,987 |
-| Books → DBpedia | 5,707 | |
+| Books → Wikidata | 7,000 (70%) | 9,987 |
+| Books → DBpedia | 5,711 | |
 | Authors → Wikidata | 2,717 (64%) | 4,222 |
 | Authors → DBpedia | 2,622 | |
 | Series → Wikidata | 404 (16%) | 2,475 |
 | Series → DBpedia | 267 | |
-| Editions → Open Library | 8,111 (92%) | 8,828 with an ISBN |
+| Editions → Open Library | 8,113 (92%) | 8,802 with a valid ISBN |
+| Editions → Wikidata | 1,633 (19%) | 8,802 with a valid ISBN |
+| Publishers → Wikidata | 129 | 1,892 |
+| Publishers → DBpedia | 98 | |
+| Languages → Wikidata, DBpedia | 28 | 29 |
 
 How a book gets its Wikidata item:
 
@@ -65,18 +69,27 @@ How a book gets its Wikidata item:
 2. Otherwise the title must equal a label or alias, and one of our authors must equal the item's author (P50): 5,096 books. Another 245 only match after dropping a subtitle ("Nickel and Dimed: On (Not) Getting by in America"). The method column marks those as `short-title`.
 3. If the item has no P50, its English description must name our author ("1997 novel by J. K. Rowling"): 27 books.
 4. Books still unmatched go through the Wikidata search box, which is more forgiving about case, punctuation and aliases. The same checks apply.
+5. Books still unmatched can go through one of their editions (next paragraph): the Wikidata edition's work (P629) must be a written work with our title and one of our authors. 5 books are linked this way, for example "Cathedral" and "Where I'm Calling From" by Raymond Carver. For 1,593 books both routes found a work, and they agree on all 1,593. Two independent methods giving the same answer is our best evidence that the title match is right.
 
-The item must be a written work. Films, TV, radio and stage productions are rejected, and so are series items, unless the class is a single-volume one such as graphic novel. If several candidates pass, the book is linked only when one has at least 3 Wikipedia sitelinks and twice as many as the next (82 books). Otherwise it stays unlinked (80 ambiguous). A Wikidata item gets at most one of our books (24 collisions dropped). 2,888 books had no candidate at all.
+The item must be a written work. Films, TV, radio and stage productions are rejected, and so are series items, unless the class is a single-volume one such as graphic novel. If several candidates pass, the book is linked only when one has at least 3 Wikipedia sitelinks and twice as many as the next (82 books). Otherwise it stays unlinked (78 ambiguous). A Wikidata item gets at most one of our books (24 collisions dropped). 2,885 books had no candidate at all.
 
 We don't search for authors and series. Each one takes the author (P50) or series (P179) item of its linked books whose label matches its name, by majority vote and one-to-one. A series item must also be classified as a series in Wikidata. DBpedia IRIs come from each item's English Wikipedia article, so we never query DBpedia. Its public endpoint gave us 500 errors and timeouts.
 
-Editions link to Open Library by ISBN-13 when the titles agree. The rule skips 348 title mismatches. Volume numbers must agree, which caught "Akira, Vol. 1" → "Akira, Vol. 4". It also drops 11 links where two of our editions point at one Open Library record. That happens when Open Library merges volumes (Transmetropolitan 1-3 are one record) or Goodreads lists a book twice with the same ISBN (Wolf Hall). An edition `isEditionOf` exactly one Book, so `owl:sameAs` there would merge different books.
+ISBNs are checked first. 26 fail the ISBN-10/13 checksum or are Barnes & Noble ebook numbers (prefix 294) and placeholders like `9999999999999`; they are never looked up. ISBN-10s are converted to ISBN-13.
 
-First-publication year: 5,914 books get `firstPublishYear` from Wikidata P577 (earliest date). It is never later than an edition year we already have, which rejected 77. Where the CSV did have a year, Wikidata agrees on 70 and disagrees on 6. Coverage went from 133 books to 6,047 (61%).
+Editions link to Open Library by ISBN when the titles agree. The rule skips 344 title mismatches. Volume numbers must agree, which caught "Akira, Vol. 1" → "Akira, Vol. 4". It also drops 11 links where two of our editions point at one Open Library record. That happens when Open Library merges volumes (Transmetropolitan 1-3 are one record) or Goodreads lists a book twice with the same ISBN (Wolf Hall). An edition `isEditionOf` exactly one Book, so `owl:sameAs` there would merge different books.
+
+Editions link to Wikidata when an item carries the ISBN as P212 (ISBN-13) or P957 (ISBN-10). Wikidata stores ISBNs hyphenated, so we query every hyphenation, 25 ISBNs per request. 1,693 ISBNs are found. The item must be an edition (not the work, which would make the edition `sameAs` the book) and have our title: that rejects 31 non-editions and 25 title mismatches. The same one-target-per-edition rule as for Open Library drops 2 more. This and the publisher links follow Hao Nguyen's Wikidata linker on `main`. His output was also a useful cross-check: on the books and authors we both link, we picked the same Wikidata item 1,585 of 1,586 times and 1,057 of 1,057.
+
+Publishers take the publisher (P123) of their linked Wikidata editions, when the names agree after ignoring words like "Books", "Inc." and "Publishing" ("Avon" = "Avon Books"). "Press" and "Group" count, because "Scholastic Press" is an imprint of Scholastic and "Penguin Group" is the parent of Penguin Books. Each Wikidata item gets one publisher of ours: our data has "Ace", "Ace Book" and "Ace Books" as three publishers, and only the one with the most editions is linked (33 dropped). 129 of 1,892 are linked. Most publishers have no linked edition to go through.
+
+Languages are matched by name among Wikidata items with an ISO 639-2 code (P219), so "English" can't land on a film or a novel called "English". 28 of 29 are linked. "Multiple languages" is the one left.
+
+First-publication year: 5,918 books get `firstPublishYear` from Wikidata P577 (earliest date). It is never later than an edition year we already have, which rejected 77. Where the CSV did have a year, Wikidata agrees on 70 and disagrees on 7. Coverage went from 133 books to 6,051 (61%).
 
 ### Precision
 
-`linking/output/review_sample.csv` is a fixed sample (seed 42): 100 random books, 75 more from the weaker methods (short title, description, sitelinks), 40 authors, 20 series and 40 editions. All 275 rows were checked by hand, and none is wrong. Fixing what earlier checks found produced several of the rules above. Each has a test in `linking/test_linking.py`:
+`linking/output/review_sample.csv` is a fixed sample (seed 42): 100 random books, up to 25 more from each weaker method (short title, description, sitelinks, ISBN edition), 40 authors, 20 series, 40 Open Library editions, 40 Wikidata editions, 30 publishers and 28 languages. All 378 rows were checked by hand and 377 are right. The wrong one: "Murder at the Vicarage" by Agatha Christie is linked to the stage play (Q6937718). Wikidata labels the novel "**The** Murder at the Vicarage" (Q693559), so the exact-title lookup only found the play, and the play's description says "written by Agatha Christie". Fixing it means also looking up titles with and without a leading article, which changes the candidates for many books. We haven't done that yet. An earlier 275-row sample had no errors. Fixing what earlier checks found produced several of the rules above. Each has a test in `linking/test_linking.py`:
 
 - "A Court of Thorns and Roses" was linked to the series item, "Last Chance to See" to the radio documentary, and "Dear Evan Hansen" to the musical.
 - "The Morganville Vampires, Volume 1" was linked to Open Library's Volume 2 record. The volume-number rule then removed two more of the same kind (Akira, Fruits Basket).
@@ -91,18 +104,19 @@ Unmatched and rejected cases, with reasons, are in `linking/output/link_issues.j
 
 ## 7. SPARQL endpoint
 
-- `endpoint/load.sh` builds a TDB2 database with one named graph per source: ontology, data, inferred, links, enrichment and VoID metadata. That's 916,665 triples, loaded in 17 s.
+- `endpoint/load.sh` builds a TDB2 database with one named graph per source: ontology, data, inferred, links, enrichment and VoID metadata. That's 918,596 triples, loaded in 20 s.
 - `endpoint/run_fuseki.sh` starts Fuseki 6.2.0 at `http://localhost:3030/books/sparql`. It is read-only: updates and Graph Store writes return HTTP 405.
-- `endpoint/run_queries.py` runs the 11 competency questions in `endpoint/queries/`, and every one returns rows. CQ1 needs the inferred `writes`. CQ9 counts the links. CQ11 is federated: it follows our `owl:sameAs` to Wikidata with `SERVICE` to get the authors' birth places, which takes a few seconds.
+- `endpoint/run_queries.py` runs the 11 competency questions in `endpoint/queries/`, and every one returns rows. CQ1 needs the inferred `writes`. CQ9 counts the links per kind and dataset. CQ11 is federated: it follows our `owl:sameAs` to Wikidata with `SERVICE` to get the authors' birth places, which takes a few seconds.
 
 ## Known gaps
 
-- 3,940 books (39%) still have no first-publication year. Wikidata has no P577 for them or they are unlinked, for example most Sandman volumes.
-- 2,992 books (30%) have no Wikidata link.
+- 3,936 books (39%) still have no first-publication year. Wikidata has no P577 for them or they are unlinked, for example most Sandman volumes.
+- 2,987 books (30%) have no Wikidata link.
+- One known wrong link, "Murder at the Vicarage" (section 5, Precision).
 - The URIs resolve only once GitHub Pages is on (section 3). `void:sparqlEndpoint` is `localhost`, so the endpoint is only reachable while we run it.
 
 ## Checks
 
-- `pipeline/test_pipeline.py` (29) and `linking/test_linking.py` (26): all 55 tests pass. The new pipeline tests fail on the old converter.
+- `pipeline/test_pipeline.py` (29) and `linking/test_linking.py` (45): all 74 tests pass. The new pipeline tests fail on the old converter.
 - `riot --validate ontology.ttl` passes, and `endpoint/load.sh` loads every file without warnings.
 - `verify_output.py` passes on both the 10k run and the full run.

@@ -43,7 +43,7 @@ $PY -m pytest -q pipeline/test_pipeline.py linking/test_linking.py
 | `pipeline/` | CSV -> RDF converter, verifier, tests, QA reports |
 | `reasoning/hermit_check.sh` | HermiT 1.4.3 (from Protégé) on the command line: consistency, unsatisfiable classes, inferred hierarchy |
 | `reasoning/materialize.py` | OWL 2 RL closure with `owlrl`; writes only the new triples |
-| `linking/link_books.py` | `owl:sameAs` to Wikidata / DBpedia / Open Library, first-publication years from Wikidata, review sample |
+| `linking/link_books.py` | `owl:sameAs` for books, authors, series, editions, publishers and languages to Wikidata / DBpedia / Open Library, first-publication years from Wikidata, review sample |
 | `endpoint/` | Fuseki config, loader, VoID metadata, competency-question queries and runner |
 
 ## Named graphs in the endpoint

@@ -4951,11 +4951,6 @@
    "reason": "no-candidate"
   },
   {
-   "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/big-nate-strikes-again--ac8154ac2cf0201d",
-   "title": "Big Nate Strikes Again",
-   "reason": "no-candidate"
-  },
-  {
    "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/the-dragonet-prophecy--ef48ccd75f1efad0",
    "title": "The Dragonet Prophecy",
    "reason": "ambiguous"
@@ -6201,11 +6196,6 @@
    "reason": "no-candidate"
   },
   {
-   "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/cathedral--632c204af09edabc",
-   "title": "Cathedral",
-   "reason": "ambiguous"
-  },
-  {
    "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/until-lilly--7b87b34fdeced722",
    "title": "Until Lilly",
    "reason": "no-candidate"
@@ -6583,11 +6573,6 @@
   {
    "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/second-chance--1d6eb5566b878f02",
    "title": "Second Chance",
-   "reason": "no-candidate"
-  },
-  {
-   "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/on-the-prowl--f35dcb68dac58619",
-   "title": "On the Prowl",
    "reason": "no-candidate"
   },
   {
@@ -9329,11 +9314,6 @@
    "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/tweet-cute--637adb39bec422fb",
    "title": "Tweet Cute",
    "reason": "no-candidate"
-  },
-  {
-   "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/where-i-m-calling-from-new-and-selected-stories--db627a5bead7101e",
-   "title": "Where I'm Calling From: New and Selected Stories",
-   "reason": "ambiguous"
   },
   {
    "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/suicide-notes--2a86d2cd26cbe762",
@@ -12138,11 +12118,6 @@
   {
    "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/death-comes-as-the-end--3ca86c3d926256b8",
    "title": "Death Comes as the End",
-   "reason": "no-candidate"
-  },
-  {
-   "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/logicomix-an-epic-search-for-truth--96dab07540c18afa",
-   "title": "Logicomix: An Epic Search for Truth",
    "reason": "no-candidate"
   },
   {
@@ -15398,6 +15373,12 @@
    "edition_year": 2000
   },
   {
+   "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/logicomix-an-epic-search-for-truth--96dab07540c18afa",
+   "reason": "differs_from_csv",
+   "csv": 2009,
+   "wikidata": 2008
+  },
+  {
    "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/long-way-down--795f8f4dc7eec81f",
    "reason": "after_known_edition",
    "wikidata": 2018,
@@ -16258,13 +16239,6 @@
    "openlibrary": "Storia del nuovo cognome: 新名字的故事"
   },
   {
-   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-176327--1404ea3f0a7ba6c6",
-   "reason": "title_mismatch",
-   "isbn": "9780810959255",
-   "ours": "The Fairy-Tale Detectives",
-   "openlibrary": "The sisters Grimm, book one: fairy-tale detectives"
-  },
-  {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17722973--0aebd206151abc43",
    "reason": "title_mismatch",
    "isbn": "9780316201544",
@@ -16447,13 +16421,6 @@
    "openlibrary": "Kolme keha probleem"
   },
   {
-   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-2073686--a27a8c127a0bbe5c",
-   "reason": "title_mismatch",
-   "isbn": "9780810994782",
-   "ours": "Tales From the Hood",
-   "openlibrary": "The Sisters Grimm Book 6: Tales From the Hood"
-  },
-  {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-207682--9d87dca0b7018197",
    "reason": "title_mismatch",
    "isbn": "9781416927051",
@@ -16480,13 +16447,6 @@
    "isbn": "9781455559312",
    "ours": "Promised",
    "openlibrary": "One night: Promised"
-  },
-  {
-   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-22192--d04c4ff6088b2af5",
-   "reason": "title_mismatch",
-   "isbn": "9780316912129",
-   "ours": "All I Want is Everything",
-   "openlibrary": "A hard day's write: the stories behind every Beatles song"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-2223324--9a54a4ed09371498",
@@ -16557,6 +16517,13 @@
    "isbn": "9780060751647",
    "ours": "Haunted",
    "openlibrary": "The Mediator: Haunted"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-23264825--fcd5fbb639c7ee24",
+   "reason": "title_mismatch",
+   "isbn": "9780316381963",
+   "ours": "Homecoming",
+   "openlibrary": "The 100: Homecoming (The 100 Series, Book 3)"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-23297931--a885e0f4fe6f07da",
@@ -16839,13 +16806,6 @@
    "openlibrary": "Chronicles of Ancient Darkness #1: Wolf Brother (Chronicles of Ancient Darkness)"
   },
   {
-   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-295834--e4dbcf1af36b4de9",
-   "reason": "title_mismatch",
-   "isbn": "9780810993235",
-   "ours": "The Unusual Suspects",
-   "openlibrary": "The Sisters Grimm Book 2: The Unusual Suspects"
-  },
-  {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-297792--dd69d51ef0172ffa",
    "reason": "title_mismatch",
    "isbn": "9780064410137",
@@ -16909,13 +16869,6 @@
    "openlibrary": "STAR WARS: THRAWN"
   },
   {
-   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-3157876--02e1595f84132dc4",
-   "reason": "title_mismatch",
-   "isbn": "9780810979772",
-   "ours": "Do-It-Yourself Book",
-   "openlibrary": "윔피키드의일기:DIY책"
-  },
-  {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-32127--20d79e08df2a3349",
    "reason": "title_mismatch",
    "isbn": "9780553381153",
@@ -16958,13 +16911,6 @@
    "openlibrary": "Journey to the Centre of the Earth (Bantam Classics)"
   },
   {
-   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-3293821--f0036af1714e90bd",
-   "reason": "title_mismatch",
-   "isbn": "9780810970687",
-   "ours": "The Last Straw",
-   "openlibrary": "Diary of a Wimpy Kid. The Last Straw"
-  },
-  {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-330744--2b1866fdc0c7eefd",
    "reason": "title_mismatch",
    "isbn": "9781569319475",
@@ -17005,6 +16951,13 @@
    "isbn": "9780375815300",
    "ours": "La Belle Sauvage",
    "openlibrary": "The Book of Dust:  La Belle Sauvage (Book of Dust, Volume 1)"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-34219873--a94f2810bd69aa21",
+   "reason": "title_mismatch",
+   "isbn": "9780316439954",
+   "ours": "The Trials of Morrigan Crow",
+   "openlibrary": "Nevermoor: The Trials of Morrigan Crow"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-34386617--93e1c6e18d436f5d",
@@ -17166,6 +17119,13 @@
    "isbn": "9780312379827",
    "ours": "Hunted",
    "openlibrary": "Tempted"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-42058--9adf3cd37d3d4665",
+   "reason": "title_mismatch",
+   "isbn": "9780192839930",
+   "ours": "Richard III",
+   "openlibrary": "The Tragedy Of Richard Iii"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-426775--0396b4e9f98597a8",
@@ -17628,13 +17588,6 @@
    "isbn": "9780451230546",
    "ours": "The Morganville Vampires, Volume 1",
    "openlibrary": "The Morganville Vampires Volume 2: Midnight Alley and Feast of Fools"
-  },
-  {
-   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-6578293--8d2713885fe7d8fb",
-   "reason": "title_mismatch",
-   "isbn": "9780810983915",
-   "ours": "Dog Days",
-   "openlibrary": "Diary of a Wimpy Kid: Dog Days"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-659469--94364db2e53abc8e",
@@ -18151,68 +18104,930 @@
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-156530--0e410600e0940747",
    "reason": "shared_target",
    "isbn": "9781401202019",
-   "openlibrary": "https://openlibrary.org/books/OL3323886M"
+   "target": "https://openlibrary.org/books/OL3323886M"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-156534--18794539c3000fae",
    "reason": "shared_target",
    "isbn": "9781563899805",
-   "openlibrary": "https://openlibrary.org/books/OL3323886M"
+   "target": "https://openlibrary.org/books/OL3323886M"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-19380923--cfaec75f377872c9",
    "reason": "shared_target",
    "isbn": "9780312429980",
-   "openlibrary": "https://openlibrary.org/books/OL24350387M"
+   "target": "https://openlibrary.org/books/OL24350387M"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-22416--4e9be756de598c16",
    "reason": "shared_target",
    "isbn": "9781563894459",
-   "openlibrary": "https://openlibrary.org/books/OL20270077M"
+   "target": "https://openlibrary.org/books/OL20270077M"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-22417--6bc724f0fe2fa90c",
    "reason": "shared_target",
    "isbn": "9781563894817",
-   "openlibrary": "https://openlibrary.org/books/OL20270077M"
+   "target": "https://openlibrary.org/books/OL20270077M"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-22418--fa8debfedb5aa1a1",
    "reason": "shared_target",
    "isbn": "9781563895685",
-   "openlibrary": "https://openlibrary.org/books/OL20270077M"
+   "target": "https://openlibrary.org/books/OL20270077M"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-34703445--bab02d710ce6e465",
    "reason": "shared_target",
    "isbn": "9781250166548",
-   "openlibrary": "https://openlibrary.org/books/OL27420261M"
+   "target": "https://openlibrary.org/books/OL27420261M"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-34704992--544176e2ec2b5e54",
    "reason": "shared_target",
    "isbn": "9781250166548",
-   "openlibrary": "https://openlibrary.org/books/OL27420261M"
+   "target": "https://openlibrary.org/books/OL27420261M"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-7235533--63fe2876b27e6826",
    "reason": "shared_target",
    "isbn": "9780765326355",
-   "openlibrary": "https://openlibrary.org/books/OL25883754M"
+   "target": "https://openlibrary.org/books/OL25883754M"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-7826803--e7b46a2fe955baa4",
    "reason": "shared_target",
    "isbn": "9780312429980",
-   "openlibrary": "https://openlibrary.org/books/OL24350387M"
+   "target": "https://openlibrary.org/books/OL24350387M"
   },
   {
    "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-9188338--0445d32e1c2f2c1b",
    "reason": "shared_target",
    "isbn": "9780765326355",
-   "openlibrary": "https://openlibrary.org/books/OL25883754M"
+   "target": "https://openlibrary.org/books/OL25883754M"
   }
  ],
- "search_failures": []
+ "search_failures": [],
+ "invalid_isbns": [
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-3579--c4f627cc19c125b1",
+   "isbn": "0076783609419"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-12513614--320a78bef7505be0",
+   "isbn": "2940011444937"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-15757434--864de3d41919a1db",
+   "isbn": "2940014979627"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17448960--17b916601f5d8353",
+   "isbn": "2940016356938"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-15835685--99af04c9a9f8a8dc",
+   "isbn": "2940015136289"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-498641--387f72e691f7f6b6",
+   "isbn": "0630809681058"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-20761374--65cfdb6cbd9f3543",
+   "isbn": "2940149543335"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-15993374--9680316df82cbab2",
+   "isbn": "2940015495874"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17201095--924785d5eb4acc9c",
+   "isbn": "2940016319506"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17316075--4efcaaaa61468712",
+   "isbn": "2940016487083"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17032328--f4876c668f54091d",
+   "isbn": "2940016249308"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17201104--e8235f3b7293ff89",
+   "isbn": "2940016554327"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-15762657--1145afbcdf73b2bd",
+   "isbn": "2940014977678"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17948485--41f0c23c72473e42",
+   "isbn": "2940044470149"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-13649056--9b5a9377db761b7b",
+   "isbn": "2940014631808"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-24151121--8eb3e214937f49e8",
+   "isbn": "2940152157420"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-95607--6505e08077566ad2",
+   "isbn": "0031809014745"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-8793878--4052530f8441bba8",
+   "isbn": "2940011080654"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-7920450--7af8cddf15005932",
+   "isbn": "2940000836729"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-2508854--b59f2f57323cfaed",
+   "isbn": "6221102017183"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-18809943--34ee4d2a6c6e07e4",
+   "isbn": "2940150270794"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-13489518--c61adf8b460fa859",
+   "isbn": "2940014746151"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-13034683--ba60ebe989f7c5a7",
+   "isbn": "2940013479173"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-12545444--936b49fdc2bb300d",
+   "isbn": "2940013567719"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-10468258--66b7e8745a128965",
+   "isbn": "2940011191213"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17260623--7d4368f2c9fc8728",
+   "isbn": "2940015580471"
+  }
+ ],
+ "wikidata_edition_issues": [
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-10803121--683c5b709e35664b",
+   "reason": "title_mismatch",
+   "isbn": "9780765330420",
+   "ours": "The Alloy of Law",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q126725147"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-10869746--141103ed6675ef34",
+   "reason": "title_mismatch",
+   "isbn": "9780312547738",
+   "ours": "Rise of the Governor",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q131844407"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-108980--5fdadbc3b2ee2600",
+   "reason": "title_mismatch",
+   "isbn": "9780811849098",
+   "ours": "Ivy and Bean",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q131456162"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-11093329--06fe48228195c691",
+   "reason": "not_an_edition",
+   "isbn": "9780316196994",
+   "ours": "The House of Silk",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q2614669"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-11281852--2127c38a65a99492",
+   "reason": "not_an_edition",
+   "isbn": "9781451612066",
+   "ours": "Kisses from Katie",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q139836053"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-12158480--ab850a2e2c40fe35",
+   "reason": "not_an_edition",
+   "isbn": "9780307719218",
+   "ours": "Why Nations Fail: The Origins of Power, Prosperity, and Poverty",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q7997840"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-13563669--887973a370957821",
+   "reason": "title_mismatch",
+   "isbn": "9781419705847",
+   "ours": "The Third Wheel",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q126652799"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-1381--fc7c762eb8db1a40",
+   "reason": "title_mismatch",
+   "isbn": "9780143039952",
+   "ours": "The Odyssey",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q125623135"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-1429082--f2f1ab6616a2480e",
+   "reason": "title_mismatch",
+   "isbn": "9784063347760",
+   "ours": "美少女戦士セーラームーン新装版 1 [Bishōjo Senshi Sailor Moon Shinsōban 1]",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q108827699"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-154798--95774df4b6e29393",
+   "reason": "not_an_edition",
+   "isbn": "9781401201913",
+   "ours": "Superman: Red Son",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q2504779"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-16065004--b57084f25b58ef09",
+   "reason": "title_mismatch",
+   "isbn": "9780765378552",
+   "ours": "Shadows of Self",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q126733440"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-169762--9a895223fd8a4a0e",
+   "reason": "not_an_edition",
+   "isbn": "9780763624026",
+   "ours": "The Pox Party",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q7714748"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-1715--9c79e8d0dd2809bd",
+   "reason": "title_mismatch",
+   "isbn": "9780140447897",
+   "ours": "Metamorphoses",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q106595694"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17707605--57c7e7740dc65a44",
+   "reason": "not_an_edition",
+   "isbn": "9780399158988",
+   "ours": "W is for Wasted",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q13422918"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17733898--a8fe74670c5825b7",
+   "reason": "title_mismatch",
+   "isbn": "9781419711329",
+   "ours": "Hard Luck",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q126687744"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17910054--4e8d0ac0f2668a62",
+   "reason": "not_an_edition",
+   "isbn": "9780805092998",
+   "ours": "The Sixth Extinction: An Unnatural History",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q129263738"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-17961--f436188478565f8c",
+   "reason": "not_an_edition",
+   "isbn": "9780140286809",
+   "ours": "Collected Fictions",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q132222453"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-1809465--2aca1b19456ab8a6",
+   "reason": "title_mismatch",
+   "isbn": "9780810994737",
+   "ours": "Rodrick Rules",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q121703856"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-18659623--9db873c466bf2bb5",
+   "reason": "not_an_edition",
+   "isbn": "9781442465954",
+   "ours": "Through the Woods",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q109715401"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-21535019--4fd4ee9036bc49f5",
+   "reason": "title_mismatch",
+   "isbn": "9781419711893",
+   "ours": "The Long Haul",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q126697823"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-22358--fc0a72a7c8bb4e23",
+   "reason": "not_an_edition",
+   "isbn": "9781401204952",
+   "ours": "We3",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q449084"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-22402972--1d7222f68cd542f3",
+   "reason": "not_an_edition",
+   "isbn": "9780399162596",
+   "ours": "Fish in a Tree",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q123904836"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-22668729--4be43100a92635e2",
+   "reason": "not_an_edition",
+   "isbn": "9781591847786",
+   "ours": "Hooked: How to Build Habit-Forming Products",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q130385558"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-23208397--b2d8a9ef3b328313",
+   "reason": "not_an_edition",
+   "isbn": "9780316261241",
+   "ours": "Underground Airlines",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q26158032"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-2341319--855e8fc9377ff14b",
+   "reason": "not_an_edition",
+   "isbn": "9780441016198",
+   "ours": "Valiant",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q7748621"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-25698--38eaa26952dbb232",
+   "reason": "not_an_edition",
+   "isbn": "9780553585971",
+   "ours": "An Inquiry into the Nature and Causes of the Wealth of Nations",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q125847765"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-26008840--108653115c883055",
+   "reason": "not_an_edition",
+   "isbn": "9782070661985",
+   "ours": "Les Disparus du Clairdelune",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q101444552"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-2873--e86c768be3ef19d4",
+   "reason": "not_an_edition",
+   "isbn": "9780452284449",
+   "ours": "The Virgin Blue",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q3213769"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-29056083--12cf3a41dbd7bf5b",
+   "reason": "not_an_edition",
+   "isbn": "9780751565355",
+   "ours": "Harry Potter and the Cursed Child: Parts One and Two",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q20711488"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-301082--d41c175b1222ee66",
+   "reason": "not_an_edition",
+   "isbn": "9780441008537",
+   "ours": "Dead Until Dark",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q2659748"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-3109--1e6545c1e81abe32",
+   "reason": "several_items",
+   "isbn": "9781594200823",
+   "ours": "The Omnivore's Dilemma: A Natural History of Four Meals",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q138649399",
+    "http://www.wikidata.org/entity/Q60414312"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-3134981--a989a180edf64a4b",
+   "reason": "not_an_edition",
+   "isbn": "9781401215811",
+   "ours": "Joker",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q1189798"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-324748--ce2fa46937457d75",
+   "reason": "title_mismatch",
+   "isbn": "9781591841661",
+   "ours": "The Dip: A Little Book That Teaches You When to Quit (and When to Stick)",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q60381867"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-35805--474c47e23c5ba7b7",
+   "reason": "title_mismatch",
+   "isbn": "9780439405577",
+   "ours": "The Capture",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q136688564"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-36478784--ac2046453e00776f",
+   "reason": "not_an_edition",
+   "isbn": "9781787474406",
+   "ours": "The Flatshare",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q125198727"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-381440--04650fde1f5c4dce",
+   "reason": "not_an_edition",
+   "isbn": "9780942299793",
+   "ours": "The Society of the Spectacle",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q139875993"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-40722--ed5a437be7631ec1",
+   "reason": "several_items",
+   "isbn": "9780394743257",
+   "ours": "The Sportswriter",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q100710605",
+    "http://www.wikidata.org/entity/Q60385843"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-43015--3589f62f44ca0126",
+   "reason": "several_items",
+   "isbn": "9780374105235",
+   "ours": "A Long Way Gone: Memoirs of a Boy Soldier",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q123375979",
+    "http://www.wikidata.org/entity/Q123375999"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-49158--4977555cab6fbbf7",
+   "reason": "not_an_edition",
+   "isbn": "9781590523179",
+   "ours": "For Women Only: What You Need to Know about the Inner Lives of Men",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q123524439"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-5217282--fa721969dd5cc536",
+   "reason": "title_mismatch",
+   "isbn": "9781606410424",
+   "ours": "Secrets of the Dragon Sanctuary",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q138700754"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-616678--89fb196d426da302",
+   "reason": "not_an_edition",
+   "isbn": "9780345367693",
+   "ours": "The Diamond Throne",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q3042448"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-6381205--123484f21c8acbdc",
+   "reason": "not_an_edition",
+   "isbn": "9780316056632",
+   "ours": "Soulless",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q7564508"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-6487308--f6f9cbe37d351641",
+   "reason": "not_an_edition",
+   "isbn": "9780385738934",
+   "ours": "Fallen",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q3930293"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-6578293--8d2713885fe7d8fb",
+   "reason": "title_mismatch",
+   "isbn": "9780810983915",
+   "ours": "Dog Days",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q122452077"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-68428--2feed0ffe9b3525a",
+   "reason": "title_mismatch",
+   "isbn": "9780765311788",
+   "ours": "The Final Empire",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q126719942"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-68429--9f7109c1748450e8",
+   "reason": "title_mismatch",
+   "isbn": "9780765316882",
+   "ours": "The Well of Ascension",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q126712643"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-6933876--9ebe63286e16fabc",
+   "reason": "not_an_edition",
+   "isbn": "9780316074148",
+   "ours": "Changeless",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q5071908"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-7005865--a4cec9ea3fd2e970",
+   "reason": "title_mismatch",
+   "isbn": "9781423128199",
+   "ours": "The Atlantis Complex",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q117847865"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-7011225--83e36e525bd8649a",
+   "reason": "title_mismatch",
+   "isbn": "9789722120760",
+   "ours": "Caim",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q130459844"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-7243142--e77694086ee6a0a7",
+   "reason": "title_mismatch",
+   "isbn": "9781606412381",
+   "ours": "Keys to the Demon Prison",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q138681841"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-782854--c28590c7cc04b0c1",
+   "reason": "not_an_edition",
+   "isbn": "9780671223502",
+   "ours": "Eloise",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q106097538"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-784911--beb870aaaec2b686",
+   "reason": "title_mismatch",
+   "isbn": "9781590387429",
+   "ours": "Rise of the Evening Star",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q138700744"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-8366402--6b6fe4b36add2aa6",
+   "reason": "not_an_edition",
+   "isbn": "9780385343831",
+   "ours": "The Tiger's Wife",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q7769245"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-85989--59d102236701d852",
+   "reason": "title_mismatch",
+   "isbn": "9780060724566",
+   "ours": "Princess on the Brink",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q126599231"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-9369720--70ef09bee0169830",
+   "reason": "not_an_edition",
+   "isbn": "9780385739160",
+   "ours": "Passion",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q3281312"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-93727--148451f88ae864ad",
+   "reason": "title_mismatch",
+   "isbn": "9780060571313",
+   "ours": "Project Princess",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q126600250"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-9418--69d006cd263e7d63",
+   "reason": "title_mismatch",
+   "isbn": "9780440241812",
+   "ours": "Shopaholic Takes Manhattan",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q126720202"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-95431--f001c02e1a2db0a0",
+   "reason": "title_mismatch",
+   "isbn": "9781563892615",
+   "ours": "Preacher, Volume 1: Gone to Texas",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q117477828"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-985386--b16680223cf0f01a",
+   "reason": "not_an_edition",
+   "isbn": "9781591163275",
+   "ours": "Case Closed, Vol. 1",
+   "candidates": [
+    "http://www.wikidata.org/entity/Q26884509"
+   ]
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-7235533--63fe2876b27e6826",
+   "reason": "shared_target",
+   "isbn": "9780765326355",
+   "target": "http://www.wikidata.org/entity/Q126707688"
+  },
+  {
+   "edition": "https://shao2011.github.io/Proj-SemWeb/resource/edition/goodreads-9188338--0445d32e1c2f2c1b",
+   "reason": "shared_target",
+   "isbn": "9780765326355",
+   "target": "http://www.wikidata.org/entity/Q126707688"
+  }
+ ],
+ "isbn_route_disagreements": [],
+ "publisher_issues": [
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/ace--2a0b6287a0e65cff",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q536795",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/ace-books--ba98f4cb79c20134"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/ace-book--7aa64c0a26ab27b6",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q536795",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/ace-books--ba98f4cb79c20134"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/knopf--b89a79000927b1cb",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q1431868",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/alfred-a-knopf--6da42f7981f03bb8"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/avon-books--d9aca4ee3453e3a2",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q2874472",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/avon--3f703a8dd95c6210"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/baen-books--05cc1b145434df17",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q799732",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/baen--54a7b71c8fa54c28"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/bantam-spectra--9c96b5b1661c6e2e",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q4857181",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/bantam-spectra--e1345de48f2bdf24"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/berkley-books--48f48f01defe2087",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q2753848",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/berkley--7a36906587d9efd2"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/crown-publishers--629f2880d77e22bf",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q5189454",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/crown--0dcfafab5f8035e7"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/crown-publishing-group--6da801b857971c33",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q5189454",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/crown--0dcfafab5f8035e7"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/del-rey-books--0d23c8ba89b767cd",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q2562301",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/del-rey--7b798997aba3d6a0"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/doubleday--4b063150573ca6d9",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q1251563",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/doubleday-books--f5cc77e6278e0401"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/dutton-books--d7e8c1209622a808",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q5317558",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/dutton--6ca411d9f1b4443b"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/edebé--d92da4ac37290167",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q8771871",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/edebe--b40773e8e134cead"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/g-p-putnam-s-sons--0f8fa812cfd63211",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q3093062",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/g-p-putnam-s-sons--af94f028766fbe87"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/g-p-putnam-s-sons--efa153869b92afbf",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q3093062",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/g-p-putnam-s-sons--af94f028766fbe87"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/harcourt-inc--e00d616a16196a21",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q5654997",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/harcourt-brace-jovanovich--e51c30109425d326"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/harpercollins-publishers--883432ae02a93909",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q95149",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/harpercollins--50dca604684bdfd0"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/houghton-mifflin--d64a6de16834e314",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q390074",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/houghton-mifflin-company--d95a4d5d22011d27"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/houghton-mifflin-harcourt--421bd6f04cbc5722",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q390074",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/houghton-mifflin-company--d95a4d5d22011d27"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/little-brown-and-company--3ab40b469bf9c7b5",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q552959",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/little-brown-and-company--4c60f5b5144d1b4d"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/little-brown-company--51dd627894aef18b",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q552959",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/little-brown-and-company--4c60f5b5144d1b4d"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/orbit-books--e19026ca0addab97",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q3355196",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/orbit--4fa1a13ac468ac49"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/pantheon-books--fff3cd0839524baa",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q520387",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/pantheon--bf4bf68699dea329"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/penguin--0a4346f806b28b3c",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q1336200",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/penguin-books--1943a10fbc6d56c8"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/penguin-books-ltd--6d3abca65c4bbec6",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q1336200",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/penguin-books--1943a10fbc6d56c8"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/puffin--f3c2984127dd2db5",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q4907694",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/puffin-books--4dad4095d633d935"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/riverhead--79e3ad78cfa0effb",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q7338215",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/riverhead-books--9e31cc68e4f32e1c"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/scholastic--e0a78934820df7c7",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q1155729",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/scholastic-inc--00c3ea368487175f"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/viking-penguin--af90b92bd04f5fe0",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q921536",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/viking--f748d0c7d58eaf6f"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/vintage-books--85e0c0ad9e60d20a",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q3560313",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/vintage--887d814b066634a8"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/w-w-norton-company--b11d406b06281977",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q1282208",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/w-w-norton-company--5f8cf64a637218c8"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/william-morrow-books--cd3f05b6040b21d6",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q8015856",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/william-morrow--b734f2f2e27fed1e"
+  },
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/william-morrow-company--df3df234e99ec796",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q8015856",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/publisher/william-morrow--b734f2f2e27fed1e"
+  }
+ ],
+ "language_issues": [
+  {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/language/multiple-languages--4bef89956673b156",
+   "label": "Multiple languages",
+   "reason": "no_candidate"
+  }
+ ]
 }

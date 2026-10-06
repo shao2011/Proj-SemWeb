@@ -2,7 +2,7 @@
 """Link the books graph to Wikidata, DBpedia and Open Library (the 5-star step).
 
 Input is the pipeline output (books_data.ttl). Output:
-  links.ttl          owl:sameAs links for books, authors, series and editions
+  links.ttl          owl:sameAs links for books, authors, series, editions, publishers and languages
   enrichment.ttl     firstPublishYear taken from Wikidata (P577) where the CSV had none
   link_report.json   counts per link kind and method
   link_issues.json   ambiguous, colliding, conflicting and rejected cases
@@ -17,6 +17,7 @@ import argparse
 import csv
 import difflib
 import hashlib
+import itertools
 import json
 import random
 import re
@@ -59,6 +60,10 @@ WORK_CLASSES = {"Q725377", "Q2831984", "Q1760610", "Q125632018", "Q1347298", "Q3
 PARTIAL = re.compile(r"\b(graphic novel|manga|vol\.?|volume|part|parts|book \d+|companion|"
                      r"omnibus|box(ed)? set|collection|illustrated|screenplay|script)\b", re.I)
 NAME_STOP = {"jr", "sr", "dr", "sir", "ii", "iii"}
+# Trailing words that don't distinguish publishers ("Avon" = "Avon Books"). "Press" and "Group" are
+# kept: "Scholastic Press" is an imprint of Scholastic, "Penguin Group" the parent of Penguin Books.
+CORPORATE = {"inc", "incorporated", "ltd", "limited", "llc", "co", "company", "corp", "corporation",
+             "books", "book", "publishing", "publishers", "publisher", "publications", "and"}
 SAFE_IRI = set("!$&'()*+,;=:@/-._~")
 
 
@@ -186,6 +191,64 @@ def gyear(year: int) -> Literal:
     return Literal(f"{'-' if year < 0 else ''}{abs(year):04d}", datatype=XSD.gYear)
 
 
+# ISBNs. Checksum validation and the hyphenation probe follow Hao's linker (linking/external.py on main).
+
+def isbn13(raw: str | None) -> str | None:
+    """Checksum-valid ISBN-13 (an ISBN-10 is converted), else None, so a typo or an EAN never
+    reaches a lookup."""
+    digits = re.sub(r"[\s\-\u2010-\u2015]", "", raw or "").upper()
+    if re.fullmatch(r"\d{9}[\dX]", digits):
+        if sum((10 - i) * (10 if c == "X" else int(c)) for i, c in enumerate(digits)) % 11: return None
+        stem = "978" + digits[:9]
+        return stem + str((10 - sum((3 if i % 2 else 1) * int(c) for i, c in enumerate(stem)) % 10) % 10)
+    if re.fullmatch(r"97[89]\d{10}", digits) and \
+            sum((3 if i % 2 else 1) * int(c) for i, c in enumerate(digits)) % 10 == 0:
+        return digits
+    return None
+
+
+def isbn10(isbn: str) -> str | None:
+    """The ISBN-10 of a 978- ISBN-13 (Wikidata often has only P957 on older editions)."""
+    if not isbn.startswith("978"): return None
+    stem = isbn[3:12]
+    check = (11 - sum((10 - i) * int(c) for i, c in enumerate(stem)) % 11) % 11
+    return stem + ("X" if check == 10 else str(check))
+
+
+def isbn_forms(digits: str) -> set[str]:
+    """Ways Wikidata may write an ISBN: compact, or hyphenated as [prefix-]group-publisher-title-check.
+    The split points depend on ISBN range tables, so every split is tried; WDQS matches exact values."""
+    stem, check = digits[:-1], digits[-1]
+    prefix, middle = (stem[:3], stem[3:]) if len(digits) == 13 else ("", stem)
+    forms = {digits}
+    for i, j in itertools.combinations(range(1, len(middle)), 2):
+        forms.add("-".join(([prefix] if prefix else []) + [middle[:i], middle[i:j], middle[j:], check]))
+    return forms
+
+
+def publisher_key(name: str) -> str:
+    tokens = norm_title(name).split()
+    while tokens and tokens[-1] in CORPORATE: tokens.pop()
+    if tokens[:1] == ["the"]: tokens.pop(0)
+    return " ".join(tokens)
+
+
+def same_publisher(a: str, b: str) -> bool:
+    key = publisher_key(a)
+    return len(key) >= 3 and key == publisher_key(b)
+
+
+def language_names(label: str) -> list[str]:
+    """Names in a Goodreads (ISO 639-2) language label: "Bokmål, Norwegian; Norwegian Bokmål"."""
+    names = []
+    for part in (p.strip() for p in label.split(";")):
+        if not part: continue
+        names.append(part)
+        head, comma, tail = part.partition(",")
+        if comma and tail.strip(): names.append(f"{tail.strip()} {head.strip()}")
+    return list(dict.fromkeys(names))
+
+
 # ---------------------------------------------------------------- local data
 
 @dataclass
@@ -222,6 +285,11 @@ def load_books(graph: Graph) -> list[BookRecord]:
     return sorted(records, key=lambda r: (-r.num_ratings, str(r.uri)))
 
 
+def edition_values(graph: Graph, prop: URIRef) -> dict[str, tuple[str, str]]:
+    """Edition -> (resource, label) for a one-valued edition property (publisher, language)."""
+    return {str(e): (str(o), str(graph.value(o, RDFS.label) or "")) for e, o in graph.subject_objects(prop)}
+
+
 # ---------------------------------------------------------------- Wikidata
 
 @dataclass
@@ -234,6 +302,8 @@ class Item:
     years: set[int] = field(default_factory=set)          # P577
     authors: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))  # P50 -> names
     series: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))   # P179 -> names
+    titles: set[str] = field(default_factory=set)         # P1476 (editions)
+    publishers: dict[str, set[str]] = field(default_factory=lambda: defaultdict(set))  # P123 -> names
     enwiki: str | None = None
 
 
@@ -301,6 +371,53 @@ def fetch_items(client: Client, uris: set[str], items: dict[str, Item]) -> None:
                 if not entity(row, "x"): continue
                 names = getattr(items[value(row, "item")], attr)[entity(row, "x")]
                 if value(row, "l"): names.add(value(row, "l"))
+
+
+def isbn_items(client: Client, isbns: list[str], workers: int) -> dict[str, set[str]]:
+    """ISBN-13 -> Wikidata items carrying it as ISBN-13 (P212) or ISBN-10 (P957)."""
+    def one(batch: list[str]) -> list[tuple[str, str]]:
+        back = {}
+        for isbn in batch:
+            i10 = isbn10(isbn)
+            for form in isbn_forms(isbn) | (isbn_forms(i10) if i10 else set()): back[form] = isbn
+        rows = client.sparql(f"SELECT ?item ?isbn WHERE {{ VALUES ?isbn {{ {' '.join(map(literal, sorted(back)))} }} "
+                             f"VALUES ?p {{ wdt:P212 wdt:P957 }} ?item ?p ?isbn }}")
+        return [(back[value(r, "isbn")], entity(r, "item")) for r in rows]
+    found = defaultdict(set)
+    with ThreadPoolExecutor(workers) as pool:
+        for rows in pool.map(one, list(chunks(sorted(set(isbns)), 25))):
+            for isbn, uri in rows:
+                if uri: found[isbn].add(uri)
+    return found
+
+
+def fetch_edition_details(client: Client, uris: set[str], items: dict[str, Item]) -> None:
+    """For edition items (already in `items`): formal titles, publishers, and works listing them (P747)."""
+    langs = ", ".join(map(literal, TITLE_LANGS))
+    for batch in chunks(sorted(uris), 200):
+        for row in client.sparql(f"""SELECT ?item ?t ?w ?p ?pl WHERE {{ VALUES ?item {{ {entity_values(batch)} }}
+              {{ ?item wdt:P1476 ?t }} UNION {{ ?w wdt:P747 ?item }} UNION
+              {{ ?item wdt:P123 ?p OPTIONAL {{ {{ ?p rdfs:label ?pl }} UNION {{ ?p skos:altLabel ?pl }}
+                                              FILTER(LANG(?pl) IN ({langs})) }} }} }}"""):
+            item = items[value(row, "item")]
+            if value(row, "t"): item.titles.add(value(row, "t"))
+            if entity(row, "w"): item.works.add(entity(row, "w"))
+            if entity(row, "p"):
+                names = item.publishers[entity(row, "p")]
+                if value(row, "pl"): names.add(value(row, "pl"))
+
+
+def language_items(client: Client, names: list[str]) -> dict[str, dict[str, set[str]]]:
+    """Name -> {"label": items, "alias": items}, among items with an ISO 639-2 code (P219), the
+    standard Goodreads language names come from."""
+    found = defaultdict(lambda: defaultdict(set))
+    values = " ".join(f"{literal(n)}@en" for n in sorted(set(names)))
+    for row in client.sparql(f"""SELECT ?name ?item ?alias WHERE {{ VALUES ?name {{ {values} }}
+          {{ ?item rdfs:label ?name BIND(false AS ?alias) }} UNION {{ ?item skos:altLabel ?name BIND(true AS ?alias) }}
+          ?item wdt:P219 [] }}"""):
+        if entity(row, "item"):
+            found[value(row, "name")]["alias" if value(row, "alias") == "true" else "label"].add(entity(row, "item"))
+    return found
 
 
 def fetch_classes(client: Client, classes: set[str], known: dict[str, tuple[bool, ...]]) -> None:
@@ -405,6 +522,40 @@ def one_to_one(votes: dict[str, Counter], weight: dict[str, int]) -> tuple[dict[
     return chosen, issues
 
 
+def choose_edition(title: str, uris: set[str], items: dict[str, Item], classes: dict) -> tuple[str | None, str]:
+    """The Wikidata edition for one ISBN: edition-level item whose title agrees with the book's."""
+    editions = [u for u in sorted(uris) if u in items and category(items[u], classes) == "edition"]
+    if not editions: return None, "not_an_edition"
+    fits = [u for u in editions if any(titles_compatible(title, t) for t in items[u].labels | items[u].titles)]
+    if len(fits) == 1: return fits[0], "isbn+title"
+    return None, "several_items" if fits else "title_mismatch"
+
+
+def work_via_editions(book: BookRecord, editions: list[str], items: dict[str, Item],
+                      classes: dict) -> tuple[str | None, str]:
+    """A book's work through its linked Wikidata editions (P629, or the work's P747): exactly one work,
+    a written work, compatible title, and no contradicting author."""
+    works = {w for e in editions for w in items[e].works}
+    if not works: return None, "edition_without_work"
+    if len(works) > 1: return None, "editions_disagree"
+    work = next(iter(works))
+    item = items.get(work)
+    if item is None or category(item, classes) != "work": return None, "not_a_work"
+    if not any(titles_compatible(book.title, label) for label in item.labels): return None, "title_mismatch"
+    if item.authors and not author_hits([n for _, n in book.authors], item): return None, "author_mismatch"
+    return work, "isbn-edition"
+
+
+def choose_language(label: str, hits: dict[str, dict[str, set[str]]]) -> tuple[str | None, str]:
+    """Exact English label first, then alias; one item or nothing."""
+    names = language_names(label)
+    for kind in ("label", "alias"):
+        found = {u for n in names for u in hits.get(n, {}).get(kind, ())}
+        if len(found) == 1: return next(iter(found)), "iso639-" + kind
+        if found: return None, "ambiguous"
+    return None, "no_candidate"
+
+
 # ---------------------------------------------------------------- Open Library
 
 def openlibrary_editions(client: Client, isbns: list[str]) -> dict[str, dict]:
@@ -429,14 +580,31 @@ def link_editions(isbn_of: dict[str, tuple[str, str]], ol: dict[str, dict]) -> t
         else:
             issues.append({"edition": edition, "reason": "title_mismatch", "isbn": isbn,
                            "ours": title, "openlibrary": theirs})
-    # Open Library sometimes answers several ISBNs with one record (volumes 1-3 of a comic merged),
-    # and Goodreads has duplicate entries with one ISBN. owl:sameAs would make those editions one
-    # individual and, since an edition isEditionOf exactly one Book, merge their books as well.
-    shared = Counter(links.values())
-    for edition in [e for e, target in links.items() if shared[target] > 1]:
-        issues.append({"edition": edition, "reason": "shared_target", "isbn": isbn_of[edition][0],
-                       "openlibrary": links.pop(edition)})
+    issues += drop_shared(links, isbn_of)
     return links, issues
+
+
+def link_wikidata_editions(isbn_of: dict[str, tuple[str, str]], found: dict[str, set[str]],
+                           items: dict[str, Item], classes: dict) -> tuple[dict[str, str], list[dict]]:
+    """Edition -> Wikidata edition item by ISBN (P212/P957), with the same rules as Open Library."""
+    links, issues = {}, []
+    for edition, (isbn, title) in sorted(isbn_of.items()):
+        if not found.get(isbn): continue
+        target, reason = choose_edition(title, found[isbn], items, classes)
+        if target: links[edition] = target
+        else: issues.append({"edition": edition, "reason": reason, "isbn": isbn, "ours": title,
+                             "candidates": sorted(found[isbn])})
+    issues += drop_shared(links, isbn_of)
+    return links, issues
+
+
+def drop_shared(links: dict[str, str], isbn_of: dict[str, tuple[str, str]]) -> list[dict]:
+    """Unlink editions that share a target. Open Library merges volumes into one record, and Goodreads
+    lists some books twice with one ISBN; owl:sameAs would make those editions one individual and,
+    since an edition isEditionOf exactly one Book, merge their books as well."""
+    shared = Counter(links.values())
+    return [{"edition": e, "reason": "shared_target", "isbn": isbn_of[e][0], "target": links.pop(e)}
+            for e in [e for e, target in links.items() if shared[target] > 1]]
 
 
 # ---------------------------------------------------------------- main flow
@@ -446,6 +614,8 @@ def run(data_path: Path, out_dir: Path, cache: Path, offline: bool, workers: int
     client = Client(cache, offline)
     graph = Graph().parse(data_path, format="turtle")
     books = load_books(graph)
+    publisher_of = edition_values(graph, BOOKS.isPublishedBy)
+    language_of = edition_values(graph, BOOKS.isInLanguage)
     del graph
     log = lambda msg: print(f"[{time.time() - started:6.0f}s] {msg}", flush=True)
     log(f"{len(books)} books loaded")
@@ -477,6 +647,35 @@ def run(data_path: Path, out_dir: Path, cache: Path, offline: bool, workers: int
     refresh({u for b in unmatched for u in candidates[b.uri]})
     for b in unmatched: decisions[b.uri] = choose_work(b, gr_of[b.uri], candidates[b.uri], items, classes)
 
+    # Editions -> Wikidata by ISBN (P212/P957). Their works (P629, or the work's P747) give a second,
+    # title-independent route to the book: used for books the title match missed, checked for the rest.
+    isbn_of, isbn_invalid = {}, []
+    for b in books:
+        for e, _, raw in b.editions:
+            if raw is None: continue
+            if (isbn := isbn13(raw)): isbn_of[str(e)] = (isbn, b.title)
+            else: isbn_invalid.append({"edition": str(e), "isbn": raw})
+    found = isbn_items(client, [i for i, _ in isbn_of.values()], workers)
+    edition_items = {u for s in found.values() for u in s}
+    refresh(edition_items)
+    fetch_edition_details(client, edition_items, items)
+    refresh(edition_items)  # works found through P747
+    wd_edition_links, wd_edition_issues = link_wikidata_editions(isbn_of, found, items, classes)
+    log(f"Wikidata editions: {len(found)} of {len(isbn_of)} valid ISBNs found, {len(wd_edition_links)} linked")
+    isbn_route, isbn_check, isbn_disagreements = Counter(), Counter(), []
+    for b in books:
+        editions = [wd_edition_links[str(e)] for e, _, _ in b.editions if str(e) in wd_edition_links]
+        if not editions: continue
+        work, reason = work_via_editions(b, editions, items, classes)
+        isbn_route[reason] += 1
+        if decisions[b.uri][0] is None:
+            if work: decisions[b.uri] = (work, reason)
+        elif work:
+            isbn_check["agree" if work == decisions[b.uri][0] else "disagree"] += 1
+            if work != decisions[b.uri][0]:
+                isbn_disagreements.append({"book": str(b.uri), "title": b.title, "kept": decisions[b.uri][0],
+                                           "method": decisions[b.uri][1], "via_isbn": work})
+
     # Books: one Wikidata work per book and one book per work.
     by_uri = {b.uri: b for b in books}
     book_votes = {str(u): Counter({w: 1}) for u, (w, _) in decisions.items() if w}
@@ -507,6 +706,27 @@ def run(data_path: Path, out_dir: Path, cache: Path, offline: bool, workers: int
     refresh(set(person_links.values()))
     log(f"persons linked: {len(person_links)}, series linked: {len(series_links)}")
 
+    # Publishers: the P123 of each linked Wikidata edition, when the name agrees; majority, one-to-one.
+    publisher_votes = defaultdict(Counter)
+    for edition, target in wd_edition_links.items():
+        if edition not in publisher_of: continue
+        local, name = publisher_of[edition]
+        hits = [p for p, labels in items[target].publishers.items() if any(same_publisher(name, l) for l in labels)]
+        if len(hits) == 1: publisher_votes[local][hits[0]] += 1
+    publisher_links, publisher_issues = one_to_one(publisher_votes, {})
+
+    # Languages: Goodreads uses ISO 639-2 English names; match them among items with an ISO 639-2 code.
+    languages = dict(language_of.values())
+    language_hits = language_items(client, [n for label in languages.values() for n in language_names(label)])
+    language_decisions = {local: choose_language(label, language_hits) for local, label in languages.items()}
+    language_links, language_issues = one_to_one(
+        {local: Counter({t: 1}) for local, (t, _) in language_decisions.items() if t}, {})
+    language_issues += [{"local": local, "label": languages[local], "reason": reason}
+                        for local, (t, reason) in sorted(language_decisions.items()) if not t]
+    refresh(set(publisher_links.values()) | set(language_links.values()))  # for their Wikipedia articles
+    log(f"publishers linked: {len(publisher_links)} of {len(set(l for l, _ in publisher_of.values()))}, "
+        f"languages linked: {len(language_links)} of {len(languages)}")
+
     # First-publication year from P577 (earliest), never later than an edition we hold.
     year_added, year_issues, year_check = {}, [], Counter()
     for local, work in book_links.items():
@@ -524,7 +744,6 @@ def run(data_path: Path, out_dir: Path, cache: Path, offline: bool, workers: int
             year_added[local] = year
 
     # Editions: Open Library by ISBN.
-    isbn_of = {str(e): (i, b.title) for b in books for e, _, i in b.editions if i}
     ol = openlibrary_editions(client, [i for i, _ in isbn_of.values()])
     edition_links, edition_issues = link_editions(isbn_of, ol)
     log(f"Open Library: {len(ol)} of {len(isbn_of)} ISBNs found, {len(edition_links)} linked")
@@ -535,13 +754,15 @@ def run(data_path: Path, out_dir: Path, cache: Path, offline: bool, workers: int
     for prefix, ns in (("books", BOOKS), ("owl", OWL), ("wd", WD), ("dbr", DBR), ("olb", OL_BOOKS)):
         links.bind(prefix, Namespace(str(ns)))
     dbpedia = Counter()
-    for kind, mapping in (("book", book_links), ("person", person_links), ("series", series_links)):
+    for kind, mapping in (("book", book_links), ("person", person_links), ("series", series_links),
+                          ("publisher", publisher_links), ("language", language_links)):
         for local, target in mapping.items():
             links.add((URIRef(local), OWL.sameAs, URIRef(target)))
             if items[target].enwiki:
                 links.add((URIRef(local), OWL.sameAs, URIRef(dbpedia_uri(items[target].enwiki))))
                 dbpedia[kind] += 1
-    for local, target in edition_links.items(): links.add((URIRef(local), OWL.sameAs, URIRef(target)))
+    for mapping in (edition_links, wd_edition_links):
+        for local, target in mapping.items(): links.add((URIRef(local), OWL.sameAs, URIRef(target)))
     links.serialize(out_dir / "links.ttl", format="turtle")
     enrichment = Graph()
     enrichment.bind("books", Namespace(str(BOOKS)))
@@ -554,7 +775,10 @@ def run(data_path: Path, out_dir: Path, cache: Path, offline: bool, workers: int
         "unmatched_books": [{"book": str(b.uri), "title": b.title, "reason": decisions[b.uri][1]}
                             for b in books if decisions[b.uri][0] is None],
         "book_collisions": book_issues, "person_issues": person_issues, "series_issues": series_issues,
-        "year_issues": year_issues, "edition_issues": edition_issues, "search_failures": search_failures}
+        "year_issues": year_issues, "edition_issues": edition_issues, "search_failures": search_failures,
+        "invalid_isbns": isbn_invalid, "wikidata_edition_issues": wd_edition_issues,
+        "isbn_route_disagreements": isbn_disagreements, "publisher_issues": publisher_issues,
+        "language_issues": language_issues}
     (out_dir / "link_issues.json").write_text(json.dumps(issues, indent=1, ensure_ascii=False), encoding="utf-8")
     persons = {str(p) for b in books for p, _ in b.authors}
     series = {str(s) for b in books for s, _ in b.series}
@@ -568,43 +792,55 @@ def run(data_path: Path, out_dir: Path, cache: Path, offline: bool, workers: int
         "dbpedia_links": dict(dbpedia),
         "first_year_added": len(year_added), "first_year_check_vs_csv": dict(year_check),
         "first_year_rejected_after_edition": sum(i["reason"] == "after_known_edition" for i in year_issues),
-        "editions_with_isbn": len(isbn_of), "openlibrary_found": sum(i in ol for i, _ in isbn_of.values()),
+        "editions_with_isbn": len(isbn_of) + len(isbn_invalid), "isbn_invalid": len(isbn_invalid),
+        "openlibrary_found": sum(i in ol for i, _ in isbn_of.values()),
         "editions_linked": len(edition_links),
         "edition_title_mismatch": sum(i["reason"] == "title_mismatch" for i in edition_issues),
         "edition_shared_target_dropped": sum(i["reason"] == "shared_target" for i in edition_issues),
+        "wikidata_isbns_found": len(found), "wikidata_editions_linked": len(wd_edition_links),
+        "wikidata_edition_rejected": dict(Counter(i["reason"] for i in wd_edition_issues)),
+        "isbn_route_to_work": dict(isbn_route), "isbn_route_vs_title_match": dict(isbn_check),
+        "publishers": len(set(l for l, _ in publisher_of.values())), "publishers_linked": len(publisher_links),
+        "publisher_issues": len(publisher_issues),
+        "languages": len(languages), "languages_linked": len(language_links),
         "link_triples": len(links), "enrichment_triples": len(enrichment),
         "http_requests_this_run": client.requests}
     (out_dir / "link_report.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
-    write_review_sample(out_dir / "review_sample.csv", seed, by_uri, book_links, method, person_links,
-                        series_links, edition_links, items, isbn_of)
+    edition_labels = {e: f"{t} / ISBN {i}" for e, (i, t) in isbn_of.items()}
+    write_review_sample(out_dir / "review_sample.csv", seed, by_uri, book_links, method, items, [
+        ("person", "via-linked-book", person_links, {str(p): n for b in books for p, n in b.authors}, 40),
+        ("series", "via-linked-book", series_links, {str(s): n for b in books for s, n in b.series}, 20),
+        ("edition", "openlibrary-isbn+title", edition_links, edition_labels, 40),
+        ("edition", "wikidata-isbn+title", wd_edition_links, edition_labels, 40),
+        ("publisher", "via-linked-edition", publisher_links, dict(publisher_of.values()), 30),
+        ("language", "iso639-name", language_links, languages, 30)])
     log("done")
     return report
 
 
-def write_review_sample(path: Path, seed: int, by_uri, book_links, method, person_links, series_links,
-                        edition_links, items, isbn_of) -> None:
+def write_review_sample(path: Path, seed: int, by_uri, book_links, method, items, groups) -> None:
+    """Books (random plus the weaker methods), then `groups`: (kind, method, links, local -> label, size)."""
     rng = random.Random(seed)
-    names = {str(p): n for b in by_uri.values() for p, n in b.authors}
-    series_names = {str(s): n for b in by_uri.values() for s, n in b.series}
-    def describe(target): return f"{sorted(items[target].labels)[:1]} — {items[target].description or ''}"
+    def describe(target, ours):
+        """The target's label closest to our name (the one the match used) and its English description."""
+        item = items.get(target)
+        if not item: return ""
+        ours = ours.split(" / ")[0]
+        label = max(sorted(item.labels), key=lambda l: difflib.SequenceMatcher(None, l.casefold(), ours.casefold()).ratio(),
+                    default="")
+        return f"{label} — {item.description or ''}"
     rows = []
     sampled = rng.sample(sorted(book_links), min(100, len(book_links)))
-    for risky in ("short-title", "description", "sitelinks"):  # plus up to 25 of each weaker method
+    for risky in ("short-title", "description", "sitelinks", "isbn-edition"):  # plus up to 25 of each
         pool = sorted(l for l in book_links if risky in method[l] and l not in sampled)
         sampled += rng.sample(pool, min(25, len(pool)))
     for local in sampled:
         book = by_uri[URIRef(local)]
-        rows.append(["book", method[local], local, f"{book.title} / {', '.join(n for _, n in book.authors)}",
-                     book_links[local], describe(book_links[local]), ""])
-    for local in rng.sample(sorted(person_links), min(40, len(person_links))):
-        rows.append(["person", "via-linked-book", local, names[local], person_links[local],
-                     describe(person_links[local]), ""])
-    for local in rng.sample(sorted(series_links), min(20, len(series_links))):
-        rows.append(["series", "via-linked-book", local, series_names[local], series_links[local],
-                     describe(series_links[local]), ""])
-    for local in rng.sample(sorted(edition_links), min(40, len(edition_links))):
-        isbn, title = isbn_of[local]
-        rows.append(["edition", "isbn+title", local, f"{title} / ISBN {isbn}", edition_links[local], "", ""])
+        label = f"{book.title} / {', '.join(n for _, n in book.authors)}"
+        rows.append(["book", method[local], local, label, book_links[local], describe(book_links[local], label), ""])
+    for kind, how, links, labels, size in groups:
+        for local in rng.sample(sorted(links), min(size, len(links))):
+            rows.append([kind, how, local, labels[local], links[local], describe(links[local], labels[local]), ""])
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle)
         writer.writerow(["kind", "method", "local", "local_label", "target", "target_label", "verdict"])

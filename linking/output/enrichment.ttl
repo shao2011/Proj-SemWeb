@@ -1173,6 +1173,8 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/big-nate-in-a-class-by-himself--ff300cf2172e9069> books:firstPublishYear "2010"^^xsd:gYear .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/big-nate-strikes-again--ac8154ac2cf0201d> books:firstPublishYear "2010"^^xsd:gYear .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/big-sur--96936798646fc011> books:firstPublishYear "1962"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/billions-billions-thoughts-on-life-and-death-at-the-brink-of-the--887db9bffefa8e91> books:firstPublishYear "1997"^^xsd:gYear .
@@ -1612,6 +1614,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/catch-me-if-you-can-the-true-story-of-a-real-fake--8b06dc503ab86353> books:firstPublishYear "1980"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/catching-fire--e79e46974a0d8e60> books:firstPublishYear "2009"^^xsd:gYear .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/cathedral--632c204af09edabc> books:firstPublishYear "1983"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/catherine-called-birdy--e9337721f60119a4> books:firstPublishYear "1994"^^xsd:gYear .
 
@@ -5468,6 +5472,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/on-the-genealogy-of-morals--48fe712bf785394b> books:firstPublishYear "1887"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/on-the-jellicoe-road--c2ee1e1b5737d0a4> books:firstPublishYear "2006"^^xsd:gYear .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/on-the-prowl--f35dcb68dac58619> books:firstPublishYear "2007"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/on-the-road--6b4a2c74890d1ddc> books:firstPublishYear "1957"^^xsd:gYear .
 
@@ -11546,6 +11552,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/where-are-you-now--885d89091cbf339f> books:firstPublishYear "2008"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/where-eagles-dare--a024ed21a62b3eba> books:firstPublishYear "1967"^^xsd:gYear .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/where-i-m-calling-from-new-and-selected-stories--db627a5bead7101e> books:firstPublishYear "1988"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/where-s-spot--fa3856e49ed6b5d9> books:firstPublishYear "1980"^^xsd:gYear .
 

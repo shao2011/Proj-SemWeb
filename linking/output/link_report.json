@@ -1,6 +1,6 @@
 {
  "books": 9987,
- "books_linked": 6995,
+ "books_linked": 7000,
  "book_methods": {
   "title+author": 5096,
   "goodreads-id": 1546,
@@ -8,12 +8,13 @@
   "title+author+sitelinks": 79,
   "title+author+short-title+sitelinks": 2,
   "title+description": 20,
+  "isbn-edition": 5,
   "title+description+short-title": 6,
   "title+description+sitelinks": 1
  },
  "books_unmatched_by_reason": {
-  "no-candidate": 2888,
-  "ambiguous": 80
+  "no-candidate": 2885,
+  "ambiguous": 78
  },
  "book_collisions_dropped": 24,
  "persons": 4222,
@@ -23,22 +24,49 @@
  "series_linked": 404,
  "series_issues": 0,
  "dbpedia_links": {
-  "book": 5707,
+  "book": 5711,
   "person": 2622,
-  "series": 267
+  "series": 267,
+  "publisher": 98,
+  "language": 28
  },
- "first_year_added": 5914,
+ "first_year_added": 5918,
  "first_year_check_vs_csv": {
   "agree": 70,
-  "disagree": 6
+  "disagree": 7
  },
  "first_year_rejected_after_edition": 77,
  "editions_with_isbn": 8828,
- "openlibrary_found": 8470,
- "editions_linked": 8111,
- "edition_title_mismatch": 348,
+ "isbn_invalid": 26,
+ "openlibrary_found": 8468,
+ "editions_linked": 8113,
+ "edition_title_mismatch": 344,
  "edition_shared_target_dropped": 11,
- "link_triples": 26823,
- "enrichment_triples": 5914,
+ "wikidata_isbns_found": 1693,
+ "wikidata_editions_linked": 1633,
+ "wikidata_edition_rejected": {
+  "title_mismatch": 25,
+  "not_an_edition": 31,
+  "several_items": 3,
+  "shared_target": 2
+ },
+ "isbn_route_to_work": {
+  "isbn-edition": 1598,
+  "editions_disagree": 1,
+  "not_a_work": 7,
+  "edition_without_work": 10,
+  "title_mismatch": 10,
+  "author_mismatch": 5
+ },
+ "isbn_route_vs_title_match": {
+  "agree": 1593
+ },
+ "publishers": 1892,
+ "publishers_linked": 129,
+ "publisher_issues": 33,
+ "languages": 29,
+ "languages_linked": 28,
+ "link_triples": 28750,
+ "enrichment_triples": 5918,
  "http_requests_this_run": 0
 }

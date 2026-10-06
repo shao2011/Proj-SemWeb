@@ -28,7 +28,7 @@
 <https://shao2011.github.io/Proj-SemWeb/linkset/wikidata> a void:Linkset ;
     void:linkPredicate owl:sameAs ;
     void:target <https://shao2011.github.io/Proj-SemWeb/dataset> , <https://www.wikidata.org/> ;
-    dcterms:description "Books, authors and series matched by Goodreads ID (P2969) or title + author; reviewed on a random sample." .
+    dcterms:description "Books, authors and series matched by Goodreads ID (P2969), title + author or ISBN edition (P212/P957 then P629); editions by checksum-valid ISBN; publishers by the P123 of linked editions; languages by name among items with an ISO 639-2 code. Reviewed on a random sample." .
 
 <https://shao2011.github.io/Proj-SemWeb/linkset/dbpedia> a void:Linkset ;
     void:linkPredicate owl:sameAs ;

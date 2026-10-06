@@ -4,7 +4,8 @@ PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl:   <http://www.w3.org/2002/07/owl#>
 PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
 SELECT ?kind ?target (COUNT(DISTINCT ?local) AS ?linked) WHERE {
-  VALUES (?kind ?class) { ("book" books:Book) ("person" books:Person) ("series" books:BookSeries) ("edition" books:BookEdition) }
+  VALUES (?kind ?class) { ("book" books:Book) ("person" books:Person) ("series" books:BookSeries) ("edition" books:BookEdition)
+                          ("publisher" books:Publisher) ("language" books:Language) }
   ?local a ?class ; owl:sameAs ?external .
   BIND(IF(STRSTARTS(STR(?external), "http://www.wikidata.org/"), "Wikidata",
        IF(STRSTARTS(STR(?external), "http://dbpedia.org/"), "DBpedia",
