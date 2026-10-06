@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "seed": 20261004,
+  "candidate_limits": {"BookEdition": 8, "Book": 10, "Person": 10, "BookSeries": 10, "Language": 10, "Publisher": 10, "Place": 10},
+  "thresholds": {"BookEdition": 90, "Book": 90, "Person": 90, "BookSeries": 85, "Language": 95, "Publisher": 90, "Place": 95},
+  "margins": {"BookEdition": 10, "Book": 10, "Person": 15, "BookSeries": 10, "Language": 10, "Publisher": 15, "Place": 15},
+  "weights": {
+    "BookEdition": {"isbn": 65, "type": 20, "title": 15},
+    "Book": {"anchor": 70, "title": 25, "author": 5},
+    "Person": {"name": 50, "role": 20, "context": 30},
+    "BookSeries": {"name": 50, "members": 35, "context": 15},
+    "Language": {"name": 80, "type": 20},
+    "Publisher": {"name": 60, "type": 20, "context": 20},
+    "Place": {"name": 60, "type": 25, "unique": 15}
+  },
+  "sample_counts": {"BookEdition": 12, "Book": 12, "Person": 12, "BookSeries": 8, "Language": 12, "Publisher": 8, "Place": 8},
+  "sample_anchor_isbns": ["9780060256531", "9780060256654", "9780060586584", "9780060852559", "9780060880125", "9781401215811", "9780226468013", "9780674996274"],
+  "isbn_batch_size": 25,
+  "http": {"timeout_seconds": 55, "max_retries": 3, "wikidata_interval_seconds": 1.5}
+}
