@@ -30,12 +30,12 @@
   "publisher": 98,
   "language": 28
  },
- "first_year_added": 5933,
+ "first_year_added": 5934,
  "first_year_check_vs_csv": {
   "agree": 70,
   "disagree": 7
  },
- "first_year_rejected_after_edition": 77,
+ "first_year_rejected_after_edition": 76,
  "editions_with_isbn": 8828,
  "isbn_invalid": 26,
  "openlibrary_found": 8468,
@@ -67,6 +67,6 @@
  "languages": 29,
  "languages_linked": 28,
  "link_triples": 28782,
- "enrichment_triples": 5933,
- "http_requests_this_run": 32
+ "enrichment_triples": 5934,
+ "http_requests_this_run": 0
 }

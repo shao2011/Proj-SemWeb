@@ -24,8 +24,8 @@ $PY pipeline/books_pipeline.py          # 3. CSV -> pipeline/output/books_data.t
 $PY pipeline/verify_output.py           #    checks the Turtle against the CSV and QA files
 reasoning/hermit_check.sh               #    HermiT: ontology + data consistent? (~25 s)
 $PY reasoning/materialize.py            #    OWL-RL -> reasoning/output/inferred.ttl (~8 min, 1.6 GB RAM)
-$PY linking/link_books.py               # 4. links -> linking/output/ (~5,400 HTTP requests, cached in linking/.cache/;
-                                        #    cached rerun ~1 min; --offline never touches the network)
+$PY linking/link_books.py               # 4. links -> linking/output/ (~6,400 HTTP requests to Wikidata and Open Library,
+                                        #    cached in linking/.cache/; cached rerun ~30 s; --offline never touches the network)
 endpoint/load.sh                        # 5. TDB2 database, one named graph per source (~20 s)
 endpoint/run_fuseki.sh                  #    http://localhost:3030/books/sparql  (UI: http://localhost:3030/)
 $PY endpoint/run_queries.py             #    runs endpoint/queries/*.rq, saves CSVs in endpoint/results/
@@ -33,7 +33,8 @@ $PY endpoint/run_queries.py             #    runs endpoint/queries/*.rq, saves C
 $PY -m pytest -q pipeline/test_pipeline.py linking/test_linking.py
 ```
 
-`linking/output/` is committed, so steps 5 onwards work without running the linker.
+`linking/output/` is committed, so the linker is optional. `endpoint/load.sh` still needs `pipeline/output/books_data.ttl`
+and `reasoning/output/inferred.ttl`, so run the pipeline and `materialize.py` first. Work still to do: `HANDOFF.md`.
 
 ## Layout
 

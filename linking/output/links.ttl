@@ -8288,7 +8288,7 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-s-daughter--e751dab063cdbec0> owl:sameAs wd:Q134617952 .
 
-<https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-sun-2008-draft--0680260fca87d846> owl:sameAs dbr:Midnight_Sun_\(Meyer_novel\),
+<https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-sun--d6469468089416bd> owl:sameAs dbr:Midnight_Sun_\(Meyer_novel\),
         wd:Q1052268 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-tides--7be875056f662f4a> owl:sameAs dbr:Midnight_Tides,

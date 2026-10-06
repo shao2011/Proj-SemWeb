@@ -14815,16 +14815,16 @@
    "kept": "https://shao2011.github.io/Proj-SemWeb/resource/book/interview-with-the-vampire--a3714bf67d5ba353"
   },
   {
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/book/maus-un-survivant-raconte-tome-1-mon-père-saigne-l-histoire--bc2894581a6e7b4b",
+   "reason": "shares_target",
+   "target": "http://www.wikidata.org/entity/Q59696",
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/book/maus-ii-a-survivor-s-tale-and-here-my-troubles-began--5ec609abbb835497"
+  },
+  {
    "local": "https://shao2011.github.io/Proj-SemWeb/resource/book/the-complete-maus--7cf5307fcbd8bc57",
    "reason": "shares_target",
    "target": "http://www.wikidata.org/entity/Q59696",
-   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/book/maus-un-survivant-raconte-tome-1-mon-père-saigne-l-histoire--bc2894581a6e7b4b"
-  },
-  {
-   "local": "https://shao2011.github.io/Proj-SemWeb/resource/book/maus-ii-a-survivor-s-tale-and-here-my-troubles-began--5ec609abbb835497",
-   "reason": "shares_target",
-   "target": "http://www.wikidata.org/entity/Q59696",
-   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/book/maus-un-survivant-raconte-tome-1-mon-père-saigne-l-histoire--bc2894581a6e7b4b"
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/book/maus-ii-a-survivor-s-tale-and-here-my-troubles-began--5ec609abbb835497"
   },
   {
    "local": "https://shao2011.github.io/Proj-SemWeb/resource/book/men-at-arms-the-play--119b99b89e7e6c36",
@@ -14833,10 +14833,10 @@
    "kept": "https://shao2011.github.io/Proj-SemWeb/resource/book/men-at-arms--d12101962c3f60d7"
   },
   {
-   "local": "https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-sun--d6469468089416bd",
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-sun-2008-draft--0680260fca87d846",
    "reason": "shares_target",
    "target": "http://www.wikidata.org/entity/Q1052268",
-   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-sun-2008-draft--0680260fca87d846"
+   "kept": "https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-sun--d6469468089416bd"
   },
   {
    "local": "https://shao2011.github.io/Proj-SemWeb/resource/book/mort-the-play--8273bd16217d6dbd",
@@ -14880,7 +14880,7 @@
    "target": "http://www.wikidata.org/entity/Q21234000"
   },
   {
-   "local": "https://shao2011.github.io/Proj-SemWeb/resource/book/maus-un-survivant-raconte-tome-1-mon-père-saigne-l-histoire--bc2894581a6e7b4b",
+   "local": "https://shao2011.github.io/Proj-SemWeb/resource/book/maus-ii-a-survivor-s-tale-and-here-my-troubles-began--5ec609abbb835497",
    "reason": "umbrella_item",
    "target": "http://www.wikidata.org/entity/Q59696"
   }
@@ -15326,12 +15326,6 @@
    "reason": "after_known_edition",
    "wikidata": 2016,
    "edition_year": 2013
-  },
-  {
-   "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-sun-2008-draft--0680260fca87d846",
-   "reason": "after_known_edition",
-   "wikidata": 2020,
-   "edition_year": 2008
   },
   {
    "book": "https://shao2011.github.io/Proj-SemWeb/resource/book/my-stroke-of-insight-a-brain-scientist-s-personal-journey--39c95f3fc47dbebf",

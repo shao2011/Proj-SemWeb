@@ -705,7 +705,7 @@ def run(data_path: Path, out_dir: Path, cache: Path, offline: bool, workers: int
     refresh(edition_items)  # works found through P747
     wd_edition_links, wd_edition_issues = link_wikidata_editions(isbn_of, found, items, classes)
     log(f"Wikidata editions: {len(found)} of {len(isbn_of)} valid ISBNs found, {len(wd_edition_links)} linked")
-    isbn_route, isbn_check, isbn_disagreements = Counter(), Counter(), []
+    isbn_route, isbn_check, isbn_disagreements, confirmed = Counter(), Counter(), [], set()
     for b in books:
         editions = [wd_edition_links[str(e)] for e, _, _ in b.editions if str(e) in wd_edition_links]
         if not editions: continue
@@ -715,13 +715,16 @@ def run(data_path: Path, out_dir: Path, cache: Path, offline: bool, workers: int
             if work: decisions[b.uri] = (work, reason)
         elif work:
             isbn_check["agree" if work == decisions[b.uri][0] else "disagree"] += 1
+            if work == decisions[b.uri][0]: confirmed.add(str(b.uri))
             if work != decisions[b.uri][0]:
                 isbn_disagreements.append({"book": str(b.uri), "title": b.title, "kept": decisions[b.uri][0],
                                            "method": decisions[b.uri][1], "via_isbn": work})
 
-    # Books: one Wikidata work per book and one book per work.
+    # Books: one Wikidata work per book and one book per work. A book whose ISBN edition confirms the
+    # match has two independent votes: Goodreads' "Midnight Sun [2008 Draft]" and the 2020 "Midnight
+    # Sun" both reach Q1052268 by Goodreads ID, and only the 2020 one by ISBN.
     by_uri = {b.uri: b for b in books}
-    book_votes = {str(u): Counter({w: 1}) for u, (w, _) in decisions.items() if w}
+    book_votes = {str(u): Counter({w: 2 if str(u) in confirmed else 1}) for u, (w, _) in decisions.items() if w}
     book_links, book_issues = one_to_one(book_votes, {str(b.uri): b.num_ratings for b in books})
     method = {str(u): m for u, (w, m) in decisions.items() if w}
     # Several books on one item, and the winner only matched a shortened title: the item is an

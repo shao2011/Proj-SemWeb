@@ -4949,6 +4949,8 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-s-children--2b74686f17adaa99> books:firstPublishYear "1981"^^xsd:gYear .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-sun--d6469468089416bd> books:firstPublishYear "2020"^^xsd:gYear .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/midnight-tides--7be875056f662f4a> books:firstPublishYear "2004"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/midwives--fa0879f403e60ea8> books:firstPublishYear "1997"^^xsd:gYear .
