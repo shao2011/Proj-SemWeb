@@ -52,7 +52,9 @@ TITLE_LANGS = ("en", "mul", "en-us", "en-gb")
 EDITION_ROOT = "Q3331189"                         # version, edition or translation
 WRITTEN_ROOTS = ("Q7725634", "Q47461344", "Q571")  # literary work, written work, book
 SERIES_ROOT = "Q7725310"                          # series of creative works
-NONBOOK_ROOTS = ("Q2431196", "Q7777570")          # audiovisual work (film, TV, radio), theatrical production
+# Audiovisual work (film, TV, radio), theatrical production, fictional character. Wikidata types
+# "Richard Hannay" both as a book series and as a fictional human.
+NONBOOK_ROOTS = ("Q2431196", "Q7777570", "Q95074")
 # Single works that Wikidata files under a series class: graphic novel, comic book album, comic book,
 # manga volume, serialized fiction, penny dreadful.
 WORK_CLASSES = {"Q725377", "Q2831984", "Q1760610", "Q125632018", "Q1347298", "Q3374808"}
@@ -160,6 +162,23 @@ def title_variants(title: str) -> list[str]:
         head, sep, tail = text.partition(":")
         if sep and not PARTIAL.search(tail): out.append(head.strip())
     return list(dict.fromkeys(t for t in out if len(t) >= 2))
+
+
+ARTICLE = re.compile(r"^(the|a|an)\s+", re.I)
+
+
+def lookup_titles(title: str) -> list[str]:
+    """Title variants plus each with its leading English article dropped, or with "The " added:
+    Wikidata labels the novel "The Murder at the Vicarage", Goodreads calls it "Murder at the Vicarage"."""
+    out = []
+    for v in title_variants(title):
+        out += [v, ARTICLE.sub("", v) if ARTICLE.match(v) else "The " + v]
+    return list(dict.fromkeys(t for t in out if len(t) >= 2))
+
+
+def title_key(text: str) -> str:
+    """Normalized title without a leading article, for comparing labels."""
+    return ARTICLE.sub("", norm_title(text))
 
 
 def titles_compatible(ours: str, theirs: str) -> bool:
@@ -479,23 +498,42 @@ def choose_work(book: BookRecord, goodreads: list[str], candidates: set[str],
     by_id = {w for uri in goodreads if (w := as_work(uri))
              and (not items[w].authors or author_hits(names, items[w]))}
     if len(by_id) == 1: return next(iter(by_id)), "goodreads-id"
-    wanted = {norm_title(v) for v in title_variants(book.title)}
-    full = norm_title(book.title)
+    wanted = {title_key(v) for v in title_variants(book.title)}
+    exact_titles = {norm_title(v) for v in title_variants(book.title)}
+    full = title_key(book.title)
     matches: dict[str, str] = {}
+    exact: set[str] = set()  # works matched without adding or dropping a leading article
+    shared: Counter = Counter()  # how many of our authors each work's P50 covers
     for uri in sorted(candidates):
         item = items.get(uri)
-        labels = {norm_title(l) for l in item.labels} if item else set()
+        labels = {title_key(l) for l in item.labels} if item else set()
         if not (labels & wanted): continue
         work = as_work(uri)
         if not work: continue
         short = "" if full in labels else "+short-title"  # matched only after dropping a subtitle
-        if author_hits(names, item) or author_hits(names, items[work]): matches.setdefault(work, "title+author" + short)
+        hits = max(len(author_hits(names, item)), len(author_hits(names, items[work])))
+        if hits:
+            matches.setdefault(work, "title+author" + short)
+            shared[work] = max(shared[work], hits)
         elif work == uri and described_by(names, item): matches.setdefault(work, "title+description" + short)
+        else: continue
+        if {norm_title(l) for l in item.labels} & exact_titles: exact.add(work)
     if not matches: return None, "no-candidate"
+    # A description naming our author is weaker evidence than P50: "Murder at the Vicarage" the play is
+    # "written by Agatha Christie" too, but only the novel has her as author.
+    if any(m.startswith("title+author") for m in matches.values()):
+        matches = {w: m for w, m in matches.items() if m.startswith("title+author")}
+        # "Nightfall" by Asimov and Silverberg is the 1990 novel by both, not Asimov's 1941 story.
+        most = max(shared[w] for w in matches)
+        matches = {w: m for w, m in matches.items() if shared[w] == most}
     if len(matches) == 1: return next(iter(matches.items()))
     ranked = sorted(matches, key=lambda w: (-items[w].sitelinks, w))
     top, second = items[ranked[0]].sitelinks, items[ranked[1]].sitelinks
     if top >= 3 and top >= 2 * second: return ranked[0], matches[ranked[0]] + "+sitelinks"
+    # No clear main item: a label equal to our title beats one equal only after an article change.
+    # A stray 2020 item "Court of Mist and Fury" (same P50, no sitelinks) made the novel ambiguous.
+    exact_matches = sorted(exact & set(matches))
+    if len(exact_matches) == 1: return exact_matches[0], matches[exact_matches[0]] + "+exact-title"
     return None, "ambiguous"
 
 
@@ -622,7 +660,10 @@ def run(data_path: Path, out_dir: Path, cache: Path, offline: bool, workers: int
 
     goodreads = goodreads_items(client, [i for b in books for i in b.goodreads_ids])
     log(f"Goodreads-ID lookups: {len(goodreads)} hits")
-    by_label = label_items(client, [v for b in books for v in title_variants(b.title)])
+    # The article forms go in their own batches, so the cached batches of the plain titles stay valid.
+    plain = {v for b in books for v in title_variants(b.title)}
+    by_label = label_items(client, sorted(plain))
+    by_label.update(label_items(client, sorted({v for b in books for v in lookup_titles(b.title)} - plain)))
     log(f"exact-label lookups: {sum(map(len, by_label.values()))} candidates")
 
     items: dict[str, Item] = {}
@@ -633,9 +674,11 @@ def run(data_path: Path, out_dir: Path, cache: Path, offline: bool, workers: int
         fetch_items(client, {w for u in uris for w in items[u].works}, items)  # works behind editions
         fetch_classes(client, {c for it in items.values() for c in it.classes}, classes)
 
-    candidates = {b.uri: {u for v in title_variants(b.title) for u in by_label.get(v, ())} for b in books}
+    candidates = {b.uri: {u for v in lookup_titles(b.title) for u in by_label.get(v, ())} for b in books}
     gr_of = {b.uri: [u for i in b.goodreads_ids for u in goodreads.get(i, ())] for b in books}
-    refresh({u for s in candidates.values() for u in s} | {u for l in gr_of.values() for u in l})
+    refresh({u for b in books for v in title_variants(b.title) for u in by_label.get(v, ())}
+            | {u for l in gr_of.values() for u in l})
+    refresh({u for s in candidates.values() for u in s})  # items found only through the article forms
     log(f"details for {len(items)} items, {len(classes)} classes")
     decisions = {b.uri: choose_work(b, gr_of[b.uri], candidates[b.uri], items, classes) for b in books}
 

@@ -29,9 +29,9 @@ What we lose: the top 10k is 96% English, against 81% in the full CSV. We'll say
 
 Ontology terms are now `https://shao2011.github.io/Proj-SemWeb/ontology#...` and resources are `https://shao2011.github.io/Proj-SemWeb/resource/...`.
 
-`example.org` can never be looked up, so it breaks LOD principle 1 (dereferenceable URIs, 04_LOD p.7) and the best practice of making vocabulary terms dereferenceable (04_LOD p.17). The movie project used `example.org` too. With Pages, `ontology.ttl` is served at the ontology URL, and each book or author can get a static page with JSON-LD in it.
+`example.org` can never be looked up, so it breaks LOD principle 1 (dereferenceable URIs, 04_LOD p.7) and the best practice of making vocabulary terms dereferenceable (04_LOD p.17). The movie project used `example.org` too.
 
-You need to do this part: turn on GitHub Pages for this repo (Settings → Pages, branch `main`). Until then the URIs are well-formed but don't resolve yet.
+Turning on GitHub Pages (Settings → Pages) is not enough by itself. Pages serves files at their own path and only adds `.html` implicitly, so `https://shao2011.github.io/Proj-SemWeb/ontology` needs a file `ontology.html` (or `ontology/index.html`), and every `/resource/...` URI needs a generated file of its own. Neither exists yet, so today all these URIs return 404.
 
 Limitation for the report: Pages can't do content negotiation, so a browser and a SPARQL client get the same file.
 
@@ -47,16 +47,16 @@ We dropped the CSV `price` column and `:price` from the ontology:
 
 ## 5. Links to other datasets (5 stars)
 
-`linking/link_books.py` writes `linking/output/links.ttl` (28,750 `owl:sameAs` triples) and `enrichment.ttl` (first-publication years). The output is committed, so you can build the endpoint without running the linker. Wikidata's public endpoint is slow: the run that added the ISBN lookups sent 563 new requests and took 26 minutes. Every answer is cached in `linking/.cache`, so a rerun takes 30 s with no network (`--offline` proves it).
+`linking/link_books.py` writes `linking/output/links.ttl` (28,782 `owl:sameAs` triples) and `enrichment.ttl` (first-publication years). The output is committed, so you can build the endpoint without running the linker. Wikidata's public endpoint is slow: the run that added the ISBN lookups sent 563 new requests and took 26 minutes, the one that added the article title forms 441 requests and 15 minutes. Every answer is cached in `linking/.cache`, so a rerun takes 30 s with no network (`--offline` proves it).
 
 | What | Linked | Out of |
 |---|---|---|
-| Books → Wikidata | 7,000 (70%) | 9,987 |
-| Books → DBpedia | 5,711 | |
-| Authors → Wikidata | 2,717 (64%) | 4,222 |
-| Authors → DBpedia | 2,622 | |
-| Series → Wikidata | 404 (16%) | 2,475 |
-| Series → DBpedia | 267 | |
+| Books → Wikidata | 7,015 (70%) | 9,987 |
+| Books → DBpedia | 5,723 | |
+| Authors → Wikidata | 2,721 (64%) | 4,222 |
+| Authors → DBpedia | 2,625 | |
+| Series → Wikidata | 403 (16%) | 2,475 |
+| Series → DBpedia | 266 | |
 | Editions → Open Library | 8,113 (92%) | 8,802 with a valid ISBN |
 | Editions → Wikidata | 1,633 (19%) | 8,802 with a valid ISBN |
 | Publishers → Wikidata | 129 | 1,892 |
@@ -66,12 +66,14 @@ We dropped the CSV `price` column and `:price` from the ontology:
 How a book gets its Wikidata item:
 
 1. Wikidata already stores the Goodreads ID (P2969): 1,546 books. The Wikidata author must not contradict ours, because some of these IDs are wrong. Kaye Gibbons' "A Virtuous Woman" carried the ID of Zaynab Alkali's novel.
-2. Otherwise the title must equal a label or alias, and one of our authors must equal the item's author (P50): 5,096 books. Another 245 only match after dropping a subtitle ("Nickel and Dimed: On (Not) Getting by in America"). The method column marks those as `short-title`.
-3. If the item has no P50, its English description must name our author ("1997 novel by J. K. Rowling"): 27 books.
+2. Otherwise the title must equal a label or alias, and one of our authors must equal the item's author (P50): 5,109 books. Another 248 only match after dropping a subtitle ("Nickel and Dimed: On (Not) Getting by in America"). The method column marks those as `short-title`. A leading "The", "A" or "An" may be added or dropped: Goodreads has "Murder at the Vicarage", Wikidata "The Murder at the Vicarage".
+3. If the item has no P50, its English description must name our author ("1997 novel by J. K. Rowling"): 25 books. A P50 match always beats a description match. The play "Murder at the Vicarage" is "written by Agatha Christie" too, but only the novel has her as P50.
 4. Books still unmatched go through the Wikidata search box, which is more forgiving about case, punctuation and aliases. The same checks apply.
 5. Books still unmatched can go through one of their editions (next paragraph): the Wikidata edition's work (P629) must be a written work with our title and one of our authors. 5 books are linked this way, for example "Cathedral" and "Where I'm Calling From" by Raymond Carver. For 1,593 books both routes found a work, and they agree on all 1,593. Two independent methods giving the same answer is our best evidence that the title match is right.
 
-The item must be a written work. Films, TV, radio and stage productions are rejected, and so are series items, unless the class is a single-volume one such as graphic novel. If several candidates pass, the book is linked only when one has at least 3 Wikipedia sitelinks and twice as many as the next (82 books). Otherwise it stays unlinked (78 ambiguous). A Wikidata item gets at most one of our books (24 collisions dropped). 2,885 books had no candidate at all.
+The item must be a written work. Films, TV, radio and stage productions and fictional characters are rejected ("Richard Hannay" is typed both as a book series and as a fictional human), and so are series items, unless the class is a single-volume one such as graphic novel. If several candidates pass, the one sharing the most of our authors wins: "Nightfall" by Asimov and Silverberg is the 1990 novel, not Asimov's 1941 story. If that still leaves several, the book is linked only when one has at least 3 Wikipedia sitelinks and twice as many as the next (83 books), or else when exactly one has our title without an article change (1 book, "A Court of Mist and Fury", against a stray item "Court of Mist and Fury"). Otherwise it stays unlinked (78 ambiguous). A Wikidata item gets at most one of our books (24 collisions dropped). 2,870 books had no candidate at all.
+
+Wikidata sometimes has two items for one novel. "The Architect's Apprentice" now links to Q123357537, which has Elif Şafak as P50, instead of Q19612908, which has only a description and a Wikipedia article. Both are the same novel, but the book lost its DBpedia link.
 
 We don't search for authors and series. Each one takes the author (P50) or series (P179) item of its linked books whose label matches its name, by majority vote and one-to-one. A series item must also be classified as a series in Wikidata. DBpedia IRIs come from each item's English Wikipedia article, so we never query DBpedia. Its public endpoint gave us 500 errors and timeouts.
 
@@ -85,14 +87,16 @@ Publishers take the publisher (P123) of their linked Wikidata editions, when the
 
 Languages are matched by name among Wikidata items with an ISO 639-2 code (P219), so "English" can't land on a film or a novel called "English". 28 of 29 are linked. "Multiple languages" is the one left.
 
-First-publication year: 5,918 books get `firstPublishYear` from Wikidata P577 (earliest date). It is never later than an edition year we already have, which rejected 77. Where the CSV did have a year, Wikidata agrees on 70 and disagrees on 7. Coverage went from 133 books to 6,051 (61%).
+First-publication year: 5,933 books get `firstPublishYear` from Wikidata P577 (earliest date). It is never later than an edition year we already have, which rejected 77. Where the CSV did have a year, Wikidata agrees on 70 and disagrees on 7. Coverage went from 133 books to 6,066 (61%).
 
 ### Precision
 
-`linking/output/review_sample.csv` is a fixed sample (seed 42): 100 random books, up to 25 more from each weaker method (short title, description, sitelinks, ISBN edition), 40 authors, 20 series, 40 Open Library editions, 40 Wikidata editions, 30 publishers and 28 languages. All 378 rows were checked by hand and 377 are right. The wrong one: "Murder at the Vicarage" by Agatha Christie is linked to the stage play (Q6937718). Wikidata labels the novel "**The** Murder at the Vicarage" (Q693559), so the exact-title lookup only found the play, and the play's description says "written by Agatha Christie". Fixing it means also looking up titles with and without a leading article, which changes the candidates for many books. We haven't done that yet. An earlier 275-row sample had no errors. Fixing what earlier checks found produced several of the rules above. Each has a test in `linking/test_linking.py`:
+`linking/output/review_sample.csv` is a fixed sample (seed 42): 100 random books, up to 25 more from each weaker method (short title, description, sitelinks, ISBN edition), 40 authors, 20 series, 40 Open Library editions, 40 Wikidata editions, 30 publishers and 28 languages. All 377 rows were checked by hand, and none is wrong now. Fixing what the checks found produced several of the rules above. Each has a test in `linking/test_linking.py`:
 
 - "A Court of Thorns and Roses" was linked to the series item, "Last Chance to See" to the radio documentary, and "Dear Evan Hansen" to the musical.
 - "The Morganville Vampires, Volume 1" was linked to Open Library's Volume 2 record. The volume-number rule then removed two more of the same kind (Akira, Fruits Basket).
+- "Murder at the Vicarage" was linked to the stage play, because only the play's label lacks "The". Article forms plus "P50 beats description" fixed it. Adding article forms first broke "A Court of Mist and Fury" (a stray item without the article) and pulled "The Aeneid" to a stray item labelled "The Aeneid". Hence the order: shared authors, then sitelinks, then the exact title.
+- "Nightfall" (Asimov and Silverberg) was linked to the 1941 short story, which has more sitelinks than the novel.
 - Plato's "Apology" got the year `-395`, which is not a valid `xsd:gYear`. It is now `-0395`.
 
 Unmatched and rejected cases, with reasons, are in `linking/output/link_issues.json`.
@@ -104,19 +108,18 @@ Unmatched and rejected cases, with reasons, are in `linking/output/link_issues.j
 
 ## 7. SPARQL endpoint
 
-- `endpoint/load.sh` builds a TDB2 database with one named graph per source: ontology, data, inferred, links, enrichment and VoID metadata. That's 918,596 triples, loaded in 20 s.
+- `endpoint/load.sh` builds a TDB2 database with one named graph per source: ontology, data, inferred, links, enrichment and VoID metadata. That's 918,643 triples, loaded in 18 s.
 - `endpoint/run_fuseki.sh` starts Fuseki 6.2.0 at `http://localhost:3030/books/sparql`. It is read-only: updates and Graph Store writes return HTTP 405.
 - `endpoint/run_queries.py` runs the 11 competency questions in `endpoint/queries/`, and every one returns rows. CQ1 needs the inferred `writes`. CQ9 counts the links per kind and dataset. CQ11 is federated: it follows our `owl:sameAs` to Wikidata with `SERVICE` to get the authors' birth places, which takes a few seconds.
 
 ## Known gaps
 
-- 3,936 books (39%) still have no first-publication year. Wikidata has no P577 for them or they are unlinked, for example most Sandman volumes.
-- 2,987 books (30%) have no Wikidata link.
-- One known wrong link, "Murder at the Vicarage" (section 5, Precision).
-- The URIs resolve only once GitHub Pages is on (section 3). `void:sparqlEndpoint` is `localhost`, so the endpoint is only reachable while we run it.
+- 3,921 books (39%) still have no first-publication year. Wikidata has no P577 for them or they are unlinked, for example most Sandman volumes.
+- 2,972 books (30%) have no Wikidata link.
+- The URIs don't resolve yet (section 3): GitHub Pages is off and no files are generated for `/ontology` or `/resource/...`. `void:sparqlEndpoint` is `localhost`, so the endpoint is only reachable while we run it.
 
 ## Checks
 
-- `pipeline/test_pipeline.py` (29) and `linking/test_linking.py` (45): all 74 tests pass. The new pipeline tests fail on the old converter.
+- `pipeline/test_pipeline.py` (29) and `linking/test_linking.py` (49): all 78 tests pass. The new pipeline tests fail on the old converter.
 - `riot --validate ontology.ttl` passes, and `endpoint/load.sh` loads every file without warnings.
 - `verify_output.py` passes on both the 10k run and the full run.

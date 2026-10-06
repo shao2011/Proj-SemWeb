@@ -10,8 +10,8 @@ from rdflib import URIRef
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from link_books import (WD, BookRecord, Item, category, choose_edition, choose_language, choose_work,  # noqa: E402
                         dbpedia_uri, entity, gyear, isbn10, isbn13, isbn_forms, language_names,
-                        link_editions, link_wikidata_editions, one_to_one, same_name, same_publisher,
-                        title_variants, titles_compatible, wikidata_year, work_via_editions)
+                        link_editions, link_wikidata_editions, lookup_titles, one_to_one, same_name,
+                        same_publisher, title_variants, titles_compatible, wikidata_year, work_via_editions)
 
 EDITION, NOVEL, SERIES, FILM = WD + "Q3331189", WD + "Q7725634", WD + "Q1667921", WD + "Q11424"
 MUSICAL, SERIALIZED = WD + "Q7777570", WD + "Q1347298"
@@ -243,3 +243,45 @@ def test_book_via_isbn_edition():
     assert work_via_editions(meyer, [WD + "E2"], items, CLASSES) == (None, "author_mismatch")
     assert work_via_editions(meyer, [WD + "E1", WD + "E2"], items, CLASSES) == (None, "editions_disagree")
     assert work_via_editions(book("Kim", "Rudyard Kipling"), [WD + "E3"], items, CLASSES) == (WD + "W3", "isbn-edition")
+
+
+def test_lookup_titles_add_and_drop_leading_article():
+    assert lookup_titles("Murder at the Vicarage") == ["Murder at the Vicarage", "The Murder at the Vicarage"]
+    assert lookup_titles("The Hobbit") == ["The Hobbit", "Hobbit"]
+    assert lookup_titles("A Game of Thrones") == ["A Game of Thrones", "Game of Thrones"]
+    assert "Bully Pulpit" in lookup_titles("The Bully Pulpit: Theodore Roosevelt and the Golden Age")
+
+
+def test_author_match_beats_description_match():
+    # Real case: Goodreads "Murder at the Vicarage"; Wikidata's novel is "The Murder at the Vicarage"
+    # (P50 Agatha Christie), the play keeps the bare title and only its description names her.
+    items = {WD + "NOVEL": item("The Murder at the Vicarage", NOVEL, ["Agatha Christie"]),
+             WD + "PLAY": item("Murder at the Vicarage", NOVEL, description="play written by Agatha Christie")}
+    vicarage = book("Murder at the Vicarage", "Agatha Christie")
+    assert choose_work(vicarage, [], {WD + "PLAY"}, items, CLASSES) == (WD + "PLAY", "title+description")
+    assert choose_work(vicarage, [], {WD + "PLAY", WD + "NOVEL"}, items, CLASSES) == (WD + "NOVEL", "title+author")
+
+
+def test_exact_title_beats_article_variant():
+    # Real case: a stray 2020 item "Court of Mist and Fury" with the same P50 as the novel.
+    items = {WD + "NOVEL": item("A Court of Mist and Fury", NOVEL, ["Sarah J. Maas"]),
+             WD + "STRAY": item("Court of Mist and Fury", NOVEL, ["Sarah J. Maas"])}
+    acomaf = book("A Court of Mist and Fury", "Sarah J. Maas")
+    assert choose_work(acomaf, [], {WD + "NOVEL", WD + "STRAY"}, items, CLASSES) == (WD + "NOVEL", "title+author+exact-title")
+    # But a clear main item wins over the exact label: "The Aeneid" is Q60220 "Aeneid", not a stray
+    # item labelled "The Aeneid".
+    items = {WD + "MAIN": item("Aeneid", NOVEL, ["Virgil"], sitelinks=120),
+             WD + "STRAY": item("The Aeneid", NOVEL, ["Virgil"])}
+    aeneid = book("The Aeneid", "Virgil")
+    assert choose_work(aeneid, [], {WD + "MAIN", WD + "STRAY"}, items, CLASSES) == (WD + "MAIN", "title+author+sitelinks")
+
+
+def test_more_shared_authors_beats_sitelinks():
+    # Real case: Goodreads "Nightfall" by Asimov and Silverberg is the 1990 novel (6 sitelinks),
+    # not Asimov's 1941 short story (20 sitelinks).
+    items = {WD + "STORY": item("Nightfall", NOVEL, ["Isaac Asimov"], sitelinks=20),
+             WD + "NOVEL": item("Nightfall", NOVEL, ["Isaac Asimov", "Robert Silverberg"], sitelinks=6)}
+    nightfall = book("Nightfall", "Isaac Asimov", "Robert Silverberg")
+    assert choose_work(nightfall, [], {WD + "STORY", WD + "NOVEL"}, items, CLASSES) == (WD + "NOVEL", "title+author")
+    assert choose_work(book("Nightfall", "Isaac Asimov"), [], {WD + "STORY", WD + "NOVEL"}, items, CLASSES) \
+        == (WD + "STORY", "title+author+sitelinks")

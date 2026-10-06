@@ -103,6 +103,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/a-beautiful-mind--7dcf23c9ddc8da92> owl:sameAs dbr:A_Beautiful_Mind_\(book\),
         wd:Q1767499 .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/a-beautiful-wedding--9701e28aac648c6e> owl:sameAs wd:Q79960361 .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/a-bend-in-the-river--aa7815103e477ed2> owl:sameAs dbr:A_Bend_in_the_River,
         wd:Q482567 .
 
@@ -4002,6 +4004,9 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/dragons-of-autumn-twilight--67646c78d0c534ee> owl:sameAs dbr:Dragons_of_Autumn_Twilight,
         wd:Q2346673 .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/dragons-of-eden-speculations-on-the-evolution-of-human-intelligen--5b029aefad31f1b9> owl:sameAs dbr:The_Dragons_of_Eden,
+        wd:Q1152481 .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/dragons-of-spring-dawning--1c73d16ecd8d531f> owl:sameAs dbr:Dragons_of_Spring_Dawning,
         wd:Q2662191 .
 
@@ -5495,7 +5500,11 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/gold--302373af87bc5770> owl:sameAs dbr:Gold_\(Cleave_novel\),
         wd:Q5578530 .
 
-<https://shao2011.github.io/Proj-SemWeb/resource/book/golden-fool--1009824d9545486a> owl:sameAs wd:Q137916197 .
+<https://shao2011.github.io/Proj-SemWeb/resource/book/gold-coast--c843c8076fbe717a> owl:sameAs dbr:The_Gold_Coast_\(DeMille_novel\),
+        wd:Q7736963 .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/golden-fool--1009824d9545486a> owl:sameAs dbr:The_Golden_Fool,
+        wd:Q1832123 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/golden-son--3a7beb88c028dc60> owl:sameAs dbr:Golden_Son,
         wd:Q19263643 .
@@ -5850,6 +5859,9 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/heart-and-soul--50aa0a228489d4b6> owl:sameAs dbr:Heart_and_Soul_\(Binchy_novel\),
         wd:Q5692159 .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/heart-of-a-dog--c648dca1909c7c86> owl:sameAs dbr:Heart_of_a_Dog,
+        wd:Q1345004 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/heart-of-darkness--b81251dd783eef1d> owl:sameAs dbr:Heart_of_Darkness,
         wd:Q129778 .
@@ -6844,6 +6856,9 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/island--67584360fb96da18> owl:sameAs dbr:Island_\(Huxley_novel\),
         wd:Q2419461 .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/island-beneath-the-sea--1255d56e4e372047> owl:sameAs dbr:Island_Beneath_the_Sea,
+        wd:Q3819509 .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/island-of-the-blue-dolphins--70d6e0f4e117d04c> owl:sameAs dbr:Island_of_the_Blue_Dolphins,
         wd:Q1453053 .
 
@@ -7742,6 +7757,9 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/lords-and-ladies--665b482021545e40> owl:sameAs dbr:Lords_and_Ladies_\(novel\),
         wd:Q2078525 .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/lords-of-the-north--d7200a2c1dfe6265> owl:sameAs dbr:The_Lords_of_the_North,
+        wd:Q743764 .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/lorna-doone--097a70669ee99462> owl:sameAs dbr:Lorna_Doone,
         wd:Q3400981 .
 
@@ -8529,8 +8547,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/mudbound--56d868d7ad94eee1> owl:sameAs dbr:Mudbound,
         wd:Q16961717 .
 
-<https://shao2011.github.io/Proj-SemWeb/resource/book/murder-at-the-vicarage--420b6736c676cf06> owl:sameAs dbr:Murder_at_the_Vicarage_\(play\),
-        wd:Q6937718 .
+<https://shao2011.github.io/Proj-SemWeb/resource/book/murder-at-the-vicarage--420b6736c676cf06> owl:sameAs dbr:The_Murder_at_the_Vicarage,
+        wd:Q693559 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/murder-in-mesopotamia--97a6cb13519aaec0> owl:sameAs dbr:Murder_in_Mesopotamia,
         wd:Q642911 .
@@ -8856,8 +8874,7 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/night-watch--8ec78e8f1e96e52a> owl:sameAs dbr:Night_Watch_\(Lukyanenko_novel\),
         wd:Q1042011 .
 
-<https://shao2011.github.io/Proj-SemWeb/resource/book/nightfall--20de3c7b4fd316ba> owl:sameAs dbr:Nightfall_\(Asimov_novelette_and_novel\),
-        wd:Q1138091 .
+<https://shao2011.github.io/Proj-SemWeb/resource/book/nightfall--20de3c7b4fd316ba> owl:sameAs wd:Q15096441 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/nightmares-and-dreamscapes--f6ec262619e8f975> owl:sameAs wd:Q19708189 .
 
@@ -9231,6 +9248,8 @@
         wd:Q104375062 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/one-piece-volume-1-romance-dawn--8e91cd1e86935ec4> owl:sameAs wd:Q136611298 .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/one-plus-one--91f639d2f2c5a592> owl:sameAs wd:Q103481261 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/one-second-after--450fae6629430f61> owl:sameAs dbr:One_Second_After,
         wd:Q7093169 .
@@ -12071,6 +12090,12 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-131-2-lives-of-captain-bluebear--bc1d0be776c83421> owl:sameAs <http://dbpedia.org/resource/The_13½_Lives_of_Captain_Bluebear>,
         wd:Q786908 .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-17th-suspect--256413096bfa8d50> owl:sameAs dbr:17th_Suspect,
+        wd:Q58276834 .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-19th-christmas--1ac6146e898cce63> owl:sameAs dbr:19th_Christmas,
+        wd:Q96368699 .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-19th-wife--bb8ca3c6a77ade8a> owl:sameAs dbr:The_19th_Wife,
         wd:Q16146894 .
 
@@ -12079,6 +12104,9 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-3-mistakes-of-my-life--8f7ce1ff1b0b042e> owl:sameAs dbr:The_3_Mistakes_of_My_Life,
         wd:Q5755375 .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-39-steps--07c2f13ba1c44abe> owl:sameAs dbr:The_Thirty-Nine_Steps,
+        wd:Q2609365 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-4-hour-body-an-uncommon-guide-to-rapid-fat-loss-incredible-se--9c3af096702b56a8> owl:sameAs dbr:The_4-Hour_Body,
         wd:Q7711900 .
@@ -12164,7 +12192,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-adventures-of-tom-sawyer--45a78b07ea4aed29> owl:sameAs dbr:The_Adventures_of_Tom_Sawyer,
         wd:Q326914 .
 
-<https://shao2011.github.io/Proj-SemWeb/resource/book/the-aeneid--96d03dce90f5fef3> owl:sameAs wd:Q138515883 .
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-aeneid--96d03dce90f5fef3> owl:sameAs dbr:Aeneid,
+        wd:Q60220 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-aeronaut-s-windlass--7065797e8729e002> owl:sameAs <http://dbpedia.org/resource/The_Aeronaut's_Windlass>,
         wd:Q23763106 .
@@ -12257,8 +12286,7 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-apprentice--9195685c11c3bddb> owl:sameAs dbr:The_Apprentice_\(Gerritsen_novel\),
         wd:Q1195764 .
 
-<https://shao2011.github.io/Proj-SemWeb/resource/book/the-architect-s-apprentice--a433435de406dbdd> owl:sameAs <http://dbpedia.org/resource/The_Architect's_Apprentice>,
-        wd:Q19612908 .
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-architect-s-apprentice--a433435de406dbdd> owl:sameAs wd:Q123357537 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-archived--2c67b29ae5e407fa> owl:sameAs wd:Q134517855 .
 
@@ -12739,6 +12767,9 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-broken-window--ffcfb98691b67e5f> owl:sameAs dbr:The_Broken_Window,
         wd:Q513696 .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-broken-wings--555cad1b1f6aba83> owl:sameAs dbr:Broken_Wings_\(Gibran_novel\),
+        wd:Q4165480 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-broker--bad0cef5ef83e8f3> owl:sameAs dbr:The_Broker,
         wd:Q922621 .
@@ -14279,6 +14310,9 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-greater-journey-americans-in-paris--a651bf95edfcb3a0> owl:sameAs dbr:The_Greater_Journey,
         wd:Q7738011 .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-greatest-generation--4efeaa73b8df9de1> owl:sameAs dbr:The_Greatest_Generation_\(book\),
+        wd:Q907541 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-greatest-salesman-in-the-world--405c922a37b0fd26> owl:sameAs dbr:The_Greatest_Salesman_in_the_World,
         wd:Q5233343 .
@@ -17282,6 +17316,9 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-sympathizer--93cdaa39ab204b7b> owl:sameAs dbr:The_Sympathizer,
         wd:Q21162257 .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-symposium--882612cea27bb976> owl:sameAs dbr:Symposium_\(Plato\),
+        wd:Q486727 .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-system-of-the-world--9d3e36853fa5196f> owl:sameAs dbr:The_System_of_the_World_\(novel\),
         wd:Q7767840 .
 
@@ -17437,6 +17474,9 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-three-pigs--1a839cfa76627e3a> owl:sameAs dbr:The_Three_Pigs,
         wd:Q3235857 .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-three-sisters--b9e0fd2b7bc66dbb> owl:sameAs dbr:Three_Sisters_\(play\),
+        wd:Q477823 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-three-stigmata-of-palmer-eldritch--fa159abb9537f2fd> owl:sameAs dbr:The_Three_Stigmata_of_Palmer_Eldritch,
         wd:Q1193211 .
@@ -17804,6 +17844,8 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-white-tiger--dda26cfb997e5716> owl:sameAs dbr:The_White_Tiger_\(Adiga_novel\),
         wd:Q2301826 .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-whole-brain-child-12-revolutionary-strategies-to-nurture-your--de48e26f4fcb6684> owl:sameAs wd:Q61114328 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-whole-truth--83eddee9bb68106a> owl:sameAs dbr:The_Whole_Truth_\(novel\),
         wd:Q2096819 .
@@ -39335,6 +39377,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/person/daniel-j-levitin--3c70e577c8231c2c> owl:sameAs dbr:Daniel_Levitin,
         wd:Q1981608 .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/person/daniel-j-siegel--56e1406d6aeb149d> owl:sameAs wd:Q90007759 .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/person/daniel-james-brown--9d7132539245d788> owl:sameAs dbr:Daniel_James_Brown,
         wd:Q17182698 .
 
@@ -41518,6 +41562,9 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/person/john-brunner--4afe0f3a684b29f9> owl:sameAs dbr:John_Brunner_\(author\),
         wd:Q378807 .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/person/john-buchan--d8d298c2828ed43d> owl:sameAs dbr:John_Buchan,
+        wd:Q333004 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/person/john-bunyan--45c3ee81ff3458e4> owl:sameAs dbr:John_Bunyan,
         wd:Q108206 .
@@ -44358,6 +44405,9 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/person/robert-r-mccammon--cd523cfd8c8607bb> owl:sameAs dbr:Robert_R._McCammon,
         wd:Q2598859 .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/person/robert-silverberg--e7be2aac309ee549> owl:sameAs dbr:Robert_Silverberg,
+        wd:Q314553 .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/person/robert-t-kiyosaki--985a2464afed86d0> owl:sameAs dbr:Robert_Kiyosaki,
         wd:Q311147 .
 
@@ -45336,6 +45386,9 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/person/tom-bissell--dd9e0514abb01ef8> owl:sameAs dbr:Tom_Bissell,
         wd:Q955912 .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/person/tom-brokaw--d470db7b1b9ad97d> owl:sameAs dbr:Tom_Brokaw,
+        wd:Q919527 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/person/tom-clancy--893d6cb9b094b751> owl:sameAs dbr:Tom_Clancy,
         wd:Q105167 .
@@ -47206,9 +47259,6 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/series/women-s-murder-club--c94fbd6869ca61c7> owl:sameAs <http://dbpedia.org/resource/Women's_Murder_Club_(novel_series)>,
         wd:Q16967812 .
-
-<https://shao2011.github.io/Proj-SemWeb/resource/series/wyman-ford--acd37ab5f0d67287> owl:sameAs dbr:Wyman_Ford,
-        wd:Q8039969 .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/series/xanth--4dd6571e0b0ff76f> owl:sameAs dbr:Xanth,
         wd:Q182099 .

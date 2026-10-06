@@ -2427,6 +2427,8 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/dragons-of-autumn-twilight--67646c78d0c534ee> books:firstPublishYear "1984"^^xsd:gYear .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/dragons-of-eden-speculations-on-the-evolution-of-human-intelligen--5b029aefad31f1b9> books:firstPublishYear "1977"^^xsd:gYear .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/dragons-of-spring-dawning--1c73d16ecd8d531f> books:firstPublishYear "1985"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/dragons-of-winter-night--25f10e65e017b4f2> books:firstPublishYear "1985"^^xsd:gYear .
@@ -3311,6 +3313,10 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/gold--302373af87bc5770> books:firstPublishYear "2012"^^xsd:gYear .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/gold-coast--c843c8076fbe717a> books:firstPublishYear "1990"^^xsd:gYear .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/golden-fool--1009824d9545486a> books:firstPublishYear "2002"^^xsd:gYear .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/golden-son--3a7beb88c028dc60> books:firstPublishYear "2015"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/goldfinger--0a82344cd2cf84d4> books:firstPublishYear "1959"^^xsd:gYear .
@@ -3526,6 +3532,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/hear-the-wind-sing--fb211cacf1fdb737> books:firstPublishYear "1979"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/heart-and-soul--50aa0a228489d4b6> books:firstPublishYear "2008"^^xsd:gYear .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/heart-of-a-dog--c648dca1909c7c86> books:firstPublishYear "1987"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/heart-of-darkness--b81251dd783eef1d> books:firstPublishYear "1899"^^xsd:gYear .
 
@@ -4101,6 +4109,8 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/island--67584360fb96da18> books:firstPublishYear "1962"^^xsd:gYear .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/island-beneath-the-sea--1255d56e4e372047> books:firstPublishYear "2009"^^xsd:gYear .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/island-of-the-blue-dolphins--70d6e0f4e117d04c> books:firstPublishYear "1960"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/island-of-the-sequined-love-nun--b3d0382e4fe89294> books:firstPublishYear "1997"^^xsd:gYear .
@@ -4635,6 +4645,8 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/lords-and-ladies--665b482021545e40> books:firstPublishYear "1992"^^xsd:gYear .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/lords-of-the-north--d7200a2c1dfe6265> books:firstPublishYear "2006"^^xsd:gYear .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/lorna-doone--097a70669ee99462> books:firstPublishYear "1869"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/loser--f9f8d72aaba70610> books:firstPublishYear "2002"^^xsd:gYear .
@@ -5091,6 +5103,8 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/mudbound--56d868d7ad94eee1> books:firstPublishYear "2008"^^xsd:gYear .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/murder-at-the-vicarage--420b6736c676cf06> books:firstPublishYear "1930"^^xsd:gYear .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/murder-in-mesopotamia--97a6cb13519aaec0> books:firstPublishYear "1936"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/murder-in-the-mews--d825c0246fd57de9> books:firstPublishYear "1937"^^xsd:gYear .
@@ -5291,7 +5305,7 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/night-watch--8ec78e8f1e96e52a> books:firstPublishYear "1998"^^xsd:gYear .
 
-<https://shao2011.github.io/Proj-SemWeb/resource/book/nightfall--20de3c7b4fd316ba> books:firstPublishYear "1941"^^xsd:gYear .
+<https://shao2011.github.io/Proj-SemWeb/resource/book/nightfall--20de3c7b4fd316ba> books:firstPublishYear "1990"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/nights-in-rodanthe--99a04bbff4825ec7> books:firstPublishYear "2002"^^xsd:gYear .
 
@@ -5514,6 +5528,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/one-of-us-is-next--d15acb765395996b> books:firstPublishYear "2020"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/one-piece-volume-1-romance-dawn--8e91cd1e86935ec4> books:firstPublishYear "1997"^^xsd:gYear .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/one-plus-one--91f639d2f2c5a592> books:firstPublishYear "2014"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/one-second-after--450fae6629430f61> books:firstPublishYear "2009"^^xsd:gYear .
 
@@ -7239,7 +7255,13 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-131-2-lives-of-captain-bluebear--bc1d0be776c83421> books:firstPublishYear "1999"^^xsd:gYear .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-17th-suspect--256413096bfa8d50> books:firstPublishYear "2018"^^xsd:gYear .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-19th-christmas--1ac6146e898cce63> books:firstPublishYear "2019"^^xsd:gYear .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-3-mistakes-of-my-life--8f7ce1ff1b0b042e> books:firstPublishYear "2008"^^xsd:gYear .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-39-steps--07c2f13ba1c44abe> books:firstPublishYear "1915"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-4-hour-body-an-uncommon-guide-to-rapid-fat-loss-incredible-se--9c3af096702b56a8> books:firstPublishYear "2010"^^xsd:gYear .
 
@@ -7348,6 +7370,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-anubis-gates--c6bdad66119d019b> books:firstPublishYear "1983"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-apprentice--9195685c11c3bddb> books:firstPublishYear "2002"^^xsd:gYear .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-architect-s-apprentice--a433435de406dbdd> books:firstPublishYear "2013"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-arrival--5c6b763a31af1d1f> books:firstPublishYear "2006"^^xsd:gYear .
 
@@ -8542,6 +8566,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-great-train-robbery--e766db05cd0511be> books:firstPublishYear "1975"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-greater-journey-americans-in-paris--a651bf95edfcb3a0> books:firstPublishYear "2011"^^xsd:gYear .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-greatest-generation--4efeaa73b8df9de1> books:firstPublishYear "1998"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-greatest-salesman-in-the-world--405c922a37b0fd26> books:firstPublishYear "1968"^^xsd:gYear .
 
@@ -10499,6 +10525,8 @@
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-three-pigs--1a839cfa76627e3a> books:firstPublishYear "2001"^^xsd:gYear .
 
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-three-sisters--b9e0fd2b7bc66dbb> books:firstPublishYear "1901"^^xsd:gYear .
+
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-three-stigmata-of-palmer-eldritch--fa159abb9537f2fd> books:firstPublishYear "1965"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-throne-of-fire--ca688c44966d9398> books:firstPublishYear "2011"^^xsd:gYear .
@@ -10724,6 +10752,8 @@
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-white-queen--ab99730e1ab39e0d> books:firstPublishYear "2009"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-white-tiger--dda26cfb997e5716> books:firstPublishYear "2008"^^xsd:gYear .
+
+<https://shao2011.github.io/Proj-SemWeb/resource/book/the-whole-brain-child-12-revolutionary-strategies-to-nurture-your--de48e26f4fcb6684> books:firstPublishYear "2011"^^xsd:gYear .
 
 <https://shao2011.github.io/Proj-SemWeb/resource/book/the-whole-truth--83eddee9bb68106a> books:firstPublishYear "2008"^^xsd:gYear .
 
