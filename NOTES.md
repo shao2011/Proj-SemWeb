@@ -109,15 +109,20 @@ Unmatched and rejected cases, with reasons, are in `linking/output/link_issues.j
 
 ## 7. SPARQL endpoint
 
-- `endpoint/load.sh` builds a TDB2 database with one named graph per source: ontology, data, inferred, links, enrichment and VoID metadata. That's 918,643 triples, loaded in 18 s.
+- `endpoint/load.sh` builds a TDB2 database with one named graph per source: ontology, data, inferred, links, enrichment and VoID metadata. That's 918,648 triples, loaded in 18 s.
 - `endpoint/run_fuseki.sh` starts Fuseki 6.2.0 at `http://localhost:3030/books/sparql`. It is read-only: updates and Graph Store writes return HTTP 405.
 - `endpoint/run_queries.py` runs the 11 competency questions in `endpoint/queries/`, and every one returns rows. CQ1 needs the inferred `writes`. CQ9 counts the links per kind and dataset. CQ11 is federated: it follows our `owl:sameAs` to Wikidata with `SERVICE` to get the authors' birth places, which takes a few seconds.
+
+## 8. Data dumps
+
+The generated Turtle files are not committed: they are rebuilt from the CSV in about 10 minutes, and every version would stay in git history (`books_data.ttl` is 54 MB, `inferred.ttl` 40 MB). They are attached, gzipped, to the GitHub release `data-v1` instead, one file per named graph, with SHA-256 checksums. `endpoint/void.ttl` lists them as `void:dataDump`, which covers the first star ("available on the web with an open license", 04_LOD p.16) and the best practice of describing the dataset with VoID (04_LOD p.17). Hao's Drive folder holds the older files from the original converter.
 
 ## Known gaps
 
 - 3,921 books (39%) still have no first-publication year. Wikidata has no P577 for them or they are unlinked, for example most Sandman volumes.
 - 2,972 books (30%) have no Wikidata link.
 - The URIs don't resolve yet (section 3): GitHub Pages is off and no files are generated for `/ontology` or `/resource/...`. `void:sparqlEndpoint` is `localhost`, so the endpoint is only reachable while we run it.
+- The repo is private, so the release files (section 8) can only be downloaded by collaborators until it is made public.
 
 ## Checks
 

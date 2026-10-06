@@ -10,6 +10,23 @@ Yêu cầu của thầy:
 
 Reasoning (HermiT check + OWL-RL inferences) is in `reasoning`. Why things are done this way: `NOTES.md`.
 
+## Download the data
+
+The generated RDF is not in git. It is attached to the GitHub release
+[`data-v1`](https://github.com/shao2011/Proj-SemWeb/releases/tag/data-v1), one file per named graph of the endpoint,
+with `SHA256SUMS`. To build the endpoint from it without running steps 3-4 (the release `ontology.ttl` and
+`void.ttl` are the same as in the repo):
+
+```bash
+gh release download data-v1 --repo shao2011/Proj-SemWeb --dir /tmp/dump && (cd /tmp/dump && sha256sum -c SHA256SUMS)
+mkdir -p pipeline/output reasoning/output
+gunzip -c /tmp/dump/books_data.ttl.gz > pipeline/output/books_data.ttl
+gunzip -c /tmp/dump/inferred.ttl.gz  > reasoning/output/inferred.ttl
+endpoint/load.sh && endpoint/run_fuseki.sh
+```
+
+A new data release needs a new tag, and the `void:dataDump` URLs in `endpoint/void.ttl` must follow it.
+
 ## Run everything
 
 Tools: Python 3.12 with `pipeline/requirements.txt`, Java 21, Apache Jena + Fuseki 6.x
@@ -34,7 +51,8 @@ $PY -m pytest -q pipeline/test_pipeline.py linking/test_linking.py
 ```
 
 `linking/output/` is committed, so the linker is optional. `endpoint/load.sh` still needs `pipeline/output/books_data.ttl`
-and `reasoning/output/inferred.ttl`, so run the pipeline and `materialize.py` first. Work still to do: `HANDOFF.md`.
+and `reasoning/output/inferred.ttl`: run the pipeline and `materialize.py`, or take them from the release (above).
+Work still to do: `HANDOFF.md`.
 
 ## Layout
 

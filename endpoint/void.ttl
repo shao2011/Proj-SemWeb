@@ -20,7 +20,12 @@
     void:vocabulary <https://shao2011.github.io/Proj-SemWeb/ontology#> , <https://schema.org/> ,
         <http://xmlns.com/foaf/0.1/> , <http://purl.org/dc/terms/> ;
     void:sparqlEndpoint <http://localhost:3030/books/sparql> ;
-    void:dataDump <https://github.com/shao2011/Proj-SemWeb> ;
+    # One dump per named graph of the endpoint, attached to the GitHub release `data-v1`.
+    void:dataDump <https://github.com/shao2011/Proj-SemWeb/releases/download/data-v1/ontology.ttl> ,
+        <https://github.com/shao2011/Proj-SemWeb/releases/download/data-v1/books_data.ttl.gz> ,
+        <https://github.com/shao2011/Proj-SemWeb/releases/download/data-v1/inferred.ttl.gz> ,
+        <https://github.com/shao2011/Proj-SemWeb/releases/download/data-v1/links.ttl.gz> ,
+        <https://github.com/shao2011/Proj-SemWeb/releases/download/data-v1/enrichment.ttl.gz> ;
     void:subset <https://shao2011.github.io/Proj-SemWeb/linkset/wikidata> ,
         <https://shao2011.github.io/Proj-SemWeb/linkset/dbpedia> ,
         <https://shao2011.github.io/Proj-SemWeb/linkset/openlibrary> .

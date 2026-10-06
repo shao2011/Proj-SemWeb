@@ -12,7 +12,8 @@ This branch (`top10k`) holds the whole project except the report, the slides and
 | `c4858da` | Your ideas ported: ISBN checksums, Wikidata editions by ISBN, publishers through editions, languages |
 | `ecb92bf` | Titles with or without "The/A/An", stricter tie-breaks, review sample re-checked |
 | `3da2d09` | Merge of your `main`, so the PR has no conflicts (section 3) |
-| last | Midnight Sun fix found through your output, this file |
+| `4bf83ba` | Midnight Sun fix found through your output, this file |
+| last | Data dumps as the GitHub release `data-v1`, `void:dataDump` points at them |
 
 ## 2. Your work compared with ours
 
@@ -81,7 +82,7 @@ This is the only course requirement still open. LOD principle 1 says a URI shoul
 
 ### 4.1 Make the repo public
 
-The repo is private, and GitHub Free serves Pages only from public repos. The dataset is CC BY-NC 4.0, so publishing derived data with attribution for a course is fine (the VoID file already credits Zenodo).
+The repo is private, and GitHub Free serves Pages only from public repos. Release files are private too: the data dumps in the release `data-v1` (`NOTES.md` section 8) download only for collaborators until the repo is public. The dataset is CC BY-NC 4.0, so publishing derived data with attribution for a course is fine (the VoID file already credits Zenodo).
 
 ### 4.2 Write `publish/build_pages.py`
 
@@ -95,7 +96,7 @@ Read `ontology.ttl`, `pipeline/output/books_data.ttl`, `reasoning/output/inferre
   - Each page shows the label and a table of the resource's outgoing triples. Objects that are our resources become relative links. `owl:sameAs` targets are shown as external links.
   - Include incoming links where useful (for example "editions of this book", "books by this person").
   - Put the same triples in `<script type="application/ld+json">`, so machines get RDF out of the HTML. Pages can't do content negotiation, so the HTML has to serve both.
-- **Root page:** `site/index.html` links to the ontology, the VoID description, the README, and a few example books.
+- **Root page:** `site/index.html` links to the ontology, the VoID description, the README, the data dumps (release `data-v1`), and a few example books.
 - **Jekyll:** add `site/.nojekyll`, otherwise Jekyll processes 77k files.
 - **Slugs:** some contain non-ASCII characters (`publisher/forum-bokförlag--...`). Test one such URL after deploying.
 
