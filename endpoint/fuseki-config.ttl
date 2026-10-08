@@ -1,0 +1,22 @@
+## Fuseki: read-only SPARQL endpoint at http://localhost:3030/books/sparql
+## over the TDB2 database built by endpoint/load.sh (one named graph per source).
+## The default graph is the union of all named graphs, so queries need no GRAPH clause.
+
+PREFIX fuseki: <http://jena.apache.org/fuseki#>
+PREFIX rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ja:     <http://jena.hpl.hp.com/2005/11/Assembler#>
+PREFIX tdb2:   <http://jena.apache.org/2016/tdb#>
+
+[] rdf:type fuseki:Server ;
+   fuseki:services ( <#service> ) .
+
+<#service> rdf:type fuseki:Service ;
+    fuseki:name "books" ;
+    fuseki:endpoint [ fuseki:operation fuseki:query ; fuseki:name "sparql" ] ;
+    fuseki:endpoint [ fuseki:operation fuseki:query ] ;
+    fuseki:endpoint [ fuseki:operation fuseki:gsp-r ; fuseki:name "get" ] ;
+    fuseki:dataset <#dataset> .
+
+<#dataset> rdf:type tdb2:DatasetTDB2 ;
+    tdb2:location "db" ;
+    tdb2:unionDefaultGraph true .

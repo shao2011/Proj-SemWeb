@@ -1,471 +1,287 @@
-"""Offline semantic and operational tests for the Wikidata-only production linker."""
-import json
-from pathlib import Path
+"""Offline tests for the linking rules (no network)."""
+
+from collections import Counter
 import sys
-from io import BytesIO
-from urllib.error import HTTPError
+from pathlib import Path
 
 import pytest
-from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import OWL, RDF, RDFS
+from rdflib import URIRef
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from core import BOOKS, Candidate, Local, LocalGraph, Store, config_digest, decide, diagnostics
-from external import ExternalError, HTTPClient, Wikidata, canonical_isbn, isbn_variants
-from external import API
-import external
-from link_books import export, load_config
-import link_books
-from matcher import Matcher, wikidata_context_eligible
+from link_books import (WD, BookRecord, Item, category, choose_edition, choose_language, choose_work,  # noqa: E402
+                        dbpedia_uri, entity, gyear, isbn10, isbn13, isbn_forms, language_names,
+                        link_editions, link_wikidata_editions, lookup_titles, one_to_one, same_name,
+                        same_publisher, title_variants, titles_compatible, wikidata_year, work_via_editions)
 
-CONFIG = load_config(Path(__file__).with_name("config.json"))
-
-
-def wd_entity(item, label, type_id, claims=None, aliases=None):
-    values = {"P31": [type_id]}
-    values.update(claims or {})
-    return {"id": item, "labels": {"en": {"value": label}},
-            "aliases": {"en": [{"value": x} for x in aliases or []]},
-            "claims": {prop: [{"mainsnak": {"datavalue": {"value": ({"id": x} if x.startswith("Q") else x)}}}
-                              for x in items] for prop, items in values.items()}}
+EDITION, NOVEL, SERIES, FILM = WD + "Q3331189", WD + "Q7725634", WD + "Q1667921", WD + "Q11424"
+MUSICAL, SERIALIZED = WD + "Q7777570", WD + "Q1347298"
+CLASSES = {EDITION: (False, False, True, False), NOVEL: (True, False, False, False),
+           SERIES: (True, True, False, False), FILM: (False, False, False, True),
+           MUSICAL: (False, False, False, True), SERIALIZED: (True, True, False, False)}
 
 
-def fixture(tmp_path, two_editions=False, translator=False):
-    g = Graph()
-    uri = lambda kind, n: URIRef(f"http://example.org/books/resource/{kind}/{n}")
-    book, edition, person, series = (uri("book", 1), uri("edition", 1), uri("person", 1), uri("series", 1))
-    publisher, language, place = (uri("publisher", 1), uri("language", 1), uri("place", 1))
-    for resource, cls, label in ((book, BOOKS.Book, "The Example Book"),
-                                 (edition, BOOKS.BookEdition, "The Example Book"),
-                                 (person, BOOKS.Person, "Alice Writer"),
-                                 (series, BOOKS.BookSeries, "Example Cycle"),
-                                 (publisher, BOOKS.Publisher, "Example Press"),
-                                 (language, BOOKS.Language, "English"),
-                                 (place, BOOKS.Place, "Springfield")):
-        g.add((resource, RDF.type, cls)); g.add((resource, RDFS.label, Literal(label)))
-    g.add((book, BOOKS.title, Literal("The Example Book")))
-    g.add((book, BOOKS.isWrittenBy, person)); g.add((book, BOOKS.hasEdition, edition))
-    g.add((book, BOOKS.isPartOfSeries, series)); g.add((book, BOOKS.setIn, place))
-    g.add((edition, BOOKS.isbn, Literal("9780439023481")))
-    g.add((edition, BOOKS.isPublishedBy, publisher)); g.add((edition, BOOKS.isInLanguage, language))
-    if two_editions:
-        other = uri("edition", 2)
-        g.add((other, RDF.type, BOOKS.BookEdition)); g.add((book, BOOKS.hasEdition, other))
-        g.add((other, BOOKS.isbn, Literal("9780060256654")))
-    if translator:
-        other = uri("person", 2)
-        g.add((other, RDF.type, BOOKS.Person)); g.add((other, RDFS.label, Literal("Terry Translator")))
-        g.add((edition, BOOKS.isTranslatedBy, other))
-    path = tmp_path / "source.ttl"
-    g.serialize(path, format="turtle")
-    return LocalGraph(path), path
+def book(title, *authors, ratings=100):
+    return BookRecord(URIRef("urn:book:" + title), title, ratings, None, [],
+                      [(URIRef("urn:person:" + a), a) for a in authors], [], [])
 
 
-class FakeWD:
-    def __init__(self):
-        self.data = {
-            "Q20": wd_entity("Q20", "The Example Book", "Q3331189", {"P212": ["9780439023481"], "P629": ["Q10"], "P123": ["Q50"]}),
-            "Q10": wd_entity("Q10", "The Example Book", "Q571", {"P50": ["Q30"], "P179": ["Q40"]}),
-            "Q30": wd_entity("Q30", "Alice Writer", "Q5", {"P106": ["Q49757"]}),
-            "Q40": wd_entity("Q40", "Example Cycle", "Q277759"),
-            "Q50": wd_entity("Q50", "Example Press", "Q2085381"),
-            "Q60": wd_entity("Q60", "English", "Q33742"),
-            "Q70": wd_entity("Q70", "Springfield", "Q515"),
-        }
-        self.lookup = {"9780439023481": {"Q20": {"P212"}}}
-        self.flags = {"Q20": {"edition": True, "publication": False},
-                      "Q10": {"edition": False, "publication": False}}
-        self.inverse = {}
-        self.search_map = {"English": ["Q60"], "Springfield": ["Q70"]}
-        self.calls = []
-        self.fail_search = False
-
-    def isbn_candidates(self, canonical, original10):
-        self.calls.append(("isbn", tuple(canonical), original10))
-        return {x: self.lookup.get(x, {}) for x in canonical}
-
-    def entities(self, ids):
-        self.calls.append(("entities", tuple(ids)))
-        return {x: self.data[x] for x in ids if x in self.data}
-
-    def edition_type_flags(self, ids):
-        self.calls.append(("flags", tuple(ids)))
-        return {x: self.flags.get(x, {"edition": False, "publication": False}) for x in ids}
-
-    def inverse_work_links(self, ids):
-        self.calls.append(("inverse", tuple(ids)))
-        return {x: set(self.inverse.get(x, set())) for x in ids}
-
-    def search(self, label, limit):
-        self.calls.append(("search", label))
-        if self.fail_search:
-            raise ExternalError("TRANSIENT_NETWORK_ERROR", "timeout")
-        return self.search_map.get(label, [])[:limit]
-
-    def labels(self, entity):
-        return [entity.get("labels", {}).get("en", {}).get("value", "")] + [
-            x["value"] for x in entity.get("aliases", {}).get("en", [])]
-
-    def types(self, entity, depth=2):
-        return {x["mainsnak"]["datavalue"]["value"]["id"] for x in entity.get("claims", {}).get("P31", [])}
+def item(label, cls, authors=(), sitelinks=0, works=(), description=None):
+    it = Item(labels={label}, classes={cls}, sitelinks=sitelinks, works=set(works), description=description)
+    for i, name in enumerate(authors): it.authors[WD + f"A{i}"].add(name)
+    return it
 
 
-def m(graph, wd=None, accepted=None, context=None):
-    return Matcher(graph, wd or FakeWD(), CONFIG, accepted or {}, context)
-
-
-def local(graph, target):
-    return next(iter(graph.entities[target].values()))
-
-
-def accepted(local_entity, item):
-    return {local_entity.uri: {"decision": "ACCEPTED", "candidate_id": item, "target_type": local_entity.target}}
-
-
-@pytest.mark.parametrize("raw,expected", [("0439023483", "9780439023481"), ("0439023484", ""),
-                                           ("097522980X", "9780975229804"),
-                                           ("9780439023481", "9780439023481"),
-                                           ("9780439023482", ""), ("2940016356938", ""),
-                                           ("0000195166000", ""), ("9791090636071", "9791090636071")])
-def test_checksum_and_prefix(raw, expected):
-    assert canonical_isbn(raw) == expected
-
-
-def test_exact_p212_and_p957_paths(tmp_path):
-    graph, _ = fixture(tmp_path)
-    edition = local(graph, "BookEdition")
-    wd = FakeWD()
-    row = m(graph, wd).edition(edition)
-    assert row["decision"] == "ACCEPTED" and row["reason_code"] == "EXACT_ISBN"
-    assert row["candidate_uri"] == "http://www.wikidata.org/entity/Q20"
-    assert row["candidates"][0]["evidence"]["matched_properties"] == ["P212"]
-    edition.data["isbn"] = "0439023483"
-    wd.lookup["9780439023481"] = {"Q20": {"P957"}}
-    row = m(graph, wd).edition(edition)
-    assert row["decision"] == "ACCEPTED"
-    assert row["candidates"][0]["evidence"]["matched_properties"] == ["P957"]
-    assert any(call[0] == "isbn" and call[2] == {"9780439023481": {"0439023483"}} for call in wd.calls)
-
-
-def test_invalid_isbn_and_not_found_no_text_fallback(tmp_path):
-    graph, _ = fixture(tmp_path)
-    edition = local(graph, "BookEdition")
-    wd = FakeWD()
-    edition.data["isbn"] = "0439023484"
-    row = m(graph, wd).edition(edition)
-    assert row["reason_code"] == "INVALID_ISBN" and wd.calls == []
-    edition.data["isbn"] = "9780439023481"
-    wd.lookup.clear()
-    row = m(graph, wd).edition(edition)
-    assert row["reason_code"] == "ISBN_NOT_FOUND"
-    assert not any(call[0] == "search" for call in wd.calls)
-
-
-def test_multiple_isbn_candidates_wrong_type_and_title_contradiction(tmp_path):
-    graph, _ = fixture(tmp_path)
-    edition = local(graph, "BookEdition")
-    wd = FakeWD()
-    wd.data["Q21"] = wd_entity("Q21", "The Example Book", "Q3331189")
-    wd.flags["Q21"] = {"edition": True, "publication": False}
-    wd.lookup[edition.data["isbn"]]["Q21"] = {"P212"}
-    assert m(graph, wd).edition(edition)["reason_code"] == "MULTIPLE_ISBN_CANDIDATES"
-    wd.lookup[edition.data["isbn"]] = {"Q21": {"P212"}}
-    wd.flags["Q21"] = {"edition": False, "publication": False}
-    assert m(graph, wd).edition(edition)["reason_code"] == "WRONG_ENTITY_TYPE"
-    wd.flags["Q21"] = {"edition": True, "publication": False}
-    wd.data["Q21"]["labels"]["en"]["value"] = "An Unrelated Atlas"
-    assert m(graph, wd).edition(edition)["reason_code"] == "TITLE_CONTRADICTION"
-
-
-def test_external_isbn_lookup_rechecks_returned_checksum():
-    class FakeHTTP:
-        def __init__(self): self.calls = []
-        def post(self, url, params):
-            self.calls.append(params["query"])
-            return {"results": {"bindings": [{"item": {"value": "http://www.wikidata.org/entity/Q1"},
-                                                 "isbn": {"value": "9780439023482"}}]}}
-    wd = Wikidata(FakeHTTP())
-    assert wd.isbn_candidates(["9780439023481"], {}) == {"9780439023481": {}}
-    assert "P212" in wd.http.calls[0]
-    assert "978-0-439-02348-1" in isbn_variants("9780439023481")
-
-
-def test_structured_p957_lookup_uses_original_valid_isbn10():
-    class FakeHTTP:
-        def __init__(self): self.queries = []
-        def post(self, url, params):
-            query = params["query"]
-            self.queries.append(query)
-            rows = [{"item": {"value": "http://www.wikidata.org/entity/Q20"},
-                     "isbn": {"value": "0-439-02348-3"}}] if "/P957>" in query else []
-            return {"results": {"bindings": rows}}
-    http = FakeHTTP()
-    result = Wikidata(http).isbn_candidates(["9780439023481"], {"9780439023481": {"0439023483"}})
-    assert result == {"9780439023481": {"Q20": {"P957"}}}
-    assert any("/P957>" in query for query in http.queries)
-
-
-def test_book_p629_and_inverse_p747(tmp_path):
-    graph, _ = fixture(tmp_path)
-    book, edition = local(graph, "Book"), local(graph, "BookEdition")
-    wd = FakeWD()
-    row = m(graph, wd, accepted(edition, "Q20")).book(book)
-    assert row["decision"] == "ACCEPTED" and row["reason_code"] == "EDITION_ANCHORED_WORK"
-    assert row["candidate_id"] == "Q10"
-    wd.data["Q20"]["claims"].pop("P629")
-    wd.inverse["Q20"] = {"Q10"}
-    inverse = m(graph, wd, accepted(edition, "Q20")).book(book)
-    assert inverse["decision"] == "ACCEPTED"
-    assert inverse["candidates"][0]["evidence"]["edition_paths"][0]["properties"] == ["inverse_P747"]
-    wd.inverse.clear()
-    assert m(graph, wd, accepted(edition, "Q20")).book(book)["reason_code"] == "EDITION_FOUND_NO_WORK"
-
-
-def test_conflicting_work_and_abstraction(tmp_path):
-    graph, _ = fixture(tmp_path, two_editions=True)
-    book = local(graph, "Book")
-    editions = list(graph.entities["BookEdition"].values())
-    wd = FakeWD()
-    wd.data["Q21"] = wd_entity("Q21", "The Example Book", "Q3331189", {"P629": ["Q11"]})
-    wd.data["Q11"] = wd_entity("Q11", "The Example Book", "Q571")
-    wd.flags["Q11"] = {"edition": False, "publication": False}
-    anchors = {editions[0].uri: {"decision": "ACCEPTED", "candidate_id": "Q20"},
-               editions[1].uri: {"decision": "ACCEPTED", "candidate_id": "Q21"}}
-    assert m(graph, wd, anchors).book(book)["reason_code"] == "INCOMPATIBLE_EDITION_WORKS"
-    wd.flags["Q10"] = {"edition": True, "publication": False}
-    assert m(graph, wd, {editions[0].uri: anchors[editions[0].uri]}).book(book)["reason_code"] == "ABSTRACTION_LEVEL_MISMATCH"
-
-
-def test_person_direct_p50_no_name_search_and_non_author_policy(tmp_path):
-    graph, _ = fixture(tmp_path, translator=True)
-    book, person = local(graph, "Book"), next(x for x in graph.entities["Person"].values() if "author" in x.data["roles"])
-    translator = next(x for x in graph.entities["Person"].values() if "translator" in x.data["roles"])
-    wd = FakeWD()
-    early = m(graph, wd).wikidata(person)
-    assert early["reason_code"] == "INSUFFICIENT_CONTEXT" and early["network_attempted"] is False and wd.calls == []
-    anchors = accepted(book, "Q10")
-    assert wikidata_context_eligible(person, anchors)
-    row = m(graph, wd, anchors).wikidata(person)
-    assert row["decision"] == "ACCEPTED" and row["reason_code"] == "DIRECT_P50_CONTEXT"
-    assert not any(call[0] == "search" for call in wd.calls)
-    wd.calls.clear()
-    pure = m(graph, wd, anchors).wikidata(translator)
-    assert pure["reason_code"] == "INSUFFICIENT_CONTEXT" and wd.calls == []
-    person.data["roles"] = ["author", "editor"]
-    assert m(graph, wd, anchors).wikidata(person)["decision"] == "ACCEPTED"
-    wd.data["Q10"]["claims"].pop("P50")
-    assert m(graph, wd, anchors).wikidata(person)["reason_code"] == "INSUFFICIENT_CONTEXT"
-
-
-@pytest.mark.parametrize("occupation,decision,reason", [
-    ("Q36180", "ACCEPTED", "DIRECT_P50_CONTEXT"),
-    ("Q250867", "NO_MATCH", "ROLE_CONTRADICTION"),
+@pytest.mark.parametrize("ours,theirs,expected", [
+    ("J.K. Rowling", "Joanne Rowling", True),          # initial vs full given name
+    ("J.R.R. Tolkien", "J. R. R. Tolkien", True),
+    ("Antoine de Saint-Exupéry", "Antoine de Saint-Exupery", True),
+    ("Gabriel García Márquez", "Gabriel Garcia Marquez", True),
+    ("Homer", "Homer", True),
+    ("Jack Thorne", "John Thorne", False),             # same surname, different person
+    ("Rowling", "J.K. Rowling", False),                # surname alone is not enough
+    ("Stephen King", "Stephen Fry", False),
 ])
-def test_author_occupation_qid_requires_actual_writer_occupation(tmp_path, occupation, decision, reason):
-    graph, _ = fixture(tmp_path)
-    book, person = local(graph, "Book"), local(graph, "Person")
-    wd = FakeWD()
-    wd.data["Q30"] = wd_entity("Q30", "Alice Writer", "Q5", {"P106": [occupation]})
-
-    row = m(graph, wd, accepted(book, "Q10")).wikidata(person)
-
-    assert row["decision"] == decision
-    assert row["reason_code"] == reason
-    assert ("ROLE_CONTRADICTION" in row["hard_conflicts"]) == (occupation == "Q250867")
-    assert row["candidates"][0]["feature_scores"]["role"] == (100 if occupation == "Q36180" else 0)
-    assert not any(call[0] == "search" for call in wd.calls)
+def test_same_name(ours, theirs, expected):
+    assert same_name(ours, theirs) is expected
 
 
-def test_explicit_direct_context_conflicts_veto_candidate(tmp_path):
-    graph, _ = fixture(tmp_path)
-    book, person = local(graph, "Book"), local(graph, "Person")
-    wd = FakeWD()
-    wd.data["Q11"] = wd_entity("Q11", "Other Work", "Q571", {"P50": ["Q31"]})
-    other_uri = "http://example.org/books/resource/book/other"
-    person.data["books"].append(other_uri)
-    anchors = accepted(book, "Q10")
-    anchors[other_uri] = {"decision": "ACCEPTED", "candidate_id": "Q11", "target_type": "Book"}
-    row = m(graph, wd, anchors).wikidata(person)
-    assert row["reason_code"] == "CONTEXT_CONTRADICTION"
-    assert row["candidates"][0]["evidence"]["contradictory_anchor_qids"] == ["Q11"]
+def test_title_variants_drop_subtitles_but_not_parts():
+    assert title_variants("Getting Things Done: The Art of Stress-Free Productivity")[-1] == "Getting Things Done"
+    assert title_variants("Deathless (Leningrad Diptych, #1)")[-1] == "Deathless"
+    assert title_variants("Twilight: The Graphic Novel, Vol. 1") == ["Twilight: The Graphic Novel, Vol. 1"]
+    assert title_variants("Harry Potter and the Order of the Phoenix (Harry Potter, #5, Part 1)") == [
+        "Harry Potter and the Order of the Phoenix (Harry Potter, #5, Part 1)"]
 
 
-def test_series_direct_p179_ambiguity_and_wrong_type(tmp_path):
-    graph, _ = fixture(tmp_path)
-    book, series = local(graph, "Book"), local(graph, "BookSeries")
-    wd = FakeWD()
-    assert m(graph, wd).wikidata(series)["reason_code"] == "INSUFFICIENT_CONTEXT" and wd.calls == []
-    anchors = accepted(book, "Q10")
-    assert m(graph, wd, anchors).wikidata(series)["reason_code"] == "DIRECT_P179_CONTEXT"
-    wd.data["Q10"]["claims"].pop("P179")
-    assert m(graph, wd, anchors).wikidata(series)["reason_code"] == "INSUFFICIENT_CONTEXT"
-    wd.data["Q10"]["claims"]["P179"] = wd_entity("Q", "", "", {"P179": ["Q40", "Q41"]})["claims"]["P179"]
-    wd.data["Q41"] = wd_entity("Q41", "Example Cycle", "Q277759")
-    assert m(graph, wd, anchors).wikidata(series)["reason_code"] == "INSUFFICIENT_MARGIN"
-    wd.data["Q40"]["claims"]["P31"] = wd_entity("Q", "", "Q5")["claims"]["P31"]
-    assert m(graph, wd, anchors).wikidata(series)["candidate_id"] == "Q41"
-    wd.data["Q41"]["claims"]["P31"] = wd_entity("Q", "", "Q5")["claims"]["P31"]
-    assert m(graph, wd, anchors).wikidata(series)["reason_code"] == "WRONG_ENTITY_TYPE"
+def test_goodreads_id_wins_and_editions_resolve_to_their_work():
+    items = {WD + "E1": item("Dune", EDITION, works=[WD + "W1"]), WD + "W1": item("Dune", NOVEL, ["Frank Herbert"]),
+             WD + "W2": item("Dune", NOVEL, ["Frank Herbert"], sitelinks=50)}
+    assert choose_work(book("Dune", "Frank Herbert"), [WD + "E1"], {WD + "W2"}, items, CLASSES) == (
+        WD + "W1", "goodreads-id")
 
 
-def test_structured_candidate_limit_rejects_before_candidate_fetch(tmp_path):
-    graph, _ = fixture(tmp_path)
-    book, series = local(graph, "Book"), local(graph, "BookSeries")
-    wd = FakeWD()
-    wd.data["Q10"]["claims"]["P179"] = wd_entity(
-        "Q", "", "", {"P179": [f"Q{x}" for x in range(100, 111)]})["claims"]["P179"]
-    result = m(graph, wd, accepted(book, "Q10")).wikidata(series)
-    assert result["reason_code"] == "AMBIGUOUS_CANDIDATES"
-    assert not any(call[0] == "entities" and "Q100" in call[1] for call in wd.calls)
+def test_title_match_requires_author_and_rejects_films_and_series():
+    items = {WD + "F": item("The Kite Runner", FILM, ["Khaled Hosseini"], sitelinks=80),
+             WD + "S": item("The Kite Runner", SERIES, ["Khaled Hosseini"]),
+             WD + "X": item("The Kite Runner", NOVEL, ["Someone Else"]),
+             WD + "N": item("The Kite Runner", NOVEL, ["Khaled Hosseini"], sitelinks=60)}
+    assert choose_work(book("The Kite Runner", "Khaled Hosseini"), [], set(items), items, CLASSES) == (
+        WD + "N", "title+author")
 
 
-def test_publisher_direct_p123_and_parent_conflict(tmp_path):
-    graph, _ = fixture(tmp_path)
-    edition, publisher = local(graph, "BookEdition"), local(graph, "Publisher")
-    wd = FakeWD()
-    assert m(graph, wd).wikidata(publisher)["reason_code"] == "INSUFFICIENT_CONTEXT" and wd.calls == []
-    anchors = accepted(edition, "Q20")
-    assert m(graph, wd, anchors).wikidata(publisher)["reason_code"] == "DIRECT_P123_CONTEXT"
-    wd.data["Q20"]["claims"].pop("P123")
-    assert m(graph, wd, anchors).wikidata(publisher)["reason_code"] == "INSUFFICIENT_CONTEXT"
-    wd.data["Q20"]["claims"]["P123"] = wd_entity("Q", "", "", {"P123": ["Q50"]})["claims"]["P123"]
-    wd.data["Q51"] = wd_entity("Q51", "Example Press", "Q2085381")
-    wd.data["Q50"]["claims"]["P749"] = wd_entity("Q", "", "", {"P749": ["Q51"]})["claims"]["P749"]
-    assert m(graph, wd, anchors).wikidata(publisher)["reason_code"] == "PUBLISHER_RELATED_ENTITY_CONFLICT"
+def test_description_fallback_when_wikidata_has_no_author():
+    items = {WD + "N": item("Kim", NOVEL, description="1901 novel by Rudyard Kipling")}
+    assert choose_work(book("Kim", "Rudyard Kipling"), [], {WD + "N"}, items, CLASSES) == (
+        WD + "N", "title+description")
 
 
-def test_language_place_remain_search_based_and_conservative(tmp_path):
-    graph, _ = fixture(tmp_path)
-    wd = FakeWD()
-    assert m(graph, wd).wikidata(local(graph, "Language"))["decision"] == "ACCEPTED"
-    place = local(graph, "Place")
-    assert m(graph, wd).wikidata(place)["decision"] == "ACCEPTED"
-    wd.data["Q71"] = wd_entity("Q71", "Springfield", "Q515")
-    wd.search_map["Springfield"] = ["Q70", "Q71"]
-    assert m(graph, wd).wikidata(place)["decision"] == "NO_MATCH"
-    assert any(call[0] == "search" for call in wd.calls)
+def test_several_works_need_a_clear_sitelink_winner():
+    clear = {WD + "A": item("Hamlet", NOVEL, ["William Shakespeare"], sitelinks=140),
+             WD + "B": item("Hamlet", NOVEL, ["William Shakespeare"], sitelinks=1)}
+    assert choose_work(book("Hamlet", "William Shakespeare"), [], set(clear), clear, CLASSES) == (
+        WD + "A", "title+author+sitelinks")
+    close = {WD + "A": item("Gone", NOVEL, ["Michael Grant"], sitelinks=2),
+             WD + "B": item("Gone", NOVEL, ["Michael Grant"], sitelinks=0)}
+    assert choose_work(book("Gone", "Michael Grant"), [], set(close), close, CLASSES) == (None, "ambiguous")
 
 
-def test_text_search_qids_are_enriched_in_batch_and_errors_remain_operational(tmp_path):
-    graph, _ = fixture(tmp_path)
-    first = local(graph, "Language")
-    second = Local("http://example.org/books/resource/language/second", "Language", "French")
-    wd = FakeWD()
-    wd.data["Q61"] = wd_entity("Q61", "French", "Q33742")
-    wd.search_map["French"] = ["Q61"]
-    context = {"entities": {}, "edition_type_flags": {}, "inverse_links": {},
-               "isbn_matches": {}, "text_search_ids": {}, "errors": {}}
-    link_books.prefetch_text_candidates(wd, [first, second], CONFIG, context)
-    assert ("entities", ("Q60", "Q61")) in wd.calls
-    assert m(graph, wd, context=context).wikidata(first)["decision"] == "ACCEPTED"
-    assert m(graph, wd, context=context).wikidata(second)["decision"] == "ACCEPTED"
-    assert sum(call[0] == "search" for call in wd.calls) == 2
-    broken = FakeWD(); broken.fail_search = True
-    failure_context = {"entities": {}, "edition_type_flags": {}, "inverse_links": {},
-                       "isbn_matches": {}, "text_search_ids": {}, "errors": {}}
-    link_books.prefetch_text_candidates(broken, [first], CONFIG, failure_context)
-    with pytest.raises(ExternalError):
-        m(graph, broken, context=failure_context).wikidata(first)
+def test_one_to_one_never_maps_two_local_resources_to_one_target():
+    votes = {"novel": Counter({"Q1": 1}), "graphic": Counter({"Q1": 1}), "tie": Counter({"Q2": 1, "Q3": 1})}
+    chosen, issues = one_to_one(votes, {"novel": 5000, "graphic": 40})
+    assert chosen == {"novel": "Q1"}
+    assert {(i["local"], i["reason"]) for i in issues} == {("graphic", "shares_target"), ("tie", "conflicting_targets")}
 
 
-def test_operational_error_is_not_no_match(tmp_path):
-    graph, _ = fixture(tmp_path)
-    wd = FakeWD(); wd.fail_search = True
-    with pytest.raises(ExternalError) as failure:
-        m(graph, wd).wikidata(local(graph, "Place"))
-    assert failure.value.code == "TRANSIENT_NETWORK_ERROR"
-    store = Store(tmp_path / "state.sqlite3")
-    store.save_error("scope", local(graph, "Place").uri, failure.value.code, str(failure.value))
-    assert len(store.errors("scope")) == 1 and not store.results("scope")
+def test_dbpedia_uri_matches_dbpedia_iri_form():
+    assert dbpedia_uri("https://en.wikipedia.org/wiki/Harry_Potter_and_the_Philosopher%27s_Stone") == \
+        "http://dbpedia.org/resource/Harry_Potter_and_the_Philosopher's_Stone"
+    assert dbpedia_uri("https://en.wikipedia.org/wiki/Antoine_de_Saint-Exup%C3%A9ry") == \
+        "http://dbpedia.org/resource/Antoine_de_Saint-Exupéry"
+    assert dbpedia_uri("https://en.wikipedia.org/wiki/What_If%3F_(book)") == \
+        "http://dbpedia.org/resource/What_If%3F_(book)"
 
 
-def test_cache_resume_and_wikidata_only_export(tmp_path):
-    graph, path = fixture(tmp_path)
-    store = Store(tmp_path / "state.sqlite3")
-    row = m(graph).edition(local(graph, "BookEdition"))
-    store.save_decision("scope", row["local_uri"], config_digest(CONFIG), row)
-    assert Store(tmp_path / "state.sqlite3").decision("scope", row["local_uri"], config_digest(CONFIG)) == row
-    original = path.read_bytes()
-    export([row], path, tmp_path / "out")
-    assert path.read_bytes() == original
-    final = Graph().parse(tmp_path / "out/books_5star.ttl", format="turtle")
-    links = list(final.triples((None, OWL.sameAs, None)))
-    assert len(links) == 1 and str(links[0][2]).startswith("http://www.wikidata.org/entity/Q")
+def test_wikidata_year_and_edition_titles():
+    assert wikidata_year("1997-06-26T00:00:00Z") == 1997
+    assert wikidata_year("-0750-01-01T00:00:00Z") == -750
+    # BCE works (Plato, Sun Tzu) must still give a valid xsd:gYear: sign plus four digits.
+    assert [str(gyear(y)) for y in (-750, -5, 1, 1997)] == ["-0750", "-0005", "0001", "1997"]
+    assert wikidata_year("http://www.wikidata.org/.well-known/genid/abc") is None
+    assert titles_compatible("The Hunger Games", "The Hunger Games")
+    assert titles_compatible("Dune", "Dune (Dune Chronicles #1)")
+    assert not titles_compatible("The Hunger Games", "Catching Fire")
 
 
-def test_mock_sample_freeze_and_small_full_export(tmp_path, monkeypatch):
-    graph, path = fixture(tmp_path)
-    config = json.loads(json.dumps(CONFIG))
-    config["sample_counts"] = {k: 1 for k in config["sample_counts"]}
-    config["sample_anchor_isbns"] = []
-    config_path = tmp_path / "config.json"; config_path.write_text(json.dumps(config))
-    wd = FakeWD()
-    monkeypatch.setattr(link_books, "Wikidata", lambda http: wd)
-    class Args:
-        command = "sample"; input = path; output = tmp_path / "output"; config = config_path
-        frozen = tmp_path / "output/frozen_config.json"
-    assert link_books.run(Args) == 0
-    report = json.loads((Args.output / "sample/diagnostics.json").read_text())
-    assert report["complete"] and report["openlibrary_requests"] == 0
-    assert report["trusted_anchors"]["EXACT_ISBN"] == 1
-    assert report["trusted_anchors"]["EDITION_ANCHORED_WORK"] == 1
-    link_books.freeze(Args)
-    Args.command = "full"
-    assert link_books.run(Args) == 0
-    final = Graph().parse(Args.output / "full/books_5star.ttl", format="turtle")
-    assert set(graph.graph) <= set(final)
-    assert all(str(obj).startswith("http://www.wikidata.org/entity/Q")
-               for _, _, obj in final.triples((None, OWL.sameAs, None)))
-    assert len(list(final.triples((None, OWL.sameAs, None)))) == 7
+def test_unknown_value_placeholders_are_not_items():
+    genid = {"x": {"type": "uri", "value": "http://www.wikidata.org/.well-known/genid/be449f3c21954e7d"}}
+    assert entity(genid, "x") is None
+    assert entity({"x": {"type": "uri", "value": WD + "Q42"}}, "x") == WD + "Q42"
 
 
-def test_regression_anchor_contracts_from_isbn_experiment(tmp_path):
-    graph, _ = fixture(tmp_path)
-    edition = local(graph, "BookEdition")
-    book = local(graph, "Book")
-    wd = FakeWD()
-    for isbn, (edition_qid, work_qid) in link_books.POSITIVE_ANCHORS.items():
-        wd.data[edition_qid] = wd_entity(edition_qid, "The Example Book", "Q3331189", {"P629": [work_qid]})
-        wd.data[work_qid] = wd_entity(work_qid, "The Example Book", "Q571", {"P50": ["Q30"]})
-        wd.flags[edition_qid] = {"edition": True, "publication": False}
-        wd.flags[work_qid] = {"edition": False, "publication": False}
-        wd.lookup[isbn] = {edition_qid: {"P212"}}
-        edition.data["isbn"] = isbn
-        row = m(graph, wd).edition(edition)
-        assert row["candidate_id"] == edition_qid
-        assert m(graph, wd, accepted(edition, edition_qid)).book(book)["candidate_id"] == work_qid
-    assert set(link_books.NEGATIVE_ANCHORS) == {"9781401215811", "9780226468013", "9780674996274"}
+def test_goodreads_id_is_rejected_when_wikidata_names_another_author():
+    # Real case: Wikidata gave Kaye Gibbons' Goodreads ID to Zaynab Alkali's "The Virtuous Woman".
+    items = {WD + "W": item("The Virtuous Woman", NOVEL, ["Zaynab Alkali"]),
+             WD + "N": item("A Virtuous Woman", NOVEL, ["Kaye Gibbons"])}
+    assert choose_work(book("A Virtuous Woman", "Kaye Gibbons"), [WD + "W"], {WD + "N"}, items, CLASSES) == (
+        WD + "N", "title+author")
 
 
-def test_no_openlibrary_production_reference():
-    root = Path(__file__).resolve().parent
-    for name in ("matcher.py", "external.py", "link_books.py", "config.json"):
-        text = (root / name).read_text(encoding="utf-8").lower()
-        assert "openlibrary.org" not in text and "p648" not in text
+def test_match_through_shortened_title_is_marked():
+    items = {WD + "B": item("Batman", NOVEL, ["Frank Miller"], sitelinks=90)}
+    assert choose_work(book("Batman: Year One", "Frank Miller"), [], {WD + "B"}, items, CLASSES) == (
+        WD + "B", "title+author+short-title")
 
 
-def test_production_http_rejects_unapproved_endpoint_before_network(tmp_path):
-    http = HTTPClient(Store(tmp_path / "cache.sqlite3"), CONFIG, "contact@example.org")
-    with pytest.raises(ExternalError) as error:
-        http.get("https://example.invalid/api", {})
-    assert error.value.code == "UNAPPROVED_ENDPOINT"
-    assert http.network_requests == 0 and http.network_hosts == {}
+def test_edition_title_rules():
+    assert titles_compatible("The Love Verb", "Love Verb")
+    assert not titles_compatible("The Wall", "The Walls of Troy and Other Stories")
+    assert not titles_compatible("The Morganville Vampires, Volume 1", "The Morganville Vampires Volume 2")
+    assert titles_compatible("Saga, Vol. 2", "Saga")  # Open Library title without the volume
+    assert titles_compatible("Catch-22", "Catch-22 (50th Anniversary Edition)")
+    assert titles_compatible("Bleach, Volume 02", "Bleach, Volume 2")
+    assert titles_compatible("The 13½ Lives of Captain Bluebear", "The 13 1/2 lives of Captain Bluebear")
+    assert not titles_compatible("Akira, Vol. 1", "Akira, Vol. 4")
 
 
-def test_http_429_retry_and_successful_response_cache(tmp_path, monkeypatch):
-    config = json.loads(json.dumps(CONFIG))
-    config["http"]["wikidata_interval_seconds"] = 0
-    attempts = []
-    def fake_urlopen(request, timeout):
-        attempts.append(request.full_url)
-        if len(attempts) == 1:
-            raise HTTPError(request.full_url, 429, "rate limited", {"Retry-After": "0"}, None)
-        return BytesIO(b'{"search": []}')
-    monkeypatch.setattr(external, "urlopen", fake_urlopen)
-    store = Store(tmp_path / "cache.sqlite3")
-    http = HTTPClient(store, config, "contact@example.org")
-    assert http.get(API, {"action": "wbsearchentities"}) == {"search": []}
-    assert http.network_requests == 2
-    cached = HTTPClient(Store(tmp_path / "cache.sqlite3"), config)
-    assert cached.get(API, {"action": "wbsearchentities"}) == {"search": []}
-    assert cached.network_requests == 0 and cached.cache_hits == 1
+@pytest.mark.parametrize("classes,expected", [
+    ({SERIES, NOVEL}, "series"),        # "A Court of Thorns and Roses" series item is also typed literary work
+    ({MUSICAL, NOVEL}, "other"),        # stage musical with a book credit
+    ({SERIALIZED, NOVEL}, "work"),      # Dickens-style novel published in parts
+    ({EDITION, NOVEL}, "edition"),
+    ({FILM}, "other"),
+])
+def test_category_precedence(classes, expected):
+    it = Item(classes=set(classes))
+    assert category(it, CLASSES) == expected
+
+
+def test_open_library_record_shared_by_two_editions_links_neither():
+    # Real cases: Goodreads lists Wolf Hall twice with one ISBN; Open Library answers the ISBNs of
+    # Transmetropolitan vol. 1 and vol. 2 with one record titled "Transmetropolitan".
+    isbn_of = {"wolf-a": ("9780312429980", "Wolf Hall"), "wolf-b": ("9780312429980", "Wolf Hall"),
+               "tm-1": ("9781563894459", "Transmetropolitan, Vol. 1: Back on the Street"),
+               "tm-2": ("9781563894817", "Transmetropolitan, Vol. 2: Lust for Life"),
+               "dune": ("9780441013593", "Dune")}
+    ol = {"9780312429980": {"key": "/books/OL1M", "title": "Wolf Hall"},
+          "9781563894459": {"key": "/books/OL2M", "title": "Transmetropolitan"},
+          "9781563894817": {"key": "/books/OL2M", "title": "Transmetropolitan"},
+          "9780441013593": {"key": "/books/OL3M", "title": "Dune"}}
+    links, issues = link_editions(isbn_of, ol)
+    assert links == {"dune": "https://openlibrary.org/books/OL3M"}
+    assert sorted((i["edition"], i["reason"]) for i in issues) == [
+        ("tm-1", "shared_target"), ("tm-2", "shared_target"),
+        ("wolf-a", "shared_target"), ("wolf-b", "shared_target")]
+
+
+@pytest.mark.parametrize("raw,expected", [
+    ("9780439023481", "9780439023481"),
+    ("978-0-439-02348-1", "9780439023481"),
+    ("0439023483", "9780439023481"),        # ISBN-10 is converted
+    ("080442957X", "9780804429573"),        # ISBN-10 with check digit X
+    ("9780439023482", None),                # wrong check digit
+    ("2940012345678", None),                # Barnes & Noble ebook EAN, not an ISBN
+    ("9999999999999", None),                # placeholder
+    ("", None),
+])
+def test_isbn13_validates_checksums(raw, expected):
+    assert isbn13(raw) == expected
+
+
+def test_isbn_forms_cover_wikidata_hyphenation():
+    assert isbn10("9780439023481") == "0439023483"
+    assert isbn10("9791032305690") is None   # 979 ISBNs have no ISBN-10
+    assert {"9780439023481", "978-0-439-02348-1"} <= isbn_forms("9780439023481")
+    assert "0-14-242417-X" in isbn_forms("014242417X")
+
+
+@pytest.mark.parametrize("ours,theirs,expected", [
+    ("Avon", "Avon Books", True),
+    ("BALLANTINE BOOKS", "Ballantine Books", True),
+    ("Little, Brown and Company", "Little, Brown", True),
+    ("Tor Books", "Tor", True),
+    ("Scholastic Press", "Scholastic Corporation", False),  # imprint vs parent company
+    ("Penguin Books", "Penguin Group", False),
+    ("Books", "Book", False),                               # nothing left to compare
+])
+def test_same_publisher(ours, theirs, expected):
+    assert same_publisher(ours, theirs) is expected
+
+
+def test_language_names_and_choice():
+    assert language_names("Bokmål, Norwegian; Norwegian Bokmål") == ["Bokmål, Norwegian", "Norwegian Bokmål"]
+    hits = {"English": {"label": {WD + "Q1860"}}, "Norwegian Bokmål": {"label": {WD + "Q25167"}},
+            "Filipino": {"alias": {WD + "Q33298"}}, "Kurdish": {"label": {WD + "Q36368", WD + "Q9"}}}
+    assert choose_language("English", hits) == (WD + "Q1860", "iso639-label")
+    assert choose_language("Bokmål, Norwegian; Norwegian Bokmål", hits) == (WD + "Q25167", "iso639-label")
+    assert choose_language("Filipino; Pilipino", hits) == (WD + "Q33298", "iso639-alias")
+    assert choose_language("Kurdish", hits) == (None, "ambiguous")
+    assert choose_language("Duala", hits) == (None, "no_candidate")
+
+
+def test_wikidata_edition_needs_edition_type_and_title():
+    items = {WD + "E1": item("The Hunger Games", EDITION), WD + "E2": item("Catching Fire", EDITION),
+             WD + "W": item("The Hunger Games", NOVEL), WD + "E3": item("The Hunger Games", EDITION)}
+    assert choose_edition("The Hunger Games", {WD + "E1", WD + "E2"}, items, CLASSES) == (WD + "E1", "isbn+title")
+    assert choose_edition("The Hunger Games", {WD + "W"}, items, CLASSES) == (None, "not_an_edition")
+    assert choose_edition("The Hunger Games", {WD + "E2"}, items, CLASSES) == (None, "title_mismatch")
+    assert choose_edition("The Hunger Games", {WD + "E1", WD + "E3"}, items, CLASSES) == (None, "several_items")
+    # Two of our editions with one ISBN (Goodreads duplicates) link neither.
+    isbn_of = {"a": ("9780439023481", "The Hunger Games"), "b": ("9780439023481", "The Hunger Games")}
+    links, issues = link_wikidata_editions(isbn_of, {"9780439023481": {WD + "E1"}}, items, CLASSES)
+    assert links == {} and {i["reason"] for i in issues} == {"shared_target"}
+
+
+def test_book_via_isbn_edition():
+    # Real case: "Midnight Sun" has many same-titled items, but its ISBN edition names the right work.
+    items = {WD + "E1": item("Midnight Sun", EDITION, works=[WD + "W1"]),
+             WD + "W1": item("Midnight Sun", NOVEL, ["Stephenie Meyer"]),
+             WD + "E2": item("Midnight Sun", EDITION, works=[WD + "W2"]),
+             WD + "W2": item("Midnight Sun", NOVEL, ["Jo Nesbø"]),
+             WD + "E3": item("Kim", EDITION, works=[WD + "W3"]), WD + "W3": item("Kim", NOVEL)}
+    meyer = book("Midnight Sun", "Stephenie Meyer")
+    assert work_via_editions(meyer, [WD + "E1"], items, CLASSES) == (WD + "W1", "isbn-edition")
+    assert work_via_editions(meyer, [WD + "E2"], items, CLASSES) == (None, "author_mismatch")
+    assert work_via_editions(meyer, [WD + "E1", WD + "E2"], items, CLASSES) == (None, "editions_disagree")
+    assert work_via_editions(book("Kim", "Rudyard Kipling"), [WD + "E3"], items, CLASSES) == (WD + "W3", "isbn-edition")
+
+
+def test_lookup_titles_add_and_drop_leading_article():
+    assert lookup_titles("Murder at the Vicarage") == ["Murder at the Vicarage", "The Murder at the Vicarage"]
+    assert lookup_titles("The Hobbit") == ["The Hobbit", "Hobbit"]
+    assert lookup_titles("A Game of Thrones") == ["A Game of Thrones", "Game of Thrones"]
+    assert "Bully Pulpit" in lookup_titles("The Bully Pulpit: Theodore Roosevelt and the Golden Age")
+
+
+def test_author_match_beats_description_match():
+    # Real case: Goodreads "Murder at the Vicarage"; Wikidata's novel is "The Murder at the Vicarage"
+    # (P50 Agatha Christie), the play keeps the bare title and only its description names her.
+    items = {WD + "NOVEL": item("The Murder at the Vicarage", NOVEL, ["Agatha Christie"]),
+             WD + "PLAY": item("Murder at the Vicarage", NOVEL, description="play written by Agatha Christie")}
+    vicarage = book("Murder at the Vicarage", "Agatha Christie")
+    assert choose_work(vicarage, [], {WD + "PLAY"}, items, CLASSES) == (WD + "PLAY", "title+description")
+    assert choose_work(vicarage, [], {WD + "PLAY", WD + "NOVEL"}, items, CLASSES) == (WD + "NOVEL", "title+author")
+
+
+def test_exact_title_beats_article_variant():
+    # Real case: a stray 2020 item "Court of Mist and Fury" with the same P50 as the novel.
+    items = {WD + "NOVEL": item("A Court of Mist and Fury", NOVEL, ["Sarah J. Maas"]),
+             WD + "STRAY": item("Court of Mist and Fury", NOVEL, ["Sarah J. Maas"])}
+    acomaf = book("A Court of Mist and Fury", "Sarah J. Maas")
+    assert choose_work(acomaf, [], {WD + "NOVEL", WD + "STRAY"}, items, CLASSES) == (WD + "NOVEL", "title+author+exact-title")
+    # But a clear main item wins over the exact label: "The Aeneid" is Q60220 "Aeneid", not a stray
+    # item labelled "The Aeneid".
+    items = {WD + "MAIN": item("Aeneid", NOVEL, ["Virgil"], sitelinks=120),
+             WD + "STRAY": item("The Aeneid", NOVEL, ["Virgil"])}
+    aeneid = book("The Aeneid", "Virgil")
+    assert choose_work(aeneid, [], {WD + "MAIN", WD + "STRAY"}, items, CLASSES) == (WD + "MAIN", "title+author+sitelinks")
+
+
+def test_more_shared_authors_beats_sitelinks():
+    # Real case: Goodreads "Nightfall" by Asimov and Silverberg is the 1990 novel (6 sitelinks),
+    # not Asimov's 1941 short story (20 sitelinks).
+    items = {WD + "STORY": item("Nightfall", NOVEL, ["Isaac Asimov"], sitelinks=20),
+             WD + "NOVEL": item("Nightfall", NOVEL, ["Isaac Asimov", "Robert Silverberg"], sitelinks=6)}
+    nightfall = book("Nightfall", "Isaac Asimov", "Robert Silverberg")
+    assert choose_work(nightfall, [], {WD + "STORY", WD + "NOVEL"}, items, CLASSES) == (WD + "NOVEL", "title+author")
+    assert choose_work(book("Nightfall", "Isaac Asimov"), [], {WD + "STORY", WD + "NOVEL"}, items, CLASSES) \
+        == (WD + "STORY", "title+author+sitelinks")

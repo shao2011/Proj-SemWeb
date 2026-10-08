@@ -1,0 +1,24 @@
+# CQ11 (federated): Where were the authors of the most-read books born, and when?
+# Birth place and date are not in the Goodreads data. The query follows our owl:sameAs
+# links and fetches them live from the Wikidata SPARQL endpoint (SERVICE).
+PREFIX books: <https://shao2011.github.io/Proj-SemWeb/ontology#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+SELECT ?author (MIN(YEAR(?birth)) AS ?born) (SAMPLE(?place) AS ?birthPlace) WHERE {
+  {
+    SELECT DISTINCT ?author ?wd WHERE {
+      ?book books:numRatings ?n ; books:isWrittenBy ?a .
+      ?a rdfs:label ?author ; owl:sameAs ?wd .
+      FILTER(STRSTARTS(STR(?wd), "http://www.wikidata.org/entity/"))
+    } ORDER BY DESC(?n) LIMIT 15
+  }
+  SERVICE <https://query.wikidata.org/sparql> {
+    ?wd wdt:P569 ?birth .
+    OPTIONAL { ?wd wdt:P19 ?pob . ?pob rdfs:label ?place FILTER(LANG(?place) = "en") }
+  }
+}
+# One row per author: Wikidata may hold several values (Jane Austen has two "Steventon" items).
+GROUP BY ?author
+ORDER BY ?born

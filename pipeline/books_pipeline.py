@@ -25,25 +25,44 @@ from rdflib import Graph, Literal, Namespace, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, XSD
 
 
-BOOKS = Namespace("http://example.org/books#")
-DEFAULT_BASE = "http://example.org/books/resource/"
+BOOKS = Namespace("https://shao2011.github.io/Proj-SemWeb/ontology#")
+DEFAULT_BASE = "https://shao2011.github.io/Proj-SemWeb/resource/"
+DEFAULT_TOP_N = 10000
 CATEGORIES = (
     "skipped_rows", "duplicate_book_ids", "ambiguous_work_groups",
     "conflicting_work_values", "invalid_isbn", "invalid_dates",
-    "malformed_list_fields", "unknown_contributor_roles",
+    "malformed_list_fields", "unknown_contributor_roles", "works_without_author",
     "award_parse_issues", "rating_count_mismatch", "invalid_values",
 )
 LIST_FIELDS = ("genres", "characters", "awards", "setting")
 REP_FIELDS = ("title", "description", "rating", "numRatings", "ratingsByStars",
               "likedPercent", "bbeScore", "bbeVotes")
-EDITION_FIELDS = ("isbn", "edition", "pages", "publishDate", "publisher",
-                  "language", "bookFormat", "coverImg", "price")
+EDITION_FIELDS = ("isbn", "edition", "pages", "publishDate", "publishYear", "publisher",
+                  "language", "bookFormat", "coverImg")
 STAR_PROPERTIES = (BOOKS.fiveStarRatings, BOOKS.fourStarRatings,
                    BOOKS.threeStarRatings, BOOKS.twoStarRatings, BOOKS.oneStarRatings)
-ROLE_PROPERTIES = {"translator": (BOOKS.isTranslatedBy, BOOKS.Translator),
-                   "illustrator": (BOOKS.isIllustratedBy, BOOKS.Illustrator),
-                   "editor": (BOOKS.isEditedBy, BOOKS.Editor),
-                   "narrator": (BOOKS.isNarratedBy, BOOKS.Narrator)}
+ROLE_PROPERTIES = {"translator": BOOKS.isTranslatedBy, "illustrator": BOOKS.isIllustratedBy,
+                   "editor": BOOKS.isEditedBy, "narrator": BOOKS.isNarratedBy}
+# Goodreads role annotations (lower-cased, one per comma/slash/&/"and" token) -> ontology role.
+# Anything not listed stays a generic hasEditionContributor and is reported in QA.
+ROLE_ALIASES = {alias: role for role, aliases in {
+    "author": ("author", "co-author", "coauthor", "co author", "co-writer", "writer", "creator",
+               "created by", "series creator", "original creator", "original author",
+               "original story", "original story by", "story", "text", "one of the authors",
+               "pseudonym", "pseud", "pen name", "writing as", "heteronym", "تأليف", "著"),
+    "translator": ("translator", "translation", "translated by", "trad", "traduction",
+                   "traducteur", "traductor", "traducción", "tradutor", "tradutora", "tradução",
+                   "traduttore", "übersetzer", "übersetzerin", "översättare", "çevirmen",
+                   "penerjemah", "tõlkija", "ترجمة", "ترجمه", "مترجم", "تعريب"),
+    "illustrator": ("illustrator", "illustrations", "illustration", "illustrated by",
+                    "ilustrator", "ilustração", "ilustraciones", "ilustradora", "artist", "art",
+                    "イラスト"),
+    "editor": ("editor", "edited by", "co-editor", "anthologist", "compiler", "selected by"),
+    "narrator": ("narrator", "narrated by", "reader", "reading", "read by"),
+}.items() for alias in aliases}
+ROLE_SPLIT = re.compile(r"\s*(?:[,/&]|\band\b)\s*")
+AUDIO_FORMATS = {"audio", "audiobook", "audio book", "audio cd", "audio cassette",
+                 "audible audio", "mp3 cd", "audio play"}
 NONWIN = re.compile(r"\b(shortlist(?:ed)?|longlist(?:ed)?|runner[- ]up|honou?rable mention|semi[- ]?finalist|highly commended)\b", re.I)
 MONTH_DATE = re.compile(r"^(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})$", re.I)
 
@@ -140,12 +159,16 @@ def parse_contributors(raw: str, book_id: str, qa: QA) -> list[Contributor]:
             continue
         roles = []
         for annotation in annotations:
-            role = canonical(annotation)
-            if role == "goodreads author": continue
-            if role in ROLE_PROPERTIES: roles.append(role)
-            else:
-                roles.append("unknown")
-                qa.add("unknown_contributor_roles", role=annotation, bookId=book_id, person=name)
+            if canonical(annotation) == "goodreads author": continue
+            for token in ROLE_SPLIT.split(canonical(annotation)):
+                token = token.strip(" -.:")
+                if not token: continue
+                role = ROLE_ALIASES.get(token)
+                if role: roles.append(role)
+                else:
+                    roles.append("unknown")
+                    qa.add("unknown_contributor_roles", role=annotation, token=token,
+                           bookId=book_id, person=name)
         result.append(Contributor(name, tuple(dict.fromkeys(roles or ["author"]))))
     return result
 
@@ -187,9 +210,10 @@ def parse_decimal(raw: str, field: str, book_id: str, qa: QA, minimum: int | Non
         return None
 
 
-def parse_date(raw: str, field: str, book_id: str, qa: QA, pivot: int) -> date | None:
+def parse_date(raw: str, field: str, book_id: str, qa: QA, pivot: int) -> tuple[date | None, int | None]:
+    """Return (full date, year). The year survives when only year or month/year is known."""
     value = clean(raw)
-    if not value: return None
+    if not value: return None, None
     match = MONTH_DATE.fullmatch(value)
     if match:
         value = f"{match.group(1)} {match.group(2)} {match.group(3)}"
@@ -197,27 +221,33 @@ def parse_date(raw: str, field: str, book_id: str, qa: QA, pivot: int) -> date |
     # Slash dates are interpreted month/day/year only, matching dataset examples.
     formats = tuple(f for f in formats if f != "%d/%m/%Y")
     for fmt in formats:
-        try: return datetime.strptime(value, fmt).date()
+        try:
+            parsed = datetime.strptime(value, fmt).date()
+            return parsed, parsed.year
         except ValueError: pass
     short = re.fullmatch(r"(\d{1,2})/(\d{1,2})/(\d{2})", value)
     if short:
         if field == "firstPublishDate":
             qa.add("invalid_dates", bookId=book_id, field=field, raw_value=raw,
                    reason="ambiguous_century")
-            return None
+            return None, None
         month, day, yy = map(int, short.groups())
         year = 2000 + yy if yy <= pivot else 1900 + yy
         try:
             parsed = date(year, month, day)
             qa.counters["date_heuristics"] += 1
-            return parsed
+            return parsed, parsed.year
         except ValueError:
             qa.add("invalid_dates", bookId=book_id, field=field, raw_value=raw,
                    reason="invalid_calendar_date")
-            return None
-    reason = "insufficient_date_precision" if re.fullmatch(r"\d{4}|[A-Za-z]+ \d{4}", value) else "unparseable"
-    qa.add("invalid_dates", bookId=book_id, field=field, raw_value=raw, reason=reason)
-    return None
+            return None, None
+    if re.fullmatch(r"\d{4}|[A-Za-z]+ \d{4}", value):
+        year = int(value[-4:])
+        qa.add("invalid_dates", bookId=book_id, field=field, raw_value=raw,
+               reason="insufficient_date_precision", kept_year=year if year > 0 else None)
+        return None, year if year > 0 else None
+    qa.add("invalid_dates", bookId=book_id, field=field, raw_value=raw, reason="unparseable")
+    return None, None
 
 
 def parse_isbn(raw: str, book_id: str, qa: QA) -> str | None:
@@ -298,23 +328,29 @@ def parse_row(raw: dict, index: int, qa: QA, pivot: int) -> ParsedRow | None:
                reason="missing_book_id" if not book_id else "missing_title")
         return None
     contributors = parse_contributors(clean(raw.get("author")), book_id, qa)
+    if not contributors:
+        qa.add("skipped_rows", row=index, bookId=book_id, title=title,
+               reason="missing_contributors")
+        return None
     authors = [c.name for c in contributors if "author" in c.roles]
     if not authors:
-        qa.add("skipped_rows", row=index, bookId=book_id, title=title,
-               reason="missing_primary_author")
-        return None
+        # Anthologies, scriptures, adaptations: keep the book, group it by its first
+        # credited contributor, and emit no isWrittenBy (unknown author under the OWA).
+        qa.add("works_without_author", row=index, bookId=book_id, title=title,
+               contributors=[[c.name, list(c.roles)] for c in contributors])
+    primary = authors[0] if authors else contributors[0].name
     values: dict[str, object] = {}
     for field in LIST_FIELDS: values[field] = parse_list(clean(raw.get(field)), field, book_id, qa)
     values["series"] = parse_series(clean(raw.get("series")), book_id, qa)
     values["isbn"] = parse_isbn(clean(raw.get("isbn")), book_id, qa)
     for field in ("publishDate", "firstPublishDate"):
-        values[field] = parse_date(clean(raw.get(field)), field, book_id, qa, pivot)
+        values[field], values[field.replace("Date", "Year")] = parse_date(
+            clean(raw.get(field)), field, book_id, qa, pivot)
     for field in ("pages", "numRatings", "bbeVotes"):
         values[field] = parse_int(clean(raw.get(field)), field, book_id, qa)
     for field in ("rating", "bbeScore"):
         values[field] = parse_decimal(clean(raw.get(field)), field, book_id, qa)
     values["likedPercent"] = parse_decimal(clean(raw.get("likedPercent")), "likedPercent", book_id, qa, 0, 100)
-    values["price"] = parse_decimal(clean(raw.get("price")), "price", book_id, qa, 0)
     for field in ("description", "language", "bookFormat", "edition", "publisher"):
         values[field] = clean(raw.get(field)) or None
     url = clean(raw.get("coverImg"))
@@ -341,8 +377,8 @@ def parse_row(raw: dict, index: int, qa: QA, pivot: int) -> ParsedRow | None:
         if stars is not None and clean(raw.get("ratingsByStars")):
             qa.add("invalid_values", bookId=book_id, field="ratingsByStars",
                    raw_value=raw.get("ratingsByStars"), reason="expected_five_nonnegative_integers")
-    return ParsedRow(index, book_id, title, canonical(title) + "|" + canonical(authors[0]),
-                     authors[0], contributors, values)
+    return ParsedRow(index, book_id, title, canonical(title) + "|" + canonical(primary),
+                     primary, contributors, values)
 
 
 class Emitter:
@@ -413,28 +449,27 @@ def emit_edition(em: Emitter, book: URIRef, book_id: str, rows: list[ParsedRow])
     for field, prop, dtype in (("isbn", BOOKS.isbn, None), ("edition", BOOKS.editionName, None),
                                ("pages", BOOKS.pageCount, XSD.nonNegativeInteger),
                                ("publishDate", BOOKS.publishDate, XSD.date),
-                               ("coverImg", BOOKS.coverImage, XSD.anyURI),
-                               ("price", BOOKS.price, XSD.decimal)):
+                               ("coverImg", BOOKS.coverImage, XSD.anyURI)):
         value = values[field]
         if isinstance(value, date): value = value.isoformat()
         emit_literal(g, edition, prop, value, dtype)
+    year = values["publishDate"].year if values["publishDate"] else values["publishYear"]
+    if year: emit_literal(g, edition, BOOKS.publishYear, f"{year:04d}", XSD.gYear)
     for field, kind, typ, prop in (("publisher", "publisher", BOOKS.Publisher, BOOKS.isPublishedBy),
                                    ("language", "language", BOOKS.Language, BOOKS.isInLanguage),
                                    ("bookFormat", "format", BOOKS.BookFormat, BOOKS.hasFormat)):
         value = values[field]
         if value:
-            if field == "bookFormat" and canonical(value) == "audiobook":
-                resource = BOOKS.Audiobook  # ontology's required named individual
-            else: resource = em.entity(kind, canonical(value), value, typ)
+            resource = em.entity(kind, canonical(value), value, typ)
+            if field == "bookFormat" and canonical(value) in AUDIO_FORMATS:
+                g.add((resource, RDF.type, BOOKS.AudioFormat))
             g.add((edition, prop, resource))
     for row in rows:
         for contributor in row.contributors:
             person = em.entity("person", canonical(contributor.name), contributor.name, BOOKS.Person)
             for role in contributor.roles:
                 if role == "author": continue
-                prop, role_type = ROLE_PROPERTIES.get(role, (BOOKS.hasEditionContributor, None))
-                g.add((edition, prop, person))
-                if role_type: g.add((person, RDF.type, role_type))
+                g.add((edition, ROLE_PROPERTIES.get(role, BOOKS.hasEditionContributor), person))
 
 
 def emit_work(em: Emitter, key: str, rows: list[ParsedRow], editions: dict[str, list[ParsedRow]], qa: QA) -> None:
@@ -465,6 +500,8 @@ def emit_work(em: Emitter, key: str, rows: list[ParsedRow], editions: dict[str, 
                observed_values=sorted(star_values), chosen_value=str(stars), chosen_bookId=rep.book_id)
     first_dates = [r.values["firstPublishDate"] for r in rows if r.values["firstPublishDate"] is not None]
     if first_dates: emit_literal(g, book, BOOKS.firstPublishDate, min(first_dates).isoformat(), XSD.date)
+    first_years = [r.values["firstPublishYear"] for r in rows if r.values["firstPublishYear"]]
+    if first_years: emit_literal(g, book, BOOKS.firstPublishYear, f"{min(first_years):04d}", XSD.gYear)
     series = {canonical(r.values["series"][0]): r.values["series"][0]
               for r in rows if r.values["series"] and r.values["series"][0]}
     positions = {r.values["series"][1] for r in rows if r.values["series"] and r.values["series"][1]}
@@ -507,7 +544,6 @@ def emit_work(em: Emitter, key: str, rows: list[ParsedRow], editions: dict[str, 
                         "finalist": BOOKS.AwardFinalistRecognition, "generic": BOOKS.AwardRecognition}[status]
             recognition = em.entity("recognition", recognition_key, f"{name} ({year}; {status})", rec_type)
             g.add((book, BOOKS.hasAwardRecognition, recognition))
-            g.add((recognition, BOOKS.isRecognitionFor, book))
             g.add((recognition, BOOKS.forAward, award_uri))
             emit_literal(g, recognition, BOOKS.awardYear, str(year), XSD.gYear)
     for book_id in sorted({r.book_id for r in rows}):
@@ -526,12 +562,26 @@ def validate_vocabulary(data: Graph, ontology: Graph) -> None:
     if unknown_types: raise ValueError(f"Undeclared local classes: {sorted(map(str, unknown_types))}")
 
 
+def select_top_ids(input_csv: Path, top_n: int) -> set[str] | None:
+    """bookIds of the top_n most-rated editions (ties: smaller bookId); None keeps every row."""
+    if top_n <= 0: return None
+    ratings: dict[str, int] = {}
+    with input_csv.open(encoding="utf-8-sig", newline="") as handle:
+        for raw in csv.DictReader(handle):
+            book_id = clean(raw.get("bookId"))
+            count = clean(raw.get("numRatings")).replace(",", "")
+            if book_id:
+                ratings[book_id] = max(ratings.get(book_id, -1), int(count) if count.isdigit() else -1)
+    return set(sorted(ratings, key=lambda b: (-ratings[b], b))[:top_n])
+
+
 def run(input_csv: Path, ontology_path: Path, output_ttl: Path, qa_dir: Path,
-        base: str = DEFAULT_BASE, pivot: int = 26) -> tuple[Graph, dict]:
+        base: str = DEFAULT_BASE, pivot: int = 26, top_n: int = 0) -> tuple[Graph, dict]:
     ontology = Graph().parse(ontology_path, format="turtle")
     qa = QA()
     rows = []
-    input_count = 0
+    input_count = selected_count = 0
+    selected = select_top_ids(input_csv, top_n)
     with input_csv.open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
         required = {"bookId", "title", "author"}
@@ -539,6 +589,8 @@ def run(input_csv: Path, ontology_path: Path, output_ttl: Path, qa_dir: Path,
             raise ValueError(f"Missing required CSV columns: {sorted(required - set(reader.fieldnames or []))}")
         for index, raw in enumerate(reader, start=2):
             input_count += 1
+            if selected is not None and clean(raw.get("bookId")) not in selected: continue
+            selected_count += 1
             try:
                 parsed = parse_row(raw, index, qa, pivot)
                 if parsed: rows.append(parsed)
@@ -554,7 +606,8 @@ def run(input_csv: Path, ontology_path: Path, output_ttl: Path, qa_dir: Path,
     validate_vocabulary(emitter.graph, ontology)
     output_ttl.parent.mkdir(parents=True, exist_ok=True)
     emitter.graph.serialize(destination=output_ttl, format="turtle")
-    counts = {"input_rows": input_count, "parsed_rows": input_count - len(qa.records["skipped_rows"]),
+    counts = {"input_rows": input_count, "top_n": top_n, "selected_rows": selected_count,
+              "parsed_rows": selected_count - len(qa.records["skipped_rows"]),
               "skipped_rows": len(qa.records["skipped_rows"]),
               "triple_count": len(emitter.graph), "Book": len(works),
               "BookEdition": len(editions)}
@@ -564,7 +617,6 @@ def run(input_csv: Path, ontology_path: Path, output_ttl: Path, qa_dir: Path,
                        ("format", "BookFormat"), ("place", "Place"),
                        ("award", "Award"), ("recognition", "AwardRecognition")):
         counts[name] = len(emitter.entities[kind])
-    counts["BookFormat"] += int((None, BOOKS.hasFormat, BOOKS.Audiobook) in emitter.graph)
     summary = qa.write(qa_dir, counts)
     return emitter.graph, summary
 
@@ -579,10 +631,13 @@ def main() -> None:
     parser.add_argument("--resource-base", default=DEFAULT_BASE)
     parser.add_argument("--two-digit-year-pivot", type=int, default=26,
                         help="Fixed pivot for edition publishDate (default: 26, the 2026 handover year)")
+    parser.add_argument("--top-n", type=int, default=DEFAULT_TOP_N,
+                        help="Keep the N most-rated bookIds (default: 10000; 0 keeps all rows)")
     args = parser.parse_args()
     if not 0 <= args.two_digit_year_pivot <= 99: parser.error("pivot must be 0..99")
+    if args.top_n < 0: parser.error("--top-n must be >= 0")
     _, summary = run(args.input, args.ontology, args.output, args.qa_dir,
-                     args.resource_base, args.two_digit_year_pivot)
+                     args.resource_base, args.two_digit_year_pivot, args.top_n)
     print(json.dumps(summary, indent=2))
 
 

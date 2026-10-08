@@ -1,0 +1,14 @@
+# CQ4: Which people both wrote books and translated editions?
+# books:Author and books:Translator are defined classes; no person is typed with them
+# in the source data. Every answer here comes from the reasoner.
+PREFIX books: <https://shao2011.github.io/Proj-SemWeb/ontology#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+SELECT ?person (COUNT(DISTINCT ?book) AS ?booksWritten) (COUNT(DISTINCT ?edition) AS ?editionsTranslated) WHERE {
+  ?p a books:Author , books:Translator ; rdfs:label ?person ;
+     books:writes ?book ; books:translates ?edition .
+}
+GROUP BY ?person
+ORDER BY DESC(?editionsTranslated) ?person
+LIMIT 20

@@ -1,0 +1,14 @@
+# CQ6: Which categories (genres) are rated highest on average?
+# Only categories with at least 100 books, to avoid noise from tiny shelves.
+PREFIX books: <https://shao2011.github.io/Proj-SemWeb/ontology#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+SELECT ?category (COUNT(?book) AS ?books) (ROUND(AVG(?rating) * 100) / 100 AS ?avgRating) WHERE {
+  ?book books:hasCategory ?c ; books:rating ?rating .
+  ?c rdfs:label ?category .
+}
+GROUP BY ?category
+HAVING (COUNT(?book) >= 100)
+ORDER BY DESC(?avgRating)
+LIMIT 15

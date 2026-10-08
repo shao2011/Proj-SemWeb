@@ -1,0 +1,12 @@
+# CQ7: In which books does a character appear?
+# Uses books:appearsIn, inferred as the inverse of books:hasCharacter.
+PREFIX books: <https://shao2011.github.io/Proj-SemWeb/ontology#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+SELECT ?title ?firstPublished WHERE {
+  ?character rdfs:label "Sherlock Holmes" ; books:appearsIn ?book .
+  ?book books:title ?title .
+  OPTIONAL { ?book books:firstPublishYear ?firstPublished }
+}
+ORDER BY ?firstPublished ?title

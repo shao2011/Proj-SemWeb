@@ -13,7 +13,7 @@ from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.namespace import OWL, RDF, RDFS, XSD
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from books_pipeline import BOOKS, CATEGORIES, DEFAULT_BASE, validate_vocabulary
+from books_pipeline import BOOKS, CATEGORIES, DEFAULT_BASE, select_top_ids, validate_vocabulary
 
 
 def verify(data_path: Path, ontology_path: Path, csv_path: Path, qa_path: Path,
@@ -26,15 +26,20 @@ def verify(data_path: Path, ontology_path: Path, csv_path: Path, qa_path: Path,
                for name in CATEGORIES}
     assert summary["triple_count"] == len(graph)
     assert summary["issue_counts"] == {name: len(rows) for name, rows in details.items()}
-    assert summary["input_rows"] == summary["parsed_rows"] + summary["skipped_rows"]
+    assert summary["selected_rows"] == summary["parsed_rows"] + summary["skipped_rows"]
 
     books = set(graph.subjects(RDF.type, BOOKS.Book))
     editions = set(graph.subjects(RDF.type, BOOKS.BookEdition))
     assert len(books) == summary["Book"]
     assert len(editions) == summary["BookEdition"]
     assert not books & editions
-    assert all(list(graph.objects(book, BOOKS.isWrittenBy)) and
-               list(graph.objects(book, BOOKS.hasEdition)) for book in books)
+    assert all(list(graph.objects(book, BOOKS.hasEdition)) for book in books)
+    # A work may lack isWrittenBy only if every edition was reported as authorless.
+    no_author_ids = {record["bookId"] for record in details["works_without_author"]}
+    for book in books:
+        if not list(graph.objects(book, BOOKS.isWrittenBy)):
+            assert all(str(graph.value(e, BOOKS.bookId)) in no_author_ids
+                       for e in graph.objects(book, BOOKS.hasEdition)), book
     assert all(len(set(graph.subjects(BOOKS.hasEdition, edition))) == 1 for edition in editions)
     assert all(isinstance(s, URIRef) and str(s).startswith(base) for s in books | editions)
     assert not any(isinstance(node, BNode) for triple in graph for node in triple)
@@ -43,13 +48,15 @@ def verify(data_path: Path, ontology_path: Path, csv_path: Path, qa_path: Path,
                for triple in graph for node in (triple[0], triple[2]))
 
     skip_rows = {record["row"] for record in details["skipped_rows"]}
+    selected = select_top_ids(csv_path, summary["top_n"])
     with csv_path.open(encoding="utf-8-sig", newline="") as handle:
         valid_ids = {row["bookId"].strip() for number, row in enumerate(csv.DictReader(handle), start=2)
-                     if number not in skip_rows}
+                     if number not in skip_rows and (selected is None or row["bookId"].strip() in selected)}
     assert len(valid_ids) == len(editions)
 
     domain = {BOOKS.isbn: BOOKS.BookEdition, BOOKS.pageCount: BOOKS.BookEdition,
               BOOKS.isPublishedBy: BOOKS.BookEdition, BOOKS.hasFormat: BOOKS.BookEdition,
+              BOOKS.publishYear: BOOKS.BookEdition, BOOKS.firstPublishYear: BOOKS.Book,
               BOOKS.rating: BOOKS.Book, BOOKS.numRatings: BOOKS.Book,
               BOOKS.hasCategory: BOOKS.Book, BOOKS.hasCharacter: BOOKS.Book,
               BOOKS.setIn: BOOKS.Book}

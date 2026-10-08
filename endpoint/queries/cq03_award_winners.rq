@@ -1,0 +1,14 @@
+# CQ3: Which books won a given award, and in which year?
+# AwardWin is one of three disjoint subclasses of the n-ary AwardRecognition.
+PREFIX books: <https://shao2011.github.io/Proj-SemWeb/ontology#>
+PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl:   <http://www.w3.org/2002/07/owl#>
+PREFIX xsd:   <http://www.w3.org/2001/XMLSchema#>
+SELECT ?year ?title ?author WHERE {
+  ?award rdfs:label "Hugo Award for Best Novel" .
+  ?recognition a books:AwardWin ; books:forAward ?award ; books:awardYear ?year ;
+               books:isRecognitionFor ?book .
+  ?book books:title ?title .
+  OPTIONAL { ?book books:isWrittenBy/rdfs:label ?author }
+}
+ORDER BY ?year
