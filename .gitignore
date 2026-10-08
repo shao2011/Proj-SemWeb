@@ -13,3 +13,6 @@ linking/.cache/
 # Python
 pipeline/.venv/
 __pycache__/
+
+# Generated GitHub Pages site (pushed to the gh-pages branch, see HANDOFF.md)
+site/

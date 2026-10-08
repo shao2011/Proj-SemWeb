@@ -31,9 +31,9 @@ Ontology terms are now `https://shao2011.github.io/Proj-SemWeb/ontology#...` and
 
 `example.org` can never be looked up, so it breaks LOD principle 1 (dereferenceable URIs, 04_LOD p.7) and the best practice of making vocabulary terms dereferenceable (04_LOD p.17). The movie project used `example.org` too.
 
-Turning on GitHub Pages (Settings → Pages) is not enough by itself. Pages serves files at their own path and only adds `.html` implicitly, so `https://shao2011.github.io/Proj-SemWeb/ontology` needs a file `ontology.html` (or `ontology/index.html`), and every `/resource/...` URI needs a generated file of its own. Neither exists yet, so today all these URIs return 404.
+Turning on GitHub Pages (Settings → Pages) is not enough by itself. Pages serves files at their own path and only adds `.html` implicitly, so `https://shao2011.github.io/Proj-SemWeb/ontology` needs a file `ontology.html`, and every `/resource/...` URI needs a file of its own. `publish/build_pages.py` generates them into `site/`: one HTML page per resource (76,971) with its triples as a table and as embedded JSON-LD, `ontology.html` with an anchor per term (so `ontology#Book` works), and an index page. The site is 336 MiB, under the 1 GB Pages limit. It is published as the orphan branch `gh-pages`, not committed to `main` (`HANDOFF.md` section 4).
 
-Limitation for the report: Pages can't do content negotiation, so a browser and a SPARQL client get the same file.
+Limitation for the report: Pages can't do content negotiation, so a browser and a program get the same HTML file. That's why every page embeds its RDF as JSON-LD, which RDF parsers such as rdflib and Jena read directly.
 
 ## 4. The price column is gone
 
@@ -121,11 +121,10 @@ The generated Turtle files are not committed: they are rebuilt from the CSV in a
 
 - 3,921 books (39%) still have no first-publication year. Wikidata has no P577 for them or they are unlinked, for example most Sandman volumes.
 - 2,972 books (30%) have no Wikidata link.
-- The URIs don't resolve yet (section 3): GitHub Pages is off and no files are generated for `/ontology` or `/resource/...`. `void:sparqlEndpoint` is `localhost`, so the endpoint is only reachable while we run it.
-- The repo is private, so the release files (section 8) can only be downloaded by collaborators until it is made public.
+- The URIs resolve only once `site/` is pushed to `gh-pages` and the Pages source is switched to it (`HANDOFF.md` section 4); until then Pages shows the README and the URIs return 404. `void:sparqlEndpoint` is `localhost`, so the endpoint is only reachable while we run it.
 
 ## Checks
 
-- `pipeline/test_pipeline.py` (29) and `linking/test_linking.py` (49): all 78 tests pass. The new pipeline tests fail on the old converter.
+- `pipeline/test_pipeline.py` (29), `linking/test_linking.py` (49) and `publish/test_build_pages.py` (45): all 123 tests pass. The new pipeline tests fail on the old converter.
 - `riot --validate ontology.ttl` passes, and `endpoint/load.sh` loads every file without warnings.
 - `verify_output.py` passes on both the 10k run and the full run.

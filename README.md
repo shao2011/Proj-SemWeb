@@ -47,12 +47,23 @@ endpoint/load.sh                        # 5. TDB2 database, one named graph per 
 endpoint/run_fuseki.sh                  #    http://localhost:3030/books/sparql  (UI: http://localhost:3030/)
 $PY endpoint/run_queries.py             #    runs endpoint/queries/*.rq, saves CSVs in endpoint/results/
 
-$PY -m pytest -q pipeline/test_pipeline.py linking/test_linking.py
+$PY -m pytest -q pipeline/test_pipeline.py linking/test_linking.py publish/test_build_pages.py
 ```
 
 `linking/output/` is committed, so the linker is optional. `endpoint/load.sh` still needs `pipeline/output/books_data.ttl`
 and `reasoning/output/inferred.ttl`: run the pipeline and `materialize.py`, or take them from the release (above).
-Work still to do: `HANDOFF.md`.
+
+## Publish the site (GitHub Pages)
+
+Our URIs (`https://shao2011.github.io/Proj-SemWeb/ontology#...`, `.../resource/...`) resolve through a static site:
+
+```bash
+$PY publish/build_pages.py                # site/: one HTML + JSON-LD page per resource, ontology.html, index (~50 s, 336 MiB)
+$PY publish/build_pages.py --serve 8000   # preview at http://localhost:8000/, serving /x as x.html like Pages
+```
+
+`site/` is not committed. It goes to the orphan branch `gh-pages`, which the Pages settings must point at.
+The exact commands are in `HANDOFF.md` section 4.
 
 ## Layout
 
@@ -64,6 +75,7 @@ Work still to do: `HANDOFF.md`.
 | `reasoning/materialize.py` | OWL 2 RL closure with `owlrl`; writes only the new triples |
 | `linking/link_books.py` | `owl:sameAs` for books, authors, series, editions, publishers and languages to Wikidata / DBpedia / Open Library, first-publication years from Wikidata, review sample |
 | `endpoint/` | Fuseki config, loader, VoID metadata, competency-question queries and runner |
+| `publish/build_pages.py` | Static GitHub Pages site that makes every resource and ontology URI dereferenceable |
 
 ## Named graphs in the endpoint
 

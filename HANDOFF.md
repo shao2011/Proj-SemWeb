@@ -1,6 +1,6 @@
 # Handoff for Hao
 
-This branch (`top10k`) holds the whole project except the report, the slides and the video. Please read this file, review the PR, and then do the one remaining coding task (section 4). `NOTES.md` explains each design decision in more detail. `README.md` lists the commands.
+This branch (`top10k`) holds the whole project except the report, the slides and the video. Please read this file, review the PR, and then publish the site (section 4: a few commands and one settings change). `NOTES.md` explains each design decision in more detail. `README.md` lists the commands.
 
 ## 1. What is in this branch
 
@@ -13,7 +13,8 @@ This branch (`top10k`) holds the whole project except the report, the slides and
 | `ecb92bf` | Titles with or without "The/A/An", stricter tie-breaks, review sample re-checked |
 | `3da2d09` | Merge of your `main`, so the PR has no conflicts (section 3) |
 | `4bf83ba` | Midnight Sun fix found through your output, this file |
-| last | Data dumps as the GitHub release `data-v1`, `void:dataDump` points at them |
+| `36319b5` | Data dumps as the GitHub release `data-v1`, `void:dataDump` points at them |
+| last | `publish/build_pages.py`: static site that makes every URI resolve (section 4) |
 
 ## 2. Your work compared with ours
 
@@ -76,45 +77,62 @@ It also removes `linking/core.py`, `external.py`, `matcher.py`, `config.json`, `
 
 If you'd rather keep a piece of it, say so in the PR and we'll put it back.
 
-## 4. Remaining task for you: make the URIs resolve (GitHub Pages)
+## 4. Remaining task for you: publish the site (GitHub Pages)
 
-This is the only course requirement still open. LOD principle 1 says a URI should return something useful when you look it up (04_LOD p.7, best practices p.17). Today every `https://shao2011.github.io/Proj-SemWeb/...` URI returns 404. A grader can test this with a single click.
+LOD principle 1 says a URI should return something useful when you look it up (04_LOD p.7, best practices p.17). The repo is public and Pages is on, but Pages builds from `top10k` and only shows the README: `/ontology` and every `/resource/...` URI return 404, because no HTML file exists for them. `publish/build_pages.py` now generates those files. What's left needs you, because changing the Pages source needs admin rights on the repo.
 
-### 4.1 Make the repo public
+### 4.1 What the script builds
 
-The repo is private, and GitHub Free serves Pages only from public repos. Release files are private too: the data dumps in the release `data-v1` (`NOTES.md` section 8) download only for collaborators until the repo is public. The dataset is CC BY-NC 4.0, so publishing derived data with attribution for a course is fine (the VoID file already credits Zenodo).
+`pipeline/.venv/bin/python publish/build_pages.py` reads the five files of the endpoint's named graphs (data, inferred, links, enrichment, VoID) plus `ontology.ttl`, and writes `site/` (gitignored) in about 50 s:
 
-### 4.2 Write `publish/build_pages.py`
+- `site/resource/<kind>/<slug--hash>.html` for each of the 76,971 resources, plus `dataset.html` and `linkset/*.html` for the VoID URIs. Pages serves `x.html` for a request to `/x`, so `https://shao2011.github.io/Proj-SemWeb/resource/book/the-hunger-games--4966d945b5bd060f` gets its page. Each page has a table of the resource's triples from all four graphs (inferred ones in italics), labels instead of raw URIs, relative links to our other resources, external links for `owl:sameAs` targets, a "Referenced by" list (for example the books of a person), and a `DESCRIBE` link to the SPARQL endpoint.
+- The same triples as JSON-LD in `<script type="application/ld+json">` on every page, because Pages can't do content negotiation.
+- `ontology.html`: one section per class and property with `id="Book"` etc., so `.../ontology#Book` lands on its section. It shows labels, comments, super-classes, equivalent classes (OWL restrictions in Manchester syntax), disjointness, domains, ranges and inverses. `ontology.ttl` is copied next to it.
+- `index.html` (links to the ontology, `void.ttl`, the release dumps, the repo, an example per kind and the 10 most-rated books), `404.html`, `style.css` and `.nojekyll`.
 
-Read `ontology.ttl`, `pipeline/output/books_data.ttl`, `reasoning/output/inferred.ttl`, `linking/output/links.ttl` and `linking/output/enrichment.ttl`, and write a static site into `site/`. Add `site/` to `.gitignore`. Use rdflib from `pipeline/.venv`.
+Measured: 76,982 files, 336 MiB of content (484 MB on disk), well under the 1 GB Pages limit; a commit of it packs to 125 MiB. The JSON-LD of 304 sampled pages parses back to exactly the triples on the page, and the ontology's JSON-LD is isomorphic to `ontology.ttl`. `publish/test_build_pages.py` checks the URI → file mapping and that every link resolves to its target URI from any page.
 
-- **Ontology:** the term URIs are hash URIs (`.../ontology#Book`), so the browser requests `/Proj-SemWeb/ontology`. Write:
-  - `site/ontology.html`: one section per class and property, with `id="Book"` etc. so the `#...` anchors work, showing `rdfs:label`, `rdfs:comment`, domain/range and super-classes.
-  - `site/ontology.ttl`: a copy, for machines.
-- **Resources:** one page per subject in the `resource/` namespace. There are 76,971 of them: 29,136 characters, 12,084 recognitions, 10,000 editions, 9,987 books, 5,749 persons, 2,611 awards, 2,475 series, 2,317 places, 1,892 publishers, 660 categories, 31 formats and 29 languages.
-  - URI `https://shao2011.github.io/Proj-SemWeb/resource/book/the-hunger-games--<hash>` → file `site/resource/book/the-hunger-games--<hash>.html`. Pages serves `x.html` for a request to `/x`.
-  - Each page shows the label and a table of the resource's outgoing triples. Objects that are our resources become relative links. `owl:sameAs` targets are shown as external links.
-  - Include incoming links where useful (for example "editions of this book", "books by this person").
-  - Put the same triples in `<script type="application/ld+json">`, so machines get RDF out of the HTML. Pages can't do content negotiation, so the HTML has to serve both.
-- **Root page:** `site/index.html` links to the ontology, the VoID description, the README, the data dumps (release `data-v1`), and a few example books.
-- **Jekyll:** add `site/.nojekyll`, otherwise Jekyll processes 77k files.
-- **Slugs:** some contain non-ASCII characters (`publisher/forum-bokförlag--...`). Test one such URL after deploying.
-
-### 4.3 Publish without bloating `main`
-
-The site is about 77k files, so don't commit it to `main`. Push `site/` as the root of an orphan branch `gh-pages`, then set Settings → Pages → source: branch `gh-pages`, folder `/`. One way, from the repo root:
+Preview it locally first, the way Pages serves it (`/x` → `x.html`):
 
 ```bash
-cd site && git init -q && git checkout -q -b gh-pages && git add -A && git commit -qm "Site" \
-  && git push -f https://github.com/shao2011/Proj-SemWeb.git gh-pages && cd .. && rm -rf site/.git
+pipeline/.venv/bin/python publish/build_pages.py --serve 8000   # http://localhost:8000/
 ```
+
+### 4.2 Push `site/` as the orphan branch `gh-pages`
+
+77k generated files don't belong on `main`. From the repo root, with `pipeline/output/books_data.ttl` and `reasoning/output/inferred.ttl` present (build them or take them from the release, see README):
+
+```bash
+SHA=$(git rev-parse --short HEAD)
+pipeline/.venv/bin/python publish/build_pages.py
+TMP=$(mktemp -d)                                   # git metadata outside site/, so the next build can delete site/
+git --git-dir="$TMP" --work-tree=site init -q -b gh-pages
+git --git-dir="$TMP" --work-tree=site add -A
+git --git-dir="$TMP" --work-tree=site commit -qm "Site built from $SHA"
+git --git-dir="$TMP" --work-tree=site push -f https://github.com/shao2011/Proj-SemWeb.git gh-pages
+rm -rf "$TMP"
+```
+
+Each run replaces `gh-pages` with a single commit, so the branch never accumulates old versions.
+
+### 4.3 Switch the Pages source (admin only)
+
+Settings → Pages → Build and deployment → Source "Deploy from a branch" → branch `gh-pages`, folder `/ (root)` → Save. Or:
+
+```bash
+gh api -X PUT repos/shao2011/Proj-SemWeb/pages -f 'source[branch]=gh-pages' -f 'source[path]=/'
+```
+
+Today the source is `top10k`. That branch goes away when the PR is merged, and the site would break with it.
 
 ### 4.4 Done when
 
-- `curl -sI https://shao2011.github.io/Proj-SemWeb/ontology` and `curl -sI https://shao2011.github.io/Proj-SemWeb/resource/book/the-hunger-games--<hash>` (take a real URI from `links.ttl`) both return `200`.
-- The Hunger Games page shows its author, its editions and its `owl:sameAs` links to Wikidata and DBpedia.
-- The JSON-LD in that page parses with rdflib (`Graph().parse(data=..., format="json-ld")`) and gives back the same triples.
-- In `NOTES.md` section 3 and "Known gaps", replace "return 404" with how it works now. In `endpoint/void.ttl`, add the site as `foaf:homepage` or `void:exampleResource` (one book URI).
+```bash
+for p in "" ontology resource/book/the-hunger-games--4966d945b5bd060f "resource/book/the-good-soldier-švejk--0220c05aa8cc81eb"; do
+  curl -s -o /dev/null -w "%{http_code} /$p\n" "https://shao2011.github.io/Proj-SemWeb/$p"; done   # all 200
+```
+
+The first deployment of 77k files can take several minutes; the Actions tab shows its progress. Then the Hunger Games page should show its author, editions and links to Wikidata and DBpedia. Afterwards, update `NOTES.md` section 3 and "Known gaps" (they say the site is not published yet).
 
 ## 5. Optional, only if there is time
 
