@@ -29,6 +29,7 @@ from urllib.parse import quote, urlsplit
 
 from rdflib import BNode, Graph, Literal, URIRef
 from rdflib.collection import Collection
+from rdflib.compare import to_canonical_graph
 from rdflib.namespace import DCTERMS, OWL, RDF, RDFS, XSD, Namespace
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -129,7 +130,8 @@ def load(inputs: dict[str, Path]) -> Triples:
             if isinstance(s, URIRef) and page_path(s) not in (None, "ontology.html"):
                 out[s].append((p, o, inferred))
         print(f"  {name}: {len(g):,} triples ({time.time() - t:.1f} s)", flush=True)
-    return out
+    # rdflib's iteration order changes between runs; sort so a rebuild writes byte-identical files.
+    return {s: sorted(out[s], key=lambda t: (t[0], t[1].n3(), t[2])) for s in sorted(out)}
 
 
 def make_labels(out: Triples) -> dict[URIRef, str]:
@@ -156,7 +158,7 @@ def incoming(out: Triples) -> dict[URIRef, list[tuple[URIRef, URIRef]]]:
         for p, o, inf in triples:
             if not inf and p != RDF.type and isinstance(o, URIRef) and o in out:
                 inc[o].append((s, p))
-    return inc
+    return {o: sorted(refs) for o, refs in inc.items()}
 
 
 # ---------------------------------------------------------------- rendering
@@ -263,7 +265,7 @@ def jsonld(nodes: dict) -> str:
 
     graph = []
     for s, pairs in nodes.items():
-        node: dict = {"@id": compact(str(s), used)}
+        node: dict = {"@id": f"_:{s}" if isinstance(s, BNode) else compact(str(s), used)}
         for p, o in pairs:
             node.setdefault(compact(str(p), used), []).append(value(o))
         graph.append(node)
@@ -315,8 +317,8 @@ def render_ontology(g: Graph, r: Renderer) -> str:
     def section(term: URIRef, rows: list[tuple[str, list[str]]]) -> str:
         local = str(term)[len(str(BOOKS)):]
         body = "".join(f"<tr><th>{name}<td>{'<br>'.join(vals)}" for name, vals in rows if vals)
-        comments = "".join(f"<p>{esc(str(c))}</p>" for c in g.objects(term, RDFS.comment))
-        labels = "".join(f"<p>{esc(str(c))}</p>" for c in g.objects(term, RDFS.label))
+        comments = "".join(f"<p>{esc(c)}</p>" for c in sorted(map(str, g.objects(term, RDFS.comment))))
+        labels = "".join(f"<p>{esc(c)}</p>" for c in sorted(map(str, g.objects(term, RDFS.label))))
         return (f'<section id="{esc(local)}"><h3>{esc(local)}</h3><p class=uri>{esc(str(term))}</p>'
                 f"{labels}{comments}<table>{body}</table></section>")
 
@@ -330,8 +332,8 @@ def render_ontology(g: Graph, r: Renderer) -> str:
         disjoint = {o for o in g.objects(c, OWL.disjointWith)} | {s for s in g.subjects(OWL.disjointWith, c)}
         disjoint |= {m for group in disjoint_groups if c in group for m in group if m != c}
         class_sections.append(section(c, [
-            ("Subclass of", [expr(o) for o in g.objects(c, RDFS.subClassOf)]),
-            ("Equivalent to", [expr(o) for o in g.objects(c, OWL.equivalentClass)]),
+            ("Subclass of", sorted(expr(o) for o in g.objects(c, RDFS.subClassOf))),
+            ("Equivalent to", sorted(expr(o) for o in g.objects(c, OWL.equivalentClass))),
             ("Disjoint with", [link(o) for o in sorted(disjoint, key=str)]),
             ("Subclasses", [link(s) for s in sorted(g.subjects(RDFS.subClassOf, c), key=str) if isinstance(s, URIRef)]),
             ("Domain of", [link(p) for p in sorted(g.subjects(RDFS.domain, c), key=str)]),
@@ -341,9 +343,9 @@ def render_ontology(g: Graph, r: Renderer) -> str:
     for kind, props in [("object", object_props), ("data", data_props)]:
         prop_sections[kind] = [section(p, [
             ("Type", [link(t) for t in sorted(g.objects(p, RDF.type), key=str)]),
-            ("Domain", [expr(o) for o in g.objects(p, RDFS.domain)]),
-            ("Range", [expr(o) for o in g.objects(p, RDFS.range)]),
-            ("Subproperty of", [link(o) for o in g.objects(p, RDFS.subPropertyOf)]),
+            ("Domain", sorted(expr(o) for o in g.objects(p, RDFS.domain))),
+            ("Range", sorted(expr(o) for o in g.objects(p, RDFS.range))),
+            ("Subproperty of", [link(o) for o in sorted(g.objects(p, RDFS.subPropertyOf), key=str)]),
             ("Subproperties", [link(s) for s in sorted(g.subjects(RDFS.subPropertyOf, p), key=str)]),
             ("Inverse of", [link(o) for o in sorted(set(g.objects(p, OWL.inverseOf)) | set(g.subjects(OWL.inverseOf, p)), key=str)]),
         ]) for p in props]
@@ -352,10 +354,14 @@ def render_ontology(g: Graph, r: Renderer) -> str:
     title = str(g.value(onto, RDFS.label) or "Books ontology")
     toc = "".join(f"<p><b>{name}:</b> " + ", ".join(f'<a href="#{esc(str(t)[len(str(BOOKS)):])}">{esc(str(t)[len(str(BOOKS)):])}</a>' for t in terms) + "</p>"
                   for name, terms in [("Classes", classes), ("Object properties", object_props), ("Datatype properties", data_props)])
-    ld = g.serialize(format="json-ld").replace("</", "<\\/")
+    # Canonical blank-node IDs and sorted triples: rdflib names blank nodes randomly on each parse.
+    nodes: dict = {}
+    for s, p, o in sorted(to_canonical_graph(g), key=lambda t: tuple(x.n3() for x in t)):
+        nodes.setdefault(s, []).append((p, o))
+    ld = jsonld(nodes)
     return (r.head(title, up, ld) + f'<nav><a href="{up}">Books Linked Data</a> · Ontology</nav>'
             f"<h1>{esc(title)}</h1><p class=uri>{esc(ONTOLOGY)}</p>"
-            + "".join(f"<p>{esc(str(c))}</p>" for c in g.objects(onto, RDFS.comment))
+            + "".join(f"<p>{esc(c)}</p>" for c in sorted(map(str, g.objects(onto, RDFS.comment))))
             + f'<p>Prefix <code>books:</code> = <code>{esc(str(BOOKS))}</code>. Turtle: <a href="ontology.ttl">ontology.ttl</a>.</p>'
             + toc + "<h2>Classes</h2>" + "".join(class_sections)
             + "<h2>Object properties</h2>" + "".join(prop_sections["object"])
@@ -385,7 +391,7 @@ def render_index(r: Renderer) -> str:
     def ratings(s) -> int:
         return next((int(o) for p, o, _ in r.out[s] if p == BOOKS.numRatings), 0)
 
-    top = sorted(by_kind.get("book", []), key=ratings, reverse=True)[:10]
+    top = sorted(by_kind.get("book", []), key=lambda b: (-ratings(b), str(b)))[:10]
     dumps = "".join(f'<li><a href="{esc(str(d))}">{esc(str(d).rsplit("/", 1)[-1])}</a>' for d in sorted(meta[VOID.dataDump], key=str))
     endpoint = (f"<li>SPARQL endpoint: <code>{esc(r.endpoint)}</code> (Apache Jena Fuseki; it runs on our machine, "
                 f'see the <a href="{REPO}#readme">README</a>)' if r.endpoint else "")

@@ -1,6 +1,6 @@
 # Handoff for Hao
 
-This branch (`top10k`) holds the whole project except the report, the slides and the video. Please read this file, review the PR, and then publish the site (section 4: a few commands and one settings change). The short checklist is "To do (Hao)" at the top of `README.md`. `NOTES.md` explains each design decision in more detail. `README.md` lists the commands.
+The `top10k` work is merged into `main` (PR #1, 2026-10-08) and the site is live. This file records what was done and why; section 4 has the commands for republishing the site. `NOTES.md` explains each design decision in more detail. `README.md` lists the commands.
 
 ## 1. What is in this branch
 
@@ -77,9 +77,9 @@ It also removes `linking/core.py`, `external.py`, `matcher.py`, `config.json`, `
 
 If you'd rather keep a piece of it, say so in the PR and we'll put it back.
 
-## 4. Remaining task for you: publish the site (GitHub Pages)
+## 4. Publishing the site (GitHub Pages) — done 2026-10-08
 
-LOD principle 1 says a URI should return something useful when you look it up (04_LOD p.7, best practices p.17). The repo is public and Pages is on, but Pages builds from `top10k` and only shows the README: `/ontology` and every `/resource/...` URI return 404, because no HTML file exists for them. `publish/build_pages.py` now generates those files. What's left needs you, because changing the Pages source needs admin rights on the repo.
+LOD principle 1 says a URI should return something useful when you look it up (04_LOD p.7, best practices p.17). GitHub Pages only serves files that exist, so `/ontology` and every `/resource/...` URI need a generated HTML file. `publish/build_pages.py` generates them; the site is published from the orphan branch `gh-pages`. Rerun 4.2 whenever the data changes; 4.3 was a one-time setting.
 
 ### 4.1 What the script builds
 
@@ -123,7 +123,7 @@ Settings → Pages → Build and deployment → Source "Deploy from a branch" �
 gh api -X PUT repos/shao2011/Proj-SemWeb/pages -f 'source[branch]=gh-pages' -f 'source[path]=/'
 ```
 
-Today the source is `top10k`. That branch goes away when the PR is merged, and the site would break with it.
+Done: the source is `gh-pages`, folder `/`.
 
 ### 4.4 Done when
 
@@ -132,7 +132,7 @@ for p in "" ontology resource/book/the-hunger-games--4966d945b5bd060f "resource/
   curl -s -o /dev/null -w "%{http_code} /$p\n" "https://shao2011.github.io/Proj-SemWeb/$p"; done   # all 200
 ```
 
-The first deployment of 77k files can take several minutes; the Actions tab shows its progress. Then the Hunger Games page should show its author, editions and links to Wikidata and DBpedia. Afterwards, update `NOTES.md` section 3 and "Known gaps" (they say the site is not published yet).
+The first deployment of 77k files took under two minutes (Actions tab). Checked on 2026-10-08: all four URLs above, 40 random linked resources and the JSON-LD of the Hunger Games page (112 triples, with its Wikidata and DBpedia links) are served correctly. The builder sorts its output, so a rebuild from the same data gives byte-identical files and a republish only changes pages whose data changed.
 
 ## 5. Optional, only if there is time
 

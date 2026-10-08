@@ -121,7 +121,7 @@ The generated Turtle files are not committed: they are rebuilt from the CSV in a
 
 - 3,921 books (39%) still have no first-publication year. Wikidata has no P577 for them or they are unlinked, for example most Sandman volumes.
 - 2,972 books (30%) have no Wikidata link.
-- The URIs resolve only once `site/` is pushed to `gh-pages` and the Pages source is switched to it (`HANDOFF.md` section 4); until then Pages shows the README and the URIs return 404. `void:sparqlEndpoint` is `localhost`, so the endpoint is only reachable while we run it.
+- Pages can't do content negotiation, so the URIs serve HTML with embedded JSON-LD rather than Turtle (section 3). `void:sparqlEndpoint` is `localhost`, so the endpoint is only reachable while we run it.
 
 ## Checks
 
