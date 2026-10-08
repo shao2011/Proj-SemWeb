@@ -1,6 +1,6 @@
 # Handoff for Hao
 
-This branch (`top10k`) holds the whole project except the report, the slides and the video. Please read this file, review the PR, and then publish the site (section 4: a few commands and one settings change). `NOTES.md` explains each design decision in more detail. `README.md` lists the commands.
+This branch (`top10k`) holds the whole project except the report, the slides and the video. Please read this file, review the PR, and then publish the site (section 4: a few commands and one settings change). The short checklist is "To do (Hao)" at the top of `README.md`. `NOTES.md` explains each design decision in more detail. `README.md` lists the commands.
 
 ## 1. What is in this branch
 

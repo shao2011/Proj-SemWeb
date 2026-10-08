@@ -10,6 +10,22 @@ Yêu cầu của thầy:
 
 Reasoning (HermiT check + OWL-RL inferences) is in `reasoning`. Why things are done this way: `NOTES.md`.
 
+## To do (Hao)
+
+Everything is built and tested except publishing the site, which needs admin rights. In this order
+(commands in `HANDOFF.md` section 4):
+
+1. **Review PR #1.** `HANDOFF.md` sections 1-3 say what changed and why.
+2. **Push the site to `gh-pages`.** Run `publish/build_pages.py`, then push `site/` as the orphan branch `gh-pages`
+   (HANDOFF 4.2). Anyone with push access can do this step.
+3. **Switch the Pages source to `gh-pages`** (admin only): Settings → Pages → branch `gh-pages`, folder `/` (HANDOFF 4.3).
+   Do this before merging the PR: Pages builds from `top10k` today, and the site breaks if that branch is deleted.
+4. **Merge PR #1.**
+5. **Check that the URIs return 200** with the `curl` loop in HANDOFF 4.4, then update `NOTES.md` section 3 and
+   "Known gaps", which still say the site is not published.
+
+Optional, if there is time: publisher and place links (HANDOFF section 5). Not covered here: report, slides, video.
+
 ## Download the data
 
 The generated RDF is not in git. It is attached to the GitHub release
