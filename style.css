@@ -1,0 +1,9 @@
+body{font:15px/1.45 system-ui,sans-serif;max-width:62rem;margin:1rem auto;padding:0 1rem;color:#222}
+a{color:#0b57d0;text-decoration:none}a:hover{text-decoration:underline}
+nav,footer,.note{font-size:.9em;color:#666}footer{margin-top:2em}
+h1{margin:.4em 0 .1em}h3{margin:1.4em 0 0}
+.uri{font:13px monospace;color:#555;word-break:break-all;margin:0 0 1em}
+table{border-collapse:collapse;width:100%}
+th,td{border-top:1px solid #ddd;padding:.3em .5em;vertical-align:top;text-align:left}
+th{width:15em;font-weight:normal;color:#444}td{white-space:pre-line;overflow-wrap:anywhere}
+em,small{color:#777}

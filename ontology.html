@@ -1,0 +1,1797 @@
+<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Books ontology (Goodreads Best Books Ever)</title><link rel=stylesheet href="./style.css"><script type="application/ld+json">[
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "http://xmlns.com/foaf/0.1/Person"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Organization",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://schema.org/Organization"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#writes",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isWrittenBy"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b27",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#AllDisjointClasses"
+    ],
+    "http://www.w3.org/2002/07/owl#members": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardWin"
+          },
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardNomination"
+          },
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardFinalistRecognition"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isWrittenBy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasContributor"
+      },
+      {
+        "@id": "https://schema.org/author"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#writes"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Translator",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b8"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b8",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#intersectionOf": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+          },
+          {
+            "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b9"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b9",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#translates"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasEdition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/workExample"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isEditionOf"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#SeriesBook",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b31"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b31",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#intersectionOf": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+          },
+          {
+            "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b32"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b32",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isPartOfSeries"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookSeries"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://schema.org/Book"
+      },
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b3"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b3",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onClass": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isEditionOf"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#qualifiedCardinality": [
+      {
+        "@type": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+        "@value": "1"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isTranslatedBy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasEditionContributor"
+      },
+      {
+        "@id": "https://schema.org/translator"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#translates"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardFinalistRecognition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardRecognition"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookFormat",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Character",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b24",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#AllDisjointClasses"
+    ],
+    "http://www.w3.org/2002/07/owl#members": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+          },
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Organization"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardWin",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardRecognition"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasContributor",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "http://purl.org/dc/terms/contributor"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#pageCount",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/numberOfPages"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isRecognitionFor",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardRecognition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasAwardRecognition"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Author",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b4"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b4",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#intersectionOf": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+          },
+          {
+            "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b5"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b5",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#writes"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#bbeVotes",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasFormat",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookFormat"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Publisher",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Organization"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isPublishedBy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Publisher"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/publisher"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#publishes"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Place",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://schema.org/Place"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#likedPercent",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isEditedBy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasEditionContributor"
+      },
+      {
+        "@id": "https://schema.org/editor"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Narrator",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b20"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b20",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#intersectionOf": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+          },
+          {
+            "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b21"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b21",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#narrates"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#bookId",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "http://purl.org/dc/terms/identifier"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#setIn",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Place"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/contentLocation"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#seriesPosition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/position"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#publishDate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#date"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/datePublished"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#appearsIn",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Character"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasCharacter"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasBook",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookSeries"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/hasPart"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isPartOfSeries"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardWinningBook",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b47"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b47",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#intersectionOf": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+          },
+          {
+            "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b48"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b48",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasAwardRecognition"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardWin"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookCategory",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#twoStarRatings",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#forAward",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardRecognition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Award"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AudioFormat",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Formats whose content is listened to (Audio CD, Audible Audio, MP3 CD, ...)."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookFormat"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Language",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://schema.org/Language"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#coverImage",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#anyURI"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardNomination",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardRecognition"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#bbeScore",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasCharacter",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Character"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#appearsIn"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#illustrates",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isIllustratedBy"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Editor",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b16"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b16",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#intersectionOf": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+          },
+          {
+            "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b17"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b17",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#edits"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#awardYear",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardRecognition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#gYear"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#editionName",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/bookEdition"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookSeries",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://schema.org/BookSeries"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#translates",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isTranslatedBy"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#publishYear",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Year of this edition; kept even when the source gives only a year or month/year."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#gYear"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#threeStarRatings",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isPartOfSeries",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookSeries"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/isPartOf"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasBook"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#IllustratedEdition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b39"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b39",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#intersectionOf": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+          },
+          {
+            "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b40"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b40",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isIllustratedBy"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://schema.org/Book"
+      },
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b1"
+      },
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b2"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#disjointWith": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b1",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasEdition"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b2",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isWrittenBy"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Author"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#oneStarRatings",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasCategory",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookCategory"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AudiobookEdition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      },
+      {
+        "@id": "https://schema.org/Audiobook"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b43"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b43",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#intersectionOf": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+          },
+          {
+            "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b44"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b44",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasFormat"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AudioFormat"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isNarratedBy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasEditionContributor"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#edits",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isEditedBy"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#fiveStarRatings",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#numRatings",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#publishes",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Publisher"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isPublishedBy"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#fourStarRatings",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Illustrator",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b12"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b12",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#intersectionOf": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+          },
+          {
+            "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b13"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b13",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#illustrates"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#description",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "http://purl.org/dc/terms/description"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#rating",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#decimal"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasEditionContributor",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "http://purl.org/dc/terms/contributor"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#firstPublishDate",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#date"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/datePublished"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isInLanguage",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Language"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/inLanguage"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#TranslatedEdition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#equivalentClass": [
+      {
+        "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b35"
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b35",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ],
+    "http://www.w3.org/2002/07/owl#intersectionOf": [
+      {
+        "@list": [
+          {
+            "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+          },
+          {
+            "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b36"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "@id": "_:n1c87d3e3eea94343909400e6ac5b0ad3b36",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Restriction"
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isTranslatedBy"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#someValuesFrom": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#title",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "http://purl.org/dc/terms/title"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#firstPublishYear",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Year the work was first published; kept even when the full date is unknown."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#gYear"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Award",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isbn",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#DatatypeProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/isbn"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#narrates",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isNarratedBy"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isIllustratedBy",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Person"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasEditionContributor"
+      },
+      {
+        "@id": "https://schema.org/illustrator"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Ontology"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "@value": "Vocabulary for the IT6390E capstone books knowledge graph. Terms are published at this URL via GitHub Pages."
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "@value": "Books ontology (Goodreads Best Books Ever)"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasAwardRecognition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardRecognition"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isRecognitionFor"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#isEditionOf",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#ObjectProperty"
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#Book"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subPropertyOf": [
+      {
+        "@id": "https://schema.org/exampleOfWork"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#inverseOf": [
+      {
+        "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#hasEdition"
+      }
+    ]
+  },
+  {
+    "@id": "https://shao2011.github.io/Proj-SemWeb/ontology#AwardRecognition",
+    "@type": [
+      "http://www.w3.org/2002/07/owl#Class"
+    ]
+  }
+]</script><nav><a href="./">Books Linked Data</a> · Ontology</nav><h1>Books ontology (Goodreads Best Books Ever)</h1><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology</p><p>Vocabulary for the IT6390E capstone books knowledge graph. Terms are published at this URL via GitHub Pages.</p><p>Prefix <code>books:</code> = <code>https://shao2011.github.io/Proj-SemWeb/ontology#</code>. Turtle: <a href="ontology.ttl">ontology.ttl</a>.</p><p><b>Classes:</b> <a href="#AudioFormat">AudioFormat</a>, <a href="#AudiobookEdition">AudiobookEdition</a>, <a href="#Author">Author</a>, <a href="#Award">Award</a>, <a href="#AwardFinalistRecognition">AwardFinalistRecognition</a>, <a href="#AwardNomination">AwardNomination</a>, <a href="#AwardRecognition">AwardRecognition</a>, <a href="#AwardWin">AwardWin</a>, <a href="#AwardWinningBook">AwardWinningBook</a>, <a href="#Book">Book</a>, <a href="#BookCategory">BookCategory</a>, <a href="#BookEdition">BookEdition</a>, <a href="#BookFormat">BookFormat</a>, <a href="#BookSeries">BookSeries</a>, <a href="#Character">Character</a>, <a href="#Editor">Editor</a>, <a href="#IllustratedEdition">IllustratedEdition</a>, <a href="#Illustrator">Illustrator</a>, <a href="#Language">Language</a>, <a href="#Narrator">Narrator</a>, <a href="#Organization">Organization</a>, <a href="#Person">Person</a>, <a href="#Place">Place</a>, <a href="#Publisher">Publisher</a>, <a href="#SeriesBook">SeriesBook</a>, <a href="#TranslatedEdition">TranslatedEdition</a>, <a href="#Translator">Translator</a></p><p><b>Object properties:</b> <a href="#appearsIn">appearsIn</a>, <a href="#edits">edits</a>, <a href="#forAward">forAward</a>, <a href="#hasAwardRecognition">hasAwardRecognition</a>, <a href="#hasBook">hasBook</a>, <a href="#hasCategory">hasCategory</a>, <a href="#hasCharacter">hasCharacter</a>, <a href="#hasContributor">hasContributor</a>, <a href="#hasEdition">hasEdition</a>, <a href="#hasEditionContributor">hasEditionContributor</a>, <a href="#hasFormat">hasFormat</a>, <a href="#illustrates">illustrates</a>, <a href="#isEditedBy">isEditedBy</a>, <a href="#isEditionOf">isEditionOf</a>, <a href="#isIllustratedBy">isIllustratedBy</a>, <a href="#isInLanguage">isInLanguage</a>, <a href="#isNarratedBy">isNarratedBy</a>, <a href="#isPartOfSeries">isPartOfSeries</a>, <a href="#isPublishedBy">isPublishedBy</a>, <a href="#isRecognitionFor">isRecognitionFor</a>, <a href="#isTranslatedBy">isTranslatedBy</a>, <a href="#isWrittenBy">isWrittenBy</a>, <a href="#narrates">narrates</a>, <a href="#publishes">publishes</a>, <a href="#setIn">setIn</a>, <a href="#translates">translates</a>, <a href="#writes">writes</a></p><p><b>Datatype properties:</b> <a href="#awardYear">awardYear</a>, <a href="#bbeScore">bbeScore</a>, <a href="#bbeVotes">bbeVotes</a>, <a href="#bookId">bookId</a>, <a href="#coverImage">coverImage</a>, <a href="#description">description</a>, <a href="#editionName">editionName</a>, <a href="#firstPublishDate">firstPublishDate</a>, <a href="#firstPublishYear">firstPublishYear</a>, <a href="#fiveStarRatings">fiveStarRatings</a>, <a href="#fourStarRatings">fourStarRatings</a>, <a href="#isbn">isbn</a>, <a href="#likedPercent">likedPercent</a>, <a href="#numRatings">numRatings</a>, <a href="#oneStarRatings">oneStarRatings</a>, <a href="#pageCount">pageCount</a>, <a href="#publishDate">publishDate</a>, <a href="#publishYear">publishYear</a>, <a href="#rating">rating</a>, <a href="#seriesPosition">seriesPosition</a>, <a href="#threeStarRatings">threeStarRatings</a>, <a href="#title">title</a>, <a href="#twoStarRatings">twoStarRatings</a></p><h2>Classes</h2><section id="AudioFormat"><h3>AudioFormat</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#AudioFormat</p><p>Formats whose content is listened to (Audio CD, Audible Audio, MP3 CD, ...).</p><table><tr><th>Subclass of<td><a href="./ontology#BookFormat">books:BookFormat</a></table></section><section id="AudiobookEdition"><h3>AudiobookEdition</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#AudiobookEdition</p><table><tr><th>Subclass of<td><a href="./ontology#BookEdition">books:BookEdition</a><br><a href="https://schema.org/Audiobook">schema:Audiobook</a><tr><th>Equivalent to<td>(<a href="./ontology#BookEdition">books:BookEdition</a> and <a href="./ontology#hasFormat">books:hasFormat</a> some <a href="./ontology#AudioFormat">books:AudioFormat</a>)</table></section><section id="Author"><h3>Author</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Author</p><table><tr><th>Subclass of<td><a href="./ontology#Person">books:Person</a><tr><th>Equivalent to<td>(<a href="./ontology#Person">books:Person</a> and <a href="./ontology#writes">books:writes</a> some <a href="./ontology#Book">books:Book</a>)</table></section><section id="Award"><h3>Award</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Award</p><table><tr><th>Range of<td><a href="./ontology#forAward">books:forAward</a></table></section><section id="AwardFinalistRecognition"><h3>AwardFinalistRecognition</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#AwardFinalistRecognition</p><table><tr><th>Subclass of<td><a href="./ontology#AwardRecognition">books:AwardRecognition</a><tr><th>Disjoint with<td><a href="./ontology#AwardNomination">books:AwardNomination</a><br><a href="./ontology#AwardWin">books:AwardWin</a></table></section><section id="AwardNomination"><h3>AwardNomination</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#AwardNomination</p><table><tr><th>Subclass of<td><a href="./ontology#AwardRecognition">books:AwardRecognition</a><tr><th>Disjoint with<td><a href="./ontology#AwardFinalistRecognition">books:AwardFinalistRecognition</a><br><a href="./ontology#AwardWin">books:AwardWin</a></table></section><section id="AwardRecognition"><h3>AwardRecognition</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#AwardRecognition</p><table><tr><th>Subclasses<td><a href="./ontology#AwardFinalistRecognition">books:AwardFinalistRecognition</a><br><a href="./ontology#AwardNomination">books:AwardNomination</a><br><a href="./ontology#AwardWin">books:AwardWin</a><tr><th>Domain of<td><a href="./ontology#awardYear">books:awardYear</a><br><a href="./ontology#forAward">books:forAward</a><br><a href="./ontology#isRecognitionFor">books:isRecognitionFor</a><tr><th>Range of<td><a href="./ontology#hasAwardRecognition">books:hasAwardRecognition</a></table></section><section id="AwardWin"><h3>AwardWin</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#AwardWin</p><table><tr><th>Subclass of<td><a href="./ontology#AwardRecognition">books:AwardRecognition</a><tr><th>Disjoint with<td><a href="./ontology#AwardFinalistRecognition">books:AwardFinalistRecognition</a><br><a href="./ontology#AwardNomination">books:AwardNomination</a></table></section><section id="AwardWinningBook"><h3>AwardWinningBook</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#AwardWinningBook</p><table><tr><th>Equivalent to<td>(<a href="./ontology#Book">books:Book</a> and <a href="./ontology#hasAwardRecognition">books:hasAwardRecognition</a> some <a href="./ontology#AwardWin">books:AwardWin</a>)</table></section><section id="Book"><h3>Book</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Book</p><table><tr><th>Subclass of<td><a href="https://schema.org/Book">schema:Book</a><br><a href="./ontology#hasEdition">books:hasEdition</a> some <a href="./ontology#BookEdition">books:BookEdition</a><br><a href="./ontology#isWrittenBy">books:isWrittenBy</a> some <a href="./ontology#Author">books:Author</a><tr><th>Disjoint with<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Domain of<td><a href="./ontology#bbeScore">books:bbeScore</a><br><a href="./ontology#bbeVotes">books:bbeVotes</a><br><a href="./ontology#description">books:description</a><br><a href="./ontology#firstPublishDate">books:firstPublishDate</a><br><a href="./ontology#firstPublishYear">books:firstPublishYear</a><br><a href="./ontology#fiveStarRatings">books:fiveStarRatings</a><br><a href="./ontology#fourStarRatings">books:fourStarRatings</a><br><a href="./ontology#hasAwardRecognition">books:hasAwardRecognition</a><br><a href="./ontology#hasCategory">books:hasCategory</a><br><a href="./ontology#hasCharacter">books:hasCharacter</a><br><a href="./ontology#hasContributor">books:hasContributor</a><br><a href="./ontology#hasEdition">books:hasEdition</a><br><a href="./ontology#isPartOfSeries">books:isPartOfSeries</a><br><a href="./ontology#isWrittenBy">books:isWrittenBy</a><br><a href="./ontology#likedPercent">books:likedPercent</a><br><a href="./ontology#numRatings">books:numRatings</a><br><a href="./ontology#oneStarRatings">books:oneStarRatings</a><br><a href="./ontology#rating">books:rating</a><br><a href="./ontology#seriesPosition">books:seriesPosition</a><br><a href="./ontology#setIn">books:setIn</a><br><a href="./ontology#threeStarRatings">books:threeStarRatings</a><br><a href="./ontology#title">books:title</a><br><a href="./ontology#twoStarRatings">books:twoStarRatings</a><tr><th>Range of<td><a href="./ontology#appearsIn">books:appearsIn</a><br><a href="./ontology#hasBook">books:hasBook</a><br><a href="./ontology#isEditionOf">books:isEditionOf</a><br><a href="./ontology#isRecognitionFor">books:isRecognitionFor</a><br><a href="./ontology#writes">books:writes</a></table></section><section id="BookCategory"><h3>BookCategory</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#BookCategory</p><table><tr><th>Range of<td><a href="./ontology#hasCategory">books:hasCategory</a></table></section><section id="BookEdition"><h3>BookEdition</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#BookEdition</p><table><tr><th>Subclass of<td><a href="https://schema.org/Book">schema:Book</a><br><a href="./ontology#isEditionOf">books:isEditionOf</a> exactly 1 <a href="./ontology#Book">books:Book</a><tr><th>Disjoint with<td><a href="./ontology#Book">books:Book</a><tr><th>Subclasses<td><a href="./ontology#AudiobookEdition">books:AudiobookEdition</a><tr><th>Domain of<td><a href="./ontology#bookId">books:bookId</a><br><a href="./ontology#coverImage">books:coverImage</a><br><a href="./ontology#editionName">books:editionName</a><br><a href="./ontology#hasEditionContributor">books:hasEditionContributor</a><br><a href="./ontology#hasFormat">books:hasFormat</a><br><a href="./ontology#isEditedBy">books:isEditedBy</a><br><a href="./ontology#isEditionOf">books:isEditionOf</a><br><a href="./ontology#isIllustratedBy">books:isIllustratedBy</a><br><a href="./ontology#isInLanguage">books:isInLanguage</a><br><a href="./ontology#isNarratedBy">books:isNarratedBy</a><br><a href="./ontology#isPublishedBy">books:isPublishedBy</a><br><a href="./ontology#isTranslatedBy">books:isTranslatedBy</a><br><a href="./ontology#isbn">books:isbn</a><br><a href="./ontology#pageCount">books:pageCount</a><br><a href="./ontology#publishDate">books:publishDate</a><br><a href="./ontology#publishYear">books:publishYear</a><tr><th>Range of<td><a href="./ontology#edits">books:edits</a><br><a href="./ontology#hasEdition">books:hasEdition</a><br><a href="./ontology#illustrates">books:illustrates</a><br><a href="./ontology#narrates">books:narrates</a><br><a href="./ontology#publishes">books:publishes</a><br><a href="./ontology#translates">books:translates</a></table></section><section id="BookFormat"><h3>BookFormat</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#BookFormat</p><table><tr><th>Subclasses<td><a href="./ontology#AudioFormat">books:AudioFormat</a><tr><th>Range of<td><a href="./ontology#hasFormat">books:hasFormat</a></table></section><section id="BookSeries"><h3>BookSeries</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#BookSeries</p><table><tr><th>Subclass of<td><a href="https://schema.org/BookSeries">schema:BookSeries</a><tr><th>Domain of<td><a href="./ontology#hasBook">books:hasBook</a><tr><th>Range of<td><a href="./ontology#isPartOfSeries">books:isPartOfSeries</a></table></section><section id="Character"><h3>Character</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Character</p><table><tr><th>Domain of<td><a href="./ontology#appearsIn">books:appearsIn</a><tr><th>Range of<td><a href="./ontology#hasCharacter">books:hasCharacter</a></table></section><section id="Editor"><h3>Editor</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Editor</p><table><tr><th>Subclass of<td><a href="./ontology#Person">books:Person</a><tr><th>Equivalent to<td>(<a href="./ontology#Person">books:Person</a> and <a href="./ontology#edits">books:edits</a> some <a href="./ontology#BookEdition">books:BookEdition</a>)</table></section><section id="IllustratedEdition"><h3>IllustratedEdition</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#IllustratedEdition</p><table><tr><th>Equivalent to<td>(<a href="./ontology#BookEdition">books:BookEdition</a> and <a href="./ontology#isIllustratedBy">books:isIllustratedBy</a> some <a href="./ontology#Person">books:Person</a>)</table></section><section id="Illustrator"><h3>Illustrator</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Illustrator</p><table><tr><th>Subclass of<td><a href="./ontology#Person">books:Person</a><tr><th>Equivalent to<td>(<a href="./ontology#Person">books:Person</a> and <a href="./ontology#illustrates">books:illustrates</a> some <a href="./ontology#BookEdition">books:BookEdition</a>)</table></section><section id="Language"><h3>Language</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Language</p><table><tr><th>Subclass of<td><a href="https://schema.org/Language">schema:Language</a><tr><th>Range of<td><a href="./ontology#isInLanguage">books:isInLanguage</a></table></section><section id="Narrator"><h3>Narrator</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Narrator</p><table><tr><th>Subclass of<td><a href="./ontology#Person">books:Person</a><tr><th>Equivalent to<td>(<a href="./ontology#Person">books:Person</a> and <a href="./ontology#narrates">books:narrates</a> some <a href="./ontology#BookEdition">books:BookEdition</a>)</table></section><section id="Organization"><h3>Organization</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Organization</p><table><tr><th>Subclass of<td><a href="https://schema.org/Organization">schema:Organization</a><tr><th>Disjoint with<td><a href="./ontology#Person">books:Person</a><tr><th>Subclasses<td><a href="./ontology#Publisher">books:Publisher</a></table></section><section id="Person"><h3>Person</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Person</p><table><tr><th>Subclass of<td><a href="http://xmlns.com/foaf/0.1/Person">foaf:Person</a><tr><th>Disjoint with<td><a href="./ontology#Organization">books:Organization</a><tr><th>Subclasses<td><a href="./ontology#Author">books:Author</a><br><a href="./ontology#Editor">books:Editor</a><br><a href="./ontology#Illustrator">books:Illustrator</a><br><a href="./ontology#Narrator">books:Narrator</a><br><a href="./ontology#Translator">books:Translator</a><tr><th>Domain of<td><a href="./ontology#edits">books:edits</a><br><a href="./ontology#illustrates">books:illustrates</a><br><a href="./ontology#narrates">books:narrates</a><br><a href="./ontology#translates">books:translates</a><br><a href="./ontology#writes">books:writes</a><tr><th>Range of<td><a href="./ontology#hasContributor">books:hasContributor</a><br><a href="./ontology#hasEditionContributor">books:hasEditionContributor</a><br><a href="./ontology#isEditedBy">books:isEditedBy</a><br><a href="./ontology#isIllustratedBy">books:isIllustratedBy</a><br><a href="./ontology#isNarratedBy">books:isNarratedBy</a><br><a href="./ontology#isTranslatedBy">books:isTranslatedBy</a><br><a href="./ontology#isWrittenBy">books:isWrittenBy</a></table></section><section id="Place"><h3>Place</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Place</p><table><tr><th>Subclass of<td><a href="https://schema.org/Place">schema:Place</a><tr><th>Range of<td><a href="./ontology#setIn">books:setIn</a></table></section><section id="Publisher"><h3>Publisher</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Publisher</p><table><tr><th>Subclass of<td><a href="./ontology#Organization">books:Organization</a><tr><th>Domain of<td><a href="./ontology#publishes">books:publishes</a><tr><th>Range of<td><a href="./ontology#isPublishedBy">books:isPublishedBy</a></table></section><section id="SeriesBook"><h3>SeriesBook</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#SeriesBook</p><table><tr><th>Equivalent to<td>(<a href="./ontology#Book">books:Book</a> and <a href="./ontology#isPartOfSeries">books:isPartOfSeries</a> some <a href="./ontology#BookSeries">books:BookSeries</a>)</table></section><section id="TranslatedEdition"><h3>TranslatedEdition</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#TranslatedEdition</p><table><tr><th>Equivalent to<td>(<a href="./ontology#BookEdition">books:BookEdition</a> and <a href="./ontology#isTranslatedBy">books:isTranslatedBy</a> some <a href="./ontology#Person">books:Person</a>)</table></section><section id="Translator"><h3>Translator</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#Translator</p><table><tr><th>Subclass of<td><a href="./ontology#Person">books:Person</a><tr><th>Equivalent to<td>(<a href="./ontology#Person">books:Person</a> and <a href="./ontology#translates">books:translates</a> some <a href="./ontology#BookEdition">books:BookEdition</a>)</table></section><h2>Object properties</h2><section id="appearsIn"><h3>appearsIn</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#appearsIn</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Character">books:Character</a><tr><th>Range<td><a href="./ontology#Book">books:Book</a><tr><th>Inverse of<td><a href="./ontology#hasCharacter">books:hasCharacter</a></table></section><section id="edits"><h3>edits</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#edits</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Person">books:Person</a><tr><th>Range<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Inverse of<td><a href="./ontology#isEditedBy">books:isEditedBy</a></table></section><section id="forAward"><h3>forAward</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#forAward</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#AwardRecognition">books:AwardRecognition</a><tr><th>Range<td><a href="./ontology#Award">books:Award</a></table></section><section id="hasAwardRecognition"><h3>hasAwardRecognition</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#hasAwardRecognition</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="./ontology#AwardRecognition">books:AwardRecognition</a><tr><th>Inverse of<td><a href="./ontology#isRecognitionFor">books:isRecognitionFor</a></table></section><section id="hasBook"><h3>hasBook</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#hasBook</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#BookSeries">books:BookSeries</a><tr><th>Range<td><a href="./ontology#Book">books:Book</a><tr><th>Subproperty of<td><a href="https://schema.org/hasPart">schema:hasPart</a><tr><th>Inverse of<td><a href="./ontology#isPartOfSeries">books:isPartOfSeries</a></table></section><section id="hasCategory"><h3>hasCategory</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#hasCategory</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="./ontology#BookCategory">books:BookCategory</a></table></section><section id="hasCharacter"><h3>hasCharacter</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#hasCharacter</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="./ontology#Character">books:Character</a><tr><th>Inverse of<td><a href="./ontology#appearsIn">books:appearsIn</a></table></section><section id="hasContributor"><h3>hasContributor</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#hasContributor</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="./ontology#Person">books:Person</a><tr><th>Subproperty of<td><a href="http://purl.org/dc/terms/contributor">dcterms:contributor</a><tr><th>Subproperties<td><a href="./ontology#isWrittenBy">books:isWrittenBy</a></table></section><section id="hasEdition"><h3>hasEdition</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#hasEdition</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Subproperty of<td><a href="https://schema.org/workExample">schema:workExample</a><tr><th>Inverse of<td><a href="./ontology#isEditionOf">books:isEditionOf</a></table></section><section id="hasEditionContributor"><h3>hasEditionContributor</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#hasEditionContributor</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="./ontology#Person">books:Person</a><tr><th>Subproperty of<td><a href="http://purl.org/dc/terms/contributor">dcterms:contributor</a><tr><th>Subproperties<td><a href="./ontology#isEditedBy">books:isEditedBy</a><br><a href="./ontology#isIllustratedBy">books:isIllustratedBy</a><br><a href="./ontology#isNarratedBy">books:isNarratedBy</a><br><a href="./ontology#isTranslatedBy">books:isTranslatedBy</a></table></section><section id="hasFormat"><h3>hasFormat</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#hasFormat</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="./ontology#BookFormat">books:BookFormat</a></table></section><section id="illustrates"><h3>illustrates</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#illustrates</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Person">books:Person</a><tr><th>Range<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Inverse of<td><a href="./ontology#isIllustratedBy">books:isIllustratedBy</a></table></section><section id="isEditedBy"><h3>isEditedBy</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#isEditedBy</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="./ontology#Person">books:Person</a><tr><th>Subproperty of<td><a href="./ontology#hasEditionContributor">books:hasEditionContributor</a><br><a href="https://schema.org/editor">schema:editor</a><tr><th>Inverse of<td><a href="./ontology#edits">books:edits</a></table></section><section id="isEditionOf"><h3>isEditionOf</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#isEditionOf</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="./ontology#Book">books:Book</a><tr><th>Subproperty of<td><a href="https://schema.org/exampleOfWork">schema:exampleOfWork</a><tr><th>Inverse of<td><a href="./ontology#hasEdition">books:hasEdition</a></table></section><section id="isIllustratedBy"><h3>isIllustratedBy</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#isIllustratedBy</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="./ontology#Person">books:Person</a><tr><th>Subproperty of<td><a href="./ontology#hasEditionContributor">books:hasEditionContributor</a><br><a href="https://schema.org/illustrator">schema:illustrator</a><tr><th>Inverse of<td><a href="./ontology#illustrates">books:illustrates</a></table></section><section id="isInLanguage"><h3>isInLanguage</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#isInLanguage</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="./ontology#Language">books:Language</a><tr><th>Subproperty of<td><a href="https://schema.org/inLanguage">schema:inLanguage</a></table></section><section id="isNarratedBy"><h3>isNarratedBy</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#isNarratedBy</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="./ontology#Person">books:Person</a><tr><th>Subproperty of<td><a href="./ontology#hasEditionContributor">books:hasEditionContributor</a><tr><th>Inverse of<td><a href="./ontology#narrates">books:narrates</a></table></section><section id="isPartOfSeries"><h3>isPartOfSeries</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#isPartOfSeries</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="./ontology#BookSeries">books:BookSeries</a><tr><th>Subproperty of<td><a href="https://schema.org/isPartOf">schema:isPartOf</a><tr><th>Inverse of<td><a href="./ontology#hasBook">books:hasBook</a></table></section><section id="isPublishedBy"><h3>isPublishedBy</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#isPublishedBy</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="./ontology#Publisher">books:Publisher</a><tr><th>Subproperty of<td><a href="https://schema.org/publisher">schema:publisher</a><tr><th>Inverse of<td><a href="./ontology#publishes">books:publishes</a></table></section><section id="isRecognitionFor"><h3>isRecognitionFor</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#isRecognitionFor</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#AwardRecognition">books:AwardRecognition</a><tr><th>Range<td><a href="./ontology#Book">books:Book</a><tr><th>Inverse of<td><a href="./ontology#hasAwardRecognition">books:hasAwardRecognition</a></table></section><section id="isTranslatedBy"><h3>isTranslatedBy</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#isTranslatedBy</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="./ontology#Person">books:Person</a><tr><th>Subproperty of<td><a href="./ontology#hasEditionContributor">books:hasEditionContributor</a><br><a href="https://schema.org/translator">schema:translator</a><tr><th>Inverse of<td><a href="./ontology#translates">books:translates</a></table></section><section id="isWrittenBy"><h3>isWrittenBy</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#isWrittenBy</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="./ontology#Person">books:Person</a><tr><th>Subproperty of<td><a href="./ontology#hasContributor">books:hasContributor</a><br><a href="https://schema.org/author">schema:author</a><tr><th>Inverse of<td><a href="./ontology#writes">books:writes</a></table></section><section id="narrates"><h3>narrates</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#narrates</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Person">books:Person</a><tr><th>Range<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Inverse of<td><a href="./ontology#isNarratedBy">books:isNarratedBy</a></table></section><section id="publishes"><h3>publishes</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#publishes</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Publisher">books:Publisher</a><tr><th>Range<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Inverse of<td><a href="./ontology#isPublishedBy">books:isPublishedBy</a></table></section><section id="setIn"><h3>setIn</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#setIn</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="./ontology#Place">books:Place</a><tr><th>Subproperty of<td><a href="https://schema.org/contentLocation">schema:contentLocation</a></table></section><section id="translates"><h3>translates</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#translates</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Person">books:Person</a><tr><th>Range<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Inverse of<td><a href="./ontology#isTranslatedBy">books:isTranslatedBy</a></table></section><section id="writes"><h3>writes</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#writes</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#ObjectProperty">owl:ObjectProperty</a><tr><th>Domain<td><a href="./ontology#Person">books:Person</a><tr><th>Range<td><a href="./ontology#Book">books:Book</a><tr><th>Inverse of<td><a href="./ontology#isWrittenBy">books:isWrittenBy</a></table></section><h2>Datatype properties</h2><section id="awardYear"><h3>awardYear</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#awardYear</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#AwardRecognition">books:AwardRecognition</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#gYear">xsd:gYear</a></table></section><section id="bbeScore"><h3>bbeScore</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#bbeScore</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#decimal">xsd:decimal</a></table></section><section id="bbeVotes"><h3>bbeVotes</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#bbeVotes</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">xsd:nonNegativeInteger</a></table></section><section id="bookId"><h3>bookId</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#bookId</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a><tr><th>Subproperty of<td><a href="http://purl.org/dc/terms/identifier">dcterms:identifier</a></table></section><section id="coverImage"><h3>coverImage</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#coverImage</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#anyURI">xsd:anyURI</a></table></section><section id="description"><h3>description</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#description</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a><tr><th>Subproperty of<td><a href="http://purl.org/dc/terms/description">dcterms:description</a></table></section><section id="editionName"><h3>editionName</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#editionName</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a><tr><th>Subproperty of<td><a href="https://schema.org/bookEdition">schema:bookEdition</a></table></section><section id="firstPublishDate"><h3>firstPublishDate</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#firstPublishDate</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#date">xsd:date</a><tr><th>Subproperty of<td><a href="https://schema.org/datePublished">schema:datePublished</a></table></section><section id="firstPublishYear"><h3>firstPublishYear</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#firstPublishYear</p><p>Year the work was first published; kept even when the full date is unknown.</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#gYear">xsd:gYear</a></table></section><section id="fiveStarRatings"><h3>fiveStarRatings</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#fiveStarRatings</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">xsd:nonNegativeInteger</a></table></section><section id="fourStarRatings"><h3>fourStarRatings</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#fourStarRatings</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">xsd:nonNegativeInteger</a></table></section><section id="isbn"><h3>isbn</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#isbn</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a><tr><th>Subproperty of<td><a href="https://schema.org/isbn">schema:isbn</a></table></section><section id="likedPercent"><h3>likedPercent</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#likedPercent</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#decimal">xsd:decimal</a></table></section><section id="numRatings"><h3>numRatings</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#numRatings</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">xsd:nonNegativeInteger</a></table></section><section id="oneStarRatings"><h3>oneStarRatings</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#oneStarRatings</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">xsd:nonNegativeInteger</a></table></section><section id="pageCount"><h3>pageCount</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#pageCount</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">xsd:nonNegativeInteger</a><tr><th>Subproperty of<td><a href="https://schema.org/numberOfPages">schema:numberOfPages</a></table></section><section id="publishDate"><h3>publishDate</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#publishDate</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#date">xsd:date</a><tr><th>Subproperty of<td><a href="https://schema.org/datePublished">schema:datePublished</a></table></section><section id="publishYear"><h3>publishYear</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#publishYear</p><p>Year of this edition; kept even when the source gives only a year or month/year.</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#BookEdition">books:BookEdition</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#gYear">xsd:gYear</a></table></section><section id="rating"><h3>rating</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#rating</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#decimal">xsd:decimal</a></table></section><section id="seriesPosition"><h3>seriesPosition</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#seriesPosition</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a><tr><th>Subproperty of<td><a href="https://schema.org/position">schema:position</a></table></section><section id="threeStarRatings"><h3>threeStarRatings</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#threeStarRatings</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">xsd:nonNegativeInteger</a></table></section><section id="title"><h3>title</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#title</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#string">xsd:string</a><tr><th>Subproperty of<td><a href="http://purl.org/dc/terms/title">dcterms:title</a></table></section><section id="twoStarRatings"><h3>twoStarRatings</h3><p class=uri>https://shao2011.github.io/Proj-SemWeb/ontology#twoStarRatings</p><table><tr><th>Type<td><a href="http://www.w3.org/2002/07/owl#DatatypeProperty">owl:DatatypeProperty</a><tr><th>Domain<td><a href="./ontology#Book">books:Book</a><tr><th>Range<td><a href="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">xsd:nonNegativeInteger</a></table></section><footer><a href="https://github.com/shao2011/Proj-SemWeb">Source code</a> · <a href="https://github.com/shao2011/Proj-SemWeb/releases/tag/data-v1">Data dumps</a> · <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a></footer>

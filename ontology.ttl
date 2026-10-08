@@ -1,0 +1,457 @@
+@prefix : <https://shao2011.github.io/Proj-SemWeb/ontology#> .
+@prefix schema: <https://schema.org/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://shao2011.github.io/Proj-SemWeb/ontology> a owl:Ontology ;
+    rdfs:label "Books ontology (Goodreads Best Books Ever)" ;
+    rdfs:comment "Vocabulary for the IT6390E capstone books knowledge graph. Terms are published at this URL via GitHub Pages." .
+
+#################################################################
+# Classes
+#################################################################
+
+:Book a owl:Class ;
+    rdfs:subClassOf schema:Book ,
+        [ a owl:Restriction ;
+          owl:onProperty :hasEdition ;
+          owl:someValuesFrom :BookEdition
+        ] ,
+        [ a owl:Restriction ;
+          owl:onProperty :isWrittenBy ;
+          owl:someValuesFrom :Author
+        ] ;
+    owl:disjointWith :BookEdition .
+
+:BookEdition a owl:Class ;
+    rdfs:subClassOf schema:Book ,
+        [ a owl:Restriction ;
+          owl:onProperty :isEditionOf ;
+          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+          owl:onClass :Book
+        ] .
+
+:Person a owl:Class ;
+    rdfs:subClassOf foaf:Person .
+
+:Author a owl:Class ;
+    rdfs:subClassOf :Person ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Person
+            [ a owl:Restriction ;
+              owl:onProperty :writes ;
+              owl:someValuesFrom :Book
+            ]
+        )
+    ] .
+
+:Translator a owl:Class ;
+    rdfs:subClassOf :Person ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Person
+            [ a owl:Restriction ;
+              owl:onProperty :translates ;
+              owl:someValuesFrom :BookEdition
+            ]
+        )
+    ] .
+
+:Illustrator a owl:Class ;
+    rdfs:subClassOf :Person ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Person
+            [ a owl:Restriction ;
+              owl:onProperty :illustrates ;
+              owl:someValuesFrom :BookEdition
+            ]
+        )
+    ] .
+
+:Editor a owl:Class ;
+    rdfs:subClassOf :Person ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Person
+            [ a owl:Restriction ;
+              owl:onProperty :edits ;
+              owl:someValuesFrom :BookEdition
+            ]
+        )
+    ] .
+
+:Narrator a owl:Class ;
+    rdfs:subClassOf :Person ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Person
+            [ a owl:Restriction ;
+              owl:onProperty :narrates ;
+              owl:someValuesFrom :BookEdition
+            ]
+        )
+    ] .
+
+:Organization a owl:Class ;
+    rdfs:subClassOf schema:Organization .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( :Person :Organization ) .
+
+:Publisher a owl:Class ;
+    rdfs:subClassOf :Organization .
+
+:BookSeries a owl:Class ;
+    rdfs:subClassOf schema:BookSeries .
+
+:BookCategory a owl:Class .
+:Character a owl:Class .
+
+:Place a owl:Class ;
+    rdfs:subClassOf schema:Place .
+
+:Language a owl:Class ;
+    rdfs:subClassOf schema:Language .
+
+:BookFormat a owl:Class .
+
+:AudioFormat a owl:Class ;
+    rdfs:subClassOf :BookFormat ;
+    rdfs:comment "Formats whose content is listened to (Audio CD, Audible Audio, MP3 CD, ...)." .
+
+:Award a owl:Class .
+:AwardRecognition a owl:Class .
+
+:AwardWin a owl:Class ;
+    rdfs:subClassOf :AwardRecognition .
+
+:AwardNomination a owl:Class ;
+    rdfs:subClassOf :AwardRecognition .
+
+:AwardFinalistRecognition a owl:Class ;
+    rdfs:subClassOf :AwardRecognition .
+
+[] a owl:AllDisjointClasses ;
+    owl:members ( :AwardWin :AwardNomination :AwardFinalistRecognition ) .
+
+:SeriesBook a owl:Class ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Book
+            [ a owl:Restriction ;
+              owl:onProperty :isPartOfSeries ;
+              owl:someValuesFrom :BookSeries
+            ]
+        )
+    ] .
+
+:TranslatedEdition a owl:Class ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :BookEdition
+            [ a owl:Restriction ;
+              owl:onProperty :isTranslatedBy ;
+              owl:someValuesFrom :Person
+            ]
+        )
+    ] .
+
+:IllustratedEdition a owl:Class ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :BookEdition
+            [ a owl:Restriction ;
+              owl:onProperty :isIllustratedBy ;
+              owl:someValuesFrom :Person
+            ]
+        )
+    ] .
+
+:AudiobookEdition a owl:Class ;
+    rdfs:subClassOf :BookEdition , schema:Audiobook ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :BookEdition
+            [ a owl:Restriction ;
+              owl:onProperty :hasFormat ;
+              owl:someValuesFrom :AudioFormat
+            ]
+        )
+    ] .
+
+:AwardWinningBook a owl:Class ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf (
+            :Book
+            [ a owl:Restriction ;
+              owl:onProperty :hasAwardRecognition ;
+              owl:someValuesFrom :AwardWin
+            ]
+        )
+    ] .
+
+#################################################################
+# Object Properties
+#################################################################
+
+:hasEdition a owl:ObjectProperty ;
+    rdfs:domain :Book ;
+    rdfs:range :BookEdition ;
+    rdfs:subPropertyOf schema:workExample ;
+    owl:inverseOf :isEditionOf .
+
+:isEditionOf a owl:ObjectProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range :Book ;
+    rdfs:subPropertyOf schema:exampleOfWork ;
+    owl:inverseOf :hasEdition .
+
+:isWrittenBy a owl:ObjectProperty ;
+    rdfs:domain :Book ;
+    rdfs:range :Person ;
+    rdfs:subPropertyOf :hasContributor , schema:author ;
+    owl:inverseOf :writes .
+
+:writes a owl:ObjectProperty ;
+    rdfs:domain :Person ;
+    rdfs:range :Book ;
+    owl:inverseOf :isWrittenBy .
+
+:hasContributor a owl:ObjectProperty ;
+    rdfs:domain :Book ;
+    rdfs:range :Person ;
+    rdfs:subPropertyOf dcterms:contributor .
+
+:hasEditionContributor a owl:ObjectProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range :Person ;
+    rdfs:subPropertyOf dcterms:contributor .
+
+:isTranslatedBy a owl:ObjectProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range :Person ;
+    rdfs:subPropertyOf :hasEditionContributor , schema:translator ;
+    owl:inverseOf :translates .
+
+:translates a owl:ObjectProperty ;
+    rdfs:domain :Person ;
+    rdfs:range :BookEdition ;
+    owl:inverseOf :isTranslatedBy .
+
+:illustrates a owl:ObjectProperty ;
+    rdfs:domain :Person ;
+    rdfs:range :BookEdition ;
+    owl:inverseOf :isIllustratedBy .
+
+:edits a owl:ObjectProperty ;
+    rdfs:domain :Person ;
+    rdfs:range :BookEdition ;
+    owl:inverseOf :isEditedBy .
+
+:narrates a owl:ObjectProperty ;
+    rdfs:domain :Person ;
+    rdfs:range :BookEdition ;
+    owl:inverseOf :isNarratedBy .
+
+:isIllustratedBy a owl:ObjectProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range :Person ;
+    rdfs:subPropertyOf :hasEditionContributor , schema:illustrator .
+
+:isEditedBy a owl:ObjectProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range :Person ;
+    rdfs:subPropertyOf :hasEditionContributor , schema:editor .
+
+:isNarratedBy a owl:ObjectProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range :Person ;
+    rdfs:subPropertyOf :hasEditionContributor .
+
+:isPartOfSeries a owl:ObjectProperty ;
+    rdfs:domain :Book ;
+    rdfs:range :BookSeries ;
+    rdfs:subPropertyOf schema:isPartOf ;
+    owl:inverseOf :hasBook .
+
+:hasBook a owl:ObjectProperty ;
+    rdfs:domain :BookSeries ;
+    rdfs:range :Book ;
+    rdfs:subPropertyOf schema:hasPart ;
+    owl:inverseOf :isPartOfSeries .
+
+:hasCategory a owl:ObjectProperty ;
+    rdfs:domain :Book ;
+    rdfs:range :BookCategory .
+
+:hasCharacter a owl:ObjectProperty ;
+    rdfs:domain :Book ;
+    rdfs:range :Character ;
+    owl:inverseOf :appearsIn .
+
+:appearsIn a owl:ObjectProperty ;
+    rdfs:domain :Character ;
+    rdfs:range :Book ;
+    owl:inverseOf :hasCharacter .
+
+:isPublishedBy a owl:ObjectProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range :Publisher ;
+    rdfs:subPropertyOf schema:publisher ;
+    owl:inverseOf :publishes .
+
+:publishes a owl:ObjectProperty ;
+    rdfs:domain :Publisher ;
+    rdfs:range :BookEdition ;
+    owl:inverseOf :isPublishedBy .
+
+:isInLanguage a owl:ObjectProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range :Language ;
+    rdfs:subPropertyOf schema:inLanguage .
+
+:setIn a owl:ObjectProperty ;
+    rdfs:domain :Book ;
+    rdfs:range :Place ;
+    rdfs:subPropertyOf schema:contentLocation .
+
+:hasFormat a owl:ObjectProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range :BookFormat .
+
+:hasAwardRecognition a owl:ObjectProperty ;
+    rdfs:domain :Book ;
+    rdfs:range :AwardRecognition ;
+    owl:inverseOf :isRecognitionFor .
+
+:isRecognitionFor a owl:ObjectProperty ;
+    rdfs:domain :AwardRecognition ;
+    rdfs:range :Book ;
+    owl:inverseOf :hasAwardRecognition .
+
+:forAward a owl:ObjectProperty ;
+    rdfs:domain :AwardRecognition ;
+    rdfs:range :Award .
+
+#################################################################
+# Datatype Properties
+#################################################################
+
+:bookId a owl:DatatypeProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf dcterms:identifier .
+
+:title a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf dcterms:title .
+
+:description a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf dcterms:description .
+
+:isbn a owl:DatatypeProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf schema:isbn .
+
+:editionName a owl:DatatypeProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf schema:bookEdition .
+
+:pageCount a owl:DatatypeProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range xsd:nonNegativeInteger ;
+    rdfs:subPropertyOf schema:numberOfPages .
+
+:publishDate a owl:DatatypeProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range xsd:date ;
+    rdfs:subPropertyOf schema:datePublished .
+
+:firstPublishDate a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:date ;
+    rdfs:subPropertyOf schema:datePublished .
+
+:publishYear a owl:DatatypeProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range xsd:gYear ;
+    rdfs:comment "Year of this edition; kept even when the source gives only a year or month/year." .
+
+:firstPublishYear a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:gYear ;
+    rdfs:comment "Year the work was first published; kept even when the full date is unknown." .
+
+:rating a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:decimal .
+
+:numRatings a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:nonNegativeInteger .
+
+:likedPercent a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:decimal .
+
+:coverImage a owl:DatatypeProperty ;
+    rdfs:domain :BookEdition ;
+    rdfs:range xsd:anyURI .
+
+:bbeScore a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:decimal .
+
+:bbeVotes a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:nonNegativeInteger .
+
+:seriesPosition a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf schema:position .
+
+:awardYear a owl:DatatypeProperty ;
+    rdfs:domain :AwardRecognition ;
+    rdfs:range xsd:gYear .
+
+:fiveStarRatings a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:nonNegativeInteger .
+
+:fourStarRatings a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:nonNegativeInteger .
+
+:threeStarRatings a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:nonNegativeInteger .
+
+:twoStarRatings a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:nonNegativeInteger .
+
+:oneStarRatings a owl:DatatypeProperty ;
+    rdfs:domain :Book ;
+    rdfs:range xsd:nonNegativeInteger .
