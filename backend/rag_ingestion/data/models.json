@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "default": "deepseek/deepseek-v4-flash-free",
+  "models": [
+    {
+      "id": "openrouter/free",
+      "label": "Free",
+      "context_tokens": 32000,
+      "max_output_tokens": 4096,
+      "keep_recent_max_messages": 20,
+      "effort": null
+    },
+    {
+      "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "label": "Nemotron 3 Ultra",
+      "context_tokens": 1000000,
+      "max_output_tokens": 65536,
+      "keep_recent_max_messages": 150,
+      "effort": "high"
+    },
+    {
+      "id": "z-ai/glm-5.2:free",
+      "label": "GLM 5.2",
+      "context_tokens": 256000,
+      "max_output_tokens": 65536,
+      "keep_recent_max_messages": 120,
+      "effort": "high"
+    },
+    {
+      "id": "google/gemma-4-31b-it:free",
+      "label": "Gemma 4 31B",
+      "context_tokens": 262144,
+      "max_output_tokens": 32768,
+      "keep_recent_max_messages": 100,
+      "effort": null
+    },
+    {
+      "id": "deepseek/deepseek-v4-pro-free",
+      "label": "DeepSeek V4 Pro",
+      "context_tokens": 128000,
+      "max_output_tokens": 16384,
+      "keep_recent_max_messages": 60,
+      "effort": "high",
+      "router": "orcarouter"
+    },
+    {
+      "id": "deepseek/deepseek-v4-flash-free",
+      "label": "DeepSeek V4 Flash",
+      "context_tokens": 128000,
+      "max_output_tokens": 16384,
+      "keep_recent_max_messages": 60,
+      "effort": null,
+      "router": "orcarouter"
+    },
+    {
+      "id": "openai/gpt-5.5",
+      "label": "GPT-5.5",
+      "context_tokens": 922000,
+      "max_output_tokens": 128000,
+      "keep_recent_max_messages": 120,
+      "effort": "high"
+    },
+    {
+      "id": "openai/gpt-5.6-sol-20260709",
+      "label": "GPT-5.6 Sol",
+      "context_tokens": 272000,
+      "max_output_tokens": 128000,
+      "keep_recent_max_messages": 120,
+      "effort": "high",
+      "enabled": false
+    },
+    {
+      "id": "anthropic/claude-opus-5",
+      "label": "Opus 5",
+      "context_tokens": 1000000,
+      "max_output_tokens": 128000,
+      "keep_recent_max_messages": 150,
+      "effort": "high",
+      "enabled": false
+    },
+    {
+      "id": "anthropic/claude-sonnet-5",
+      "label": "Sonnet 5",
+      "context_tokens": 1000000,
+      "max_output_tokens": 128000,
+      "keep_recent_max_messages": 120,
+      "effort": "high",
+      "enabled": false
+    },
+    {
+      "id": "anthropic/claude-haiku-4.5",
+      "label": "Haiku 4.5",
+      "context_tokens": 200000,
+      "max_output_tokens": 64000,
+      "keep_recent_max_messages": 60,
+      "effort": null,
+      "enabled": false
+    }
+  ]
+}

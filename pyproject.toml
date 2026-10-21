@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rag-ingestion"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.14,<2",
+    "boto3>=1.35,<2",
+    "fastapi>=0.116,<1",
+    "firebase-admin>=7.1,<8",
+    "httpx>=0.28,<1",
+    # Generation runs through LangChain's agent loop so the model can call
+    # tools mid-turn; pinned tight because the v1 agent API still moves.
+    "langchain>=1.2,<2",
+    "langchain-openai>=1.5,<2",
+    "nlpo3>=1.4,<2",
+    "openpyxl>=3.1,<4",
+    "psycopg2-binary>=2.9,<3",
+    "pydantic>=2.13,<3",
+    "pymupdf>=1.28,<2",
+    "python-multipart>=0.0.20,<1",
+    "qdrant-client>=1.18,<2",
+    "redis>=5.2,<7",
+    "sqlmodel>=0.0.22,<1",
+    "uvicorn[standard]>=0.35,<1",
+]
+
+[project.optional-dependencies]
+# Deep-agent harness: paused, kept installable for the spike script.
+agent = [
+    "deepagents>=0.7.5,<0.8",
+]
+benchmark = [
+    "mteb>=2.18,<3",
+]
+test = [
+    "pytest>=8.3,<9",
+    "pytest-cov>=6,<7",
+]
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+
+[tool.setuptools.package-data]
+rag_ingestion = ["data/*.txt", "data/*.json"]
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+testpaths = ["backend/tests"]

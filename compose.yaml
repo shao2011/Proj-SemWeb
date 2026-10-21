@@ -1,0 +1,155 @@
+services:
+  db:
+    image: postgres:16
+    container_name: rag-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-rag}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+    ports:
+      # Published so pytest and alembic can run from the host, not just in-network.
+      - "5432:5432"
+    volumes:
+      - rag_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-rag}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: rag-redis
+    # volatile-lru, not allkeys-lru: the retrieval cache's per-project version
+    # counter is the one key written without a TTL, and it is the key that
+    # invalidates everything else -- evicting it would resurrect pre-upload
+    # entries that are still inside their TTL. Every cache entry is written
+    # with setex, so eviction still has the whole cache to reclaim from.
+    command: redis-server --save "" --appendonly no --maxmemory 256mb --maxmemory-policy volatile-lru
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag-api
+    environment:
+      # Both default to the local services and are overridden from .env when the
+      # deployment points at a managed one (Supabase, Qdrant Cloud). The
+      # in-network host is the default here; the published 5432 above is for
+      # host-side tooling.
+      DATABASE_URL: ${DATABASE_URL:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-rag}}
+      QDRANT_URL: ${QDRANT_URL:-http://host.docker.internal:6333}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+      QDRANT_COLLECTION_PREFIX: ${QDRANT_COLLECTION_PREFIX:-rag}
+      REDIS_URL: redis://redis:6379/0
+      EMBEDDING_CACHE_TTL_SECONDS: ${EMBEDDING_CACHE_TTL_SECONDS:-86400}
+      EMBEDDING_PROFILE_VERSION: ${EMBEDDING_PROFILE_VERSION:-v1}
+      SUMMARY_MODEL: ${SUMMARY_MODEL:-}
+      HISTORY_MAX_MESSAGES: ${HISTORY_MAX_MESSAGES:-}
+      HISTORY_MAX_CHARS: ${HISTORY_MAX_CHARS:-}
+      HISTORY_KEEP_RECENT: ${HISTORY_KEEP_RECENT:-}
+      SUMMARY_TRIGGER_MESSAGES: ${SUMMARY_TRIGGER_MESSAGES:-}
+      GENERATION_MAX_TOKENS: ${GENERATION_MAX_TOKENS:-}
+      # UnderstandMessage's context: recent turns and the thread summary, each
+      # with its own budget so a long summary cannot evict the recent turns.
+      UNDERSTAND_CONTEXT_MESSAGES: ${UNDERSTAND_CONTEXT_MESSAGES:-}
+      UNDERSTAND_CONTEXT_CHARS: ${UNDERSTAND_CONTEXT_CHARS:-}
+      UNDERSTAND_SUMMARY_CHARS: ${UNDERSTAND_SUMMARY_CHARS:-}
+      MEMORY_CHAR_BUDGET: ${MEMORY_CHAR_BUDGET:-}
+      PROMOTION_THREAD_THRESHOLD: ${PROMOTION_THREAD_THRESHOLD:-}
+      UNDERSTAND_MAX_TOKENS: ${UNDERSTAND_MAX_TOKENS:-}
+      SUMMARY_MAX_TOKENS: ${SUMMARY_MAX_TOKENS:-}
+      MEMORY_CAP_THREAD: ${MEMORY_CAP_THREAD:-}
+      MEMORY_CAP_PROJECT: ${MEMORY_CAP_PROJECT:-}
+      MEMORY_CAP_USER: ${MEMORY_CAP_USER:-}
+      # Chunking and retrieval depths: the knobs a benchmark sweep needs.
+      CHUNK_MIN_TOKENS: ${CHUNK_MIN_TOKENS:-}
+      CHUNK_TARGET_TOKENS: ${CHUNK_TARGET_TOKENS:-}
+      CHUNK_MAX_TOKENS: ${CHUNK_MAX_TOKENS:-}
+      RETRIEVAL_ROUTE_LIMIT: ${RETRIEVAL_ROUTE_LIMIT:-}
+      RETRIEVAL_ROUTE_K: ${RETRIEVAL_ROUTE_K:-}
+      RETRIEVAL_GLOBAL_K: ${RETRIEVAL_GLOBAL_K:-}
+      RETRIEVAL_MAX_CANDIDATES: ${RETRIEVAL_MAX_CANDIDATES:-}
+      RETRIEVAL_TOKEN_BUDGET: ${RETRIEVAL_TOKEN_BUDGET:-}
+      RETRIEVAL_REFERENCE_CAP: ${RETRIEVAL_REFERENCE_CAP:-}
+      # Endpoints and timeouts: a proxy or self-hosted gateway needs these.
+      COHERE_BASE_URL: ${COHERE_BASE_URL:-}
+      VOYAGE_BASE_URL: ${VOYAGE_BASE_URL:-}
+      JINA_BASE_URL: ${JINA_BASE_URL:-}
+      OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-}
+      DATALAB_BASE_URL: ${DATALAB_BASE_URL:-}
+      PROVIDER_TIMEOUT_SECONDS: ${PROVIDER_TIMEOUT_SECONDS:-}
+      OPENROUTER_TIMEOUT_SECONDS: ${OPENROUTER_TIMEOUT_SECONDS:-}
+      DATALAB_TIMEOUT_SECONDS: ${DATALAB_TIMEOUT_SECONDS:-}
+      # Whole-outcome retrieval cache. Off by default: it only pays for itself
+      # where the same question recurs, and a stale answer is worse than a slow one.
+      RETRIEVAL_CACHE_ENABLED: ${RETRIEVAL_CACHE_ENABLED:-}
+      RETRIEVAL_CACHE_TTL_SECONDS: ${RETRIEVAL_CACHE_TTL_SECONDS:-}
+      REDIS_CONNECT_TIMEOUT_SECONDS: ${REDIS_CONNECT_TIMEOUT_SECONDS:-}
+      REDIS_READ_TIMEOUT_SECONDS: ${REDIS_READ_TIMEOUT_SECONDS:-}
+      # Must live under /app/data (the rag_api_data volume): rendered markdown
+      # and media cannot be regenerated after ingest, so anywhere else they
+      # vanish on every container rebuild.
+      MEDIA_ROOT: ${MEDIA_ROOT:-data/media}
+      # Set all four and media goes to the bucket instead, which is the only way
+      # two API containers see the same uploads. A partial set refuses to start.
+      R2_ENDPOINT: ${R2_ENDPOINT:-}
+      R2_BUCKET: ${R2_BUCKET:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      FIREBASE_SERVICE_ACCOUNT_PATH: ${FIREBASE_SERVICE_ACCOUNT_PATH:-/app/secrets/firebase-service-account.json}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-}
+      ADMIN_EMAILS: ${ADMIN_EMAILS:-}
+      DATALAB_API_KEY: ${DATALAB_API_KEY:-}
+      COHERE_API_KEY: ${COHERE_API_KEY:-}
+      COHERE_EMBEDDING_MODEL: ${COHERE_EMBEDDING_MODEL:-embed-v4.0}
+      COHERE_RERANK_MODEL: ${COHERE_RERANK_MODEL:-rerank-v4.0-pro}
+      COHERE_EMBEDDING_DIMENSIONS: ${COHERE_EMBEDDING_DIMENSIONS:-1024}
+      VOYAGE_API_KEY: ${VOYAGE_API_KEY:-}
+      VOYAGE_EMBEDDING_MODEL: ${VOYAGE_EMBEDDING_MODEL:-voyage-4}
+      VOYAGE_RERANK_MODEL: ${VOYAGE_RERANK_MODEL:-rerank-2.5}
+      VOYAGE_EMBEDDING_DIMENSIONS: ${VOYAGE_EMBEDDING_DIMENSIONS:-1024}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-openrouter/free}
+      UNDERSTAND_MODEL: ${UNDERSTAND_MODEL:-openrouter/free}
+      USE_MOCK_ANSWERER: ${USE_MOCK_ANSWERER:-}
+      UPLOAD_MAX_FILES_PER_BATCH: ${UPLOAD_MAX_FILES_PER_BATCH:-10}
+      UPLOAD_MAX_FILE_BYTES: ${UPLOAD_MAX_FILE_BYTES:-26214400}
+      UPLOAD_MAX_BATCH_BYTES: ${UPLOAD_MAX_BATCH_BYTES:-104857600}
+      UPLOAD_WORKER_COUNT: ${UPLOAD_WORKER_COUNT:-2}
+      LOG_LEVEL: ${LOG_LEVEL:-DEBUG}
+      # Unset means stdout only, which is what `docker compose logs` reads.
+      LOG_FILE: ${LOG_FILE:-}
+      LOG_SQL: ${LOG_SQL:-}
+      JINA_API_KEY: ${JINA_API_KEY:-}
+      JINA_EMBEDDING_MODEL: ${JINA_EMBEDDING_MODEL:-jina-embeddings-v4}
+      JINA_RERANK_MODEL: ${JINA_RERANK_MODEL:-jina-reranker-v3}
+      JINA_EMBEDDING_DIMENSIONS: ${JINA_EMBEDDING_DIMENSIONS:-1024}
+    volumes:
+      - rag_api_data:/app/data
+      # Mounted, never baked into the image: this is the Firebase Admin
+      # credential that turns Bearer-token verification on.
+      - ./eslothai-chat-firebase-adminsdk-fbsvc-c52b09b3fd.json:/app/secrets/firebase-service-account.json:ro
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  rag_api_data:
+  rag_pg_data:
