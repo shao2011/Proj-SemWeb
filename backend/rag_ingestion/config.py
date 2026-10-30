@@ -417,6 +417,9 @@ class RetrievalConfig(StrictModel):
     #: `le=1.0` bound is load-bearing -- above 1.0 the floor outruns the top hit
     #: and the chain returns no evidence at all. 0 keeps every hit.
     keep_ratio: float = Field(default=0.5, ge=0.0, le=1.0)
+    #: Off only for experiments that compare against plain leaves. Setting
+    #: `token_budget` to zero is not the same thing: it empties the evidence.
+    auto_merge: bool = True
 
     @model_validator(mode="after")
     def validate_global_fallback(self) -> RetrievalConfig:

@@ -51,3 +51,6 @@ media/
 .trash/
 /package-lock.json
 /document/
+
+# Evaluation outputs
+eval/results/

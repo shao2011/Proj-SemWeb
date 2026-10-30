@@ -39,6 +39,13 @@ agent = [
 benchmark = [
     "mteb>=2.18,<3",
 ]
+# Evaluation harness (eval/): Mem0 and LangMem through their official
+# libraries, and the Porter stemmer that LoCoMo's F1 uses.
+eval = [
+    "mem0ai>=1.0,<2",
+    "langmem>=0.0.29,<1",
+    "nltk>=3.9,<4",
+]
 test = [
     "pytest>=8.3,<9",
     "pytest-cov>=6,<7",

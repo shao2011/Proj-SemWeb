@@ -334,10 +334,13 @@ def run_retrieval(
     chunks_by_id = _ancestors(
         index, evidence, owner_user_id=owner_user_id, project_id=project_id
     )
-    merged = auto_merge(evidence, chunks_by_id, token_budget=active.token_budget)
-    diagnostics["auto_merged"] = merged.merge_count
-
-    selected: list[Chunk] = list(merged.chunks)
+    if active.auto_merge:
+        merged = auto_merge(evidence, chunks_by_id, token_budget=active.token_budget)
+        diagnostics["auto_merged"] = merged.merge_count
+        selected: list[Chunk] = list(merged.chunks)
+    else:
+        diagnostics["auto_merged"] = 0
+        selected = list(evidence)
     selected_ids = {chunk.chunk_id for chunk in selected}
 
     # How strongly each referenced block was pointed at. An expanded chunk has no
